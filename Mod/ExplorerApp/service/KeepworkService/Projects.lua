@@ -12,9 +12,12 @@ local KeepworkService = NPL.load('(gl)Mod/WorldShare/service/KeepworkService.lua
 
 local Projects = NPL.export()
 
-function Projects:GetProjectsByFilter(filter, sort, callback)
+function Projects:GetProjectsByFilter(filter, sort, pages, callback)
     local headers = KeepworkService:GetHeaders()
-    local params = {}
+    local params = {
+        ["x-page"] = pages and pages.page and pages.page or 1,
+        ["x-per-page"] = pages and pages.perPage and pages.perPage or 10
+    }
 
     if type(filter) == 'string' then
         params["classifyTags-like"] = format("%%%s%%", filter)
@@ -31,7 +34,7 @@ function Projects:GetProjectsByFilter(filter, sort, callback)
             allFilters:push_back(curFilter)
         end
 
-        params = { ["$and"] = allFilters }
+        params["$and"] = allFilters
     end
 
     if type(sort) == 'string' then
@@ -62,7 +65,7 @@ function Projects:GetProjectById(projectIds, sort, callback)
     local headers = KeepworkService:GetHeaders()
     local params = {
         ["$and"] = {
-            { classifyTags = { ["$like"] = '%paracraft专属%' } },
+            { classifyTags = { ["$like"] = '%paracraft专用%' } },
             { id = { ["$in"] = projectIds } },
         }
     }
@@ -93,4 +96,20 @@ end
 
 function Projects:GetProjectDetailById(projectId, callback)
     KeepworkService:GetProject(projectId, callback)
+end
+
+function Projects:GetAllTags(callback)
+    local headers = KeepworkService:GetHeaders()
+
+    KeepworkService:Request(
+        "/systemTags/search",
+        "POST",
+        {},
+        headers,
+        function(data, err)
+            if type(callback) == 'function' then
+                callback(data, err)
+            end
+        end
+    )
 end

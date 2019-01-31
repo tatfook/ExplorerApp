@@ -31,16 +31,13 @@ local Toast = NPL.load("./Toast/Toast.lua")
 
 local MainPage = NPL.export()
 
-MainPage.categorySelected = 1
+MainPage.categorySelected = L"收藏"
 MainPage.categoryTree = {
-    {value = L'精选'},
-    {value = L'单人'},
-    {value = L'多人'},
-    {value = L'对战'},
-    {value = L'动画'},
     {value = L'收藏'}
 }
 MainPage.worksTree = {}
+MainPage.downloadedGame = '全部游戏'
+MainPage.curPage = 1
 
 function MainPage:ShowPage()
     self.balance = Wallet:GetUserBalance()
@@ -54,8 +51,7 @@ function MainPage:ShowPage()
     local MainPagePage = Store:Get('page/MainPage')
 
     if MainPagePage then
-        MainPagePage:GetNode('categoryTree'):SetAttribute('DataSource', self.categoryTree)
-        MainPage:SetWorkdsTree()
+        self:SetCategoryTree()
     end
 
 	Screen:Connect("sizeChanged", MainPage, MainPage.OnScreenSizeChange, "UniqueConnection")
@@ -123,24 +119,54 @@ function MainPage:UpdateSort()
     end
 
     if self.categorySelected ~= 0 then
-        self:SetWorkdsTree(self.categorySelected, sort)
+        self:SetWorksTree(self.categorySelected, sort)
     else
         self:Search(sort)
     end
 end
 
-function MainPage:SetWorkdsTree(index, sort)
+function MainPage:SetCategoryTree()
+    local MainPagePage = Store:Get('page/MainPage')
+
+    if not MainPagePage then
+        return false
+    end
+
+    MainPagePage:GetNode('categoryTree'):SetAttribute('DataSource', self.categoryTree)
+
+    Projects:GetAllTags(function(data, err)
+        if err ~= 200 or type(data) ~= 'table' or not data.rows then
+            self:SetWorksTree(L"收藏")
+            return false
+        end
+
+        self.remoteCategoryTree = {}
+
+        for key, item in ipairs(data.rows) do
+            if item and item.tagname ~= 'paracraft专用' then
+                self.remoteCategoryTree[#self.remoteCategoryTree + 1] = { value = item.tagname or '' }
+            end
+        end
+
+        self.remoteCategoryTree[#self.remoteCategoryTree + 1] = { value = L'收藏' }
+
+        MainPagePage:GetNode('categoryTree'):SetAttribute('DataSource', self.remoteCategoryTree)
+        self:SetWorksTree(self.remoteCategoryTree[1].value)
+    end)
+end
+
+function MainPage:SetWorksTree(value, sort)
     local MainPage = Store:Get('page/MainPage')
 
     if (not MainPage) then
         return false
     end
 
-    if not index then
-        index = 1
+    if not value then
+        value = L'精选'
     end
 
-    if index == 6 then
+    if value == L'收藏' then
         local allFavoriteProjects = ProjectsDatabase:GetAllFavoriteProjects()
 
         Projects:GetProjectById(
@@ -151,7 +177,7 @@ function MainPage:SetWorkdsTree(index, sort)
                     return false
                 end
 
-                self.categorySelected = index
+                self.categorySelected = value
                 self.worksTree = self:HandleWorldsTree(data.rows)
                 MainPage:GetNode('worksTree'):SetAttribute('DataSource', data.rows)
                 self:Refresh()
@@ -160,16 +186,40 @@ function MainPage:SetWorkdsTree(index, sort)
         return true
     end
 
-    local filter = {"paracraft专属", self.categoryTree[index].value}
+    local filter = {"paracraft专用", value}
 
-    Projects:GetProjectsByFilter(filter, sort, function(data, err)
+    Projects:GetProjectsByFilter(filter, sort, { page = self.curPage }, function(data, err)
         if not data or not data.rows then
             return false
         end
 
-        self.categorySelected = index
-        self.worksTree = self:HandleWorldsTree(data.rows)
-        MainPage:GetNode('worksTree'):SetAttribute('DataSource', data.rows)
+        self.categorySelected = value
+
+        local rows = {}
+
+        if self.downloadedGame == '全部游戏' then
+            rows = data.rows
+        elseif self.downloadedGame == '本地游戏' then
+            for key, item in ipairs(data.rows) do
+                if ProjectsDatabase:IsProjectDownloaded(item.id) then
+                    rows[#rows + 1] = item
+                end
+            end
+        else
+            return false
+        end
+
+        if self.curPage ~= 1 then
+            rows = self:HandleWorldsTree(rows)
+           
+            for key, item in ipairs(rows) do
+                self.worksTree[#self.worksTree + 1] = item
+            end
+        else
+            self.worksTree = self:HandleWorldsTree(rows)
+        end
+
+        MainPage:GetNode('worksTree'):SetAttribute('DataSource', self.worksTree)
         self:Refresh()
     end)
 end
@@ -283,7 +333,9 @@ function MainPage:SetCoins()
 end
 
 function MainPage:SelectProject(index)
-    if self.playerBalance <= 0 then
+    self.curProjectIndex = index
+
+    if self.playerBalance <= 0 and not Store:Get("world/personalMode") then
         GameOver:ShowPage(3)
         return false
     end
@@ -318,10 +370,12 @@ function MainPage:SelectProject(index)
                     "never",
                     function(bSucceed, localWorldPath)
                         if bSucceed then
-                            self.playerBalance = self.playerBalance - 1
-                            self.balance = self.balance - 1
-                            Wallet:SetPlayerBalance(self.playerBalance)
-                            Wallet:SetUserBalance(self.balance)
+                            if not Store:Get("world/personalMode") then
+                                self.playerBalance = self.playerBalance - 1
+                                self.balance = self.balance - 1
+                                Wallet:SetPlayerBalance(self.playerBalance)
+                                Wallet:SetUserBalance(self.balance)
+                            end
                             self:HandleGameProcess()
                             MainPage:Close()
                         end
@@ -365,6 +419,18 @@ function MainPage:HandleGameProcess()
         end,
         60000 * 10 - 60000
     )
+end
+
+function MainPage:SelectDownloadedCategory()
+    local MainPagePage = Store:Get("page/MainPage")
+
+    if not MainPagePage then
+        return false
+    end
+
+    self.curPage = 1
+    self.downloadedGame = MainPagePage:GetValue("downloaded_game")
+    self:SetWorksTree(self.categorySelected)
 end
 
 function MainPage:GetSortIndex()

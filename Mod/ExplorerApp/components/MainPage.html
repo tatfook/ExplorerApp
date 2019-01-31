@@ -8,8 +8,9 @@
 
             MainPage.SetPage()
 
-            function select_category(index)
-                MainPage:SetWorkdsTree(index)
+            function select_category(value)
+                MainPage.curPage = 1
+                MainPage:SetWorksTree(value)
             end
 
             function search()
@@ -52,6 +53,34 @@
 
             function get_cur_sort()
                 return MainPage:GetSortList()[MainPage:GetSortIndex()].value
+            end
+
+            function select_downloaded_category()
+                MainPage:SelectDownloadedCategory()
+            end
+
+            function is_load_more_items(index)
+                if index == #MainPage.worksTree then
+                    return true
+                end
+            end
+
+            function mycreate()
+                if MainPage.categorySelected == L'收藏' then
+                    return false
+                end
+
+                if MainPage.worksTree[#MainPage.worksTree].isLoaded then
+                    return false
+                end
+
+                MainPage.worksTree[#MainPage.worksTree].isLoaded = true
+                MainPage.curPage = MainPage.curPage + 1
+                MainPage:SetWorksTree(MainPage.categorySelected)
+            end
+
+            function get_page_size()
+                return #MainPage.worksTree
             end
         ]]>
     </script>
@@ -173,9 +202,16 @@
             list_search_tool = {
 
             },
+            downloaded_game = {
+                float = 'left',
+                width = 170,
+                height = 30,
+                ['margin-top'] = 22,
+                ['padding-left'] = 5,
+            },
             list_search_bar = {
                 float = 'left',
-                ['margin-left'] = 450,
+                ['margin-left'] = 280,
                 ['margin-top'] = 22,
                 textcolor = "#ffffff",
                 width = 316,
@@ -318,7 +354,7 @@
     </style>
     <div class="area" name="area">
         <div class="strip" name="strip">
-            <div class="title">探索</div>
+            <div class="title"><%=L"探索"%></div>
             <div class="balance">
                 <div class="strip_icon_1"></div>
                 <div class="strip_coins"><%=MainPage.playerBalance%></div>
@@ -327,7 +363,7 @@
             <div class="close" align="right">
                 <div onclick="close()" class="close_click"></div>
                 <div class="close_icon"></div>
-                <div class="close_word">返回</div>
+                <div class="close_word"><%=L"返回"%></div>
             </div>
         </div>
         <div class="area_content" name="area_content">
@@ -335,11 +371,11 @@
                 <pe:gridview name="categoryTree" DefaultNodeHeight="10" pagesize="10" ItemsPerLine="1" AllowPaging="false">
                     <Columns>
                         <div>
-                            <pe:if condition='<%= Eval("index") == MainPage.categorySelected %>'>
+                            <pe:if condition='<%= Eval("value") == MainPage.categorySelected %>'>
                                 <input type="button" value='<%=Eval("value")%>' class="category_button_selected"/>
                             </pe:if>
-                            <pe:if condition='<%= Eval("index") ~= MainPage.categorySelected %>'>
-                                <input type="button" value='<%=Eval("value")%>' name="<%=Eval('index')%>" onclick="select_category" class="category_button"/>
+                            <pe:if condition='<%= Eval("value") ~= MainPage.categorySelected %>'>
+                                <input type="button" value='<%=Eval("value")%>' name="<%=Eval('value')%>" onclick="select_category" class="category_button"/>
                             </pe:if>
                         </div>
                     </Columns>
@@ -355,6 +391,10 @@
             </div>
             <div class="list">
                 <div class=list_search_tool>
+                    <div class="downloaded_game">
+                        <input name="downloaded_game" onclick="select_downloaded_category" style="margin-top:3px;margin-right: 3px;" type="radio" value="全部游戏" checked="checked"/>全部游戏
+                        <input name="downloaded_game" onclick="select_downloaded_category" style="margin-top:3px;margin-right: 3px;" type="radio" value="本地游戏" />本地游戏
+                    </div>
                     <div class="list_search_bar">
                         <div class="list_search_bar_radius"></div>
                         <input type="text" name="project_id" class="list_search_textfield" spacing="4" EmptyText='<%=L"请输入项目ID"%>' rows="1" CaretColor="#FFFFFFFF" />
@@ -368,7 +408,7 @@
                     </div>
                 </div>
                 <div class="list_content">
-                    <pe:gridview name="worksTree" style="position:relative;text-align:left" DefaultNodeHeight="10" pagesize="10" ItemsPerLine="3" AllowPaging="false">
+                    <pe:gridview name="worksTree" style="position:relative;text-align:left" DefaultNodeHeight="10" pagesize="<%=get_page_size%>" ItemsPerLine="3" AllowPaging="false">
                         <Columns>
                             <div class="work_item">
                                 <input type="button" class="click" name='<%=Eval("index")%>' onclick="select_project" />
@@ -401,6 +441,9 @@
                                     </pe:if>
                                 </div>
                                 <div style="<%=get_image(Eval('extra'))%>"></div>
+                                <pe:if condition="<%= is_load_more_items(Eval('index')) %>">
+                                    <pe:custom oncreate="<%=mycreate%>"></pe:custom>
+                                </pe:if>
                             </div>
                         </Columns>
                         <PagerSettings Position="Bottom" height="1" />
