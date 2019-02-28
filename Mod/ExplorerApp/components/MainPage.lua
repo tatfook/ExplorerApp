@@ -21,6 +21,7 @@ local Screen = commonlib.gettable("System.Windows.Screen")
 
 local Store = NPL.load("(gl)Mod/WorldShare/store/Store.lua")
 local Utils = NPL.load("(gl)Mod/WorldShare/helper/Utils.lua")
+local KeepworkService = NPL.load("(gl)Mod/WorldShare/service/KeepworkService.lua")
 local KeepworkServiceProjects = NPL.load("../service/KeepworkService/Projects.lua")
 local KeepworkEsServiceProjects = NPL.load("../service/KeepworkEsService/Projects.lua")
 local Password = NPL.load("./Password/Password.lua")
@@ -34,12 +35,12 @@ local Toast = NPL.load("./Toast/Toast.lua")
 
 local MainPage = NPL.export()
 
-MainPage.categorySelected = L "收藏"
+MainPage.categorySelected = L"收藏"
 MainPage.categoryTree = {
-    {value = L "收藏"}
+    {value = L"收藏"}
 }
 MainPage.worksTree = {}
-MainPage.downloadedGame = "全部游戏"
+MainPage.downloadedGame = "all"
 MainPage.curPage = 1
 
 function MainPage:ShowPage()
@@ -47,7 +48,7 @@ function MainPage:ShowPage()
     self.playerBalance = Wallet:GetPlayerBalance()
 
     Store:Set("explorer/selectSortIndex", 1)
-    Store:Set("explorer/sortList", {{value = L "综合"}, {value = L "最新"}, {value = L "热门"}})
+    Store:Set("explorer/sortList", {{value = L"综合"}, {value = L"最新"}, {value = L"热门"}})
 
     local params =
         Utils:ShowWindow(
@@ -58,7 +59,8 @@ function MainPage:ShowPage()
         0,
         0,
         "_fi",
-        false
+        false,
+        2
     )
 
     local MainPagePage = Store:Get("page/MainPage")
@@ -150,7 +152,7 @@ function MainPage:SetCategoryTree()
     KeepworkServiceProjects:GetAllTags(
         function(data, err)
             if err ~= 200 or type(data) ~= "table" or not data.rows then
-                self:SetWorksTree(L "收藏")
+                self:SetWorksTree(L"收藏")
                 return false
             end
 
@@ -162,7 +164,7 @@ function MainPage:SetCategoryTree()
                 end
             end
 
-            self.remoteCategoryTree[#self.remoteCategoryTree + 1] = {value = L "收藏"}
+            self.remoteCategoryTree[#self.remoteCategoryTree + 1] = {value = L"收藏"}
 
             MainPagePage:GetNode("categoryTree"):SetAttribute("DataSource", self.remoteCategoryTree)
             self:SetWorksTree(self.remoteCategoryTree[1].value)
@@ -178,10 +180,10 @@ function MainPage:SetWorksTree(value, sort)
     end
 
     if not value then
-        value = L "精选"
+        value = L"精选"
     end
 
-    if value == L "收藏" then
+    if value == L"收藏" then
         local allFavoriteProjects = ProjectsDatabase:GetAllFavoriteProjects()
 
         KeepworkServiceProjects:GetProjectById(
@@ -203,9 +205,23 @@ function MainPage:SetWorksTree(value, sort)
                     end
                 end
 
+                local rows = {}
+
+                if self.downloadedGame == "all" then
+                    rows = data.rows
+                elseif self.downloadedGame == "local" then
+                    for key, item in ipairs(data.rows) do
+                        if ProjectsDatabase:IsProjectDownloaded(item.id) then
+                            rows[#rows + 1] = item
+                        end
+                    end
+                else
+                    return false
+                end
+
                 self.categorySelected = value
-                self.worksTree = self:HandleWorldsTree(data.rows)
-                MainPage:GetNode("worksTree"):SetAttribute("DataSource", data.rows)
+                self.worksTree = self:HandleWorldsTree(rows)
+                MainPage:GetNode("worksTree"):SetAttribute("DataSource", rows)
                 self:Refresh()
             end
         )
@@ -227,9 +243,9 @@ function MainPage:SetWorksTree(value, sort)
 
             local rows = {}
 
-            if self.downloadedGame == "全部游戏" then
+            if self.downloadedGame == "all" then
                 rows = data.hits
-            elseif self.downloadedGame == "本地游戏" then
+            elseif self.downloadedGame == "local" then
                 for key, item in ipairs(data.hits) do
                     if ProjectsDatabase:IsProjectDownloaded(item.id) then
                         rows[#rows + 1] = item
@@ -318,7 +334,7 @@ function MainPage:HandleWorldsTree(rows)
 end
 
 function MainPage:DownloadWorld(index)
-    Toast:ShowPage(L "开始下载")
+    Toast:ShowPage(L"开始下载")
     local curItem = self.worksTree[index]
 
     if not curItem or not curItem.id then
@@ -330,7 +346,7 @@ function MainPage:DownloadWorld(index)
             curItem.id,
             function(data, err)
                 if not data or not data.world or not data.world.archiveUrl or err ~= 200 then
-                    Toast:ShowPage(L "网络不太稳定")
+                    Toast:ShowPage(L"网络不太稳定")
                     return false
                 end
 
@@ -346,7 +362,7 @@ function MainPage:DownloadWorld(index)
                     ),
                     function(bSuccess, downloadPath)
                         if bSuccess then
-                            Toast:ShowPage(L "下载成功")
+                            Toast:ShowPage(L"下载成功")
                             ProjectsDatabase:SetDownloadedProject(data)
                             self:HandleWorldsTree(self.worksTree)
                             self:Refresh()
@@ -371,10 +387,10 @@ function MainPage:SetFavorite(index)
     end
 
     if not ProjectsDatabase:IsFavoriteProject(curItem.id) then
-        Toast:ShowPage(L "收藏成功")
+        Toast:ShowPage(L"收藏成功")
         ProjectsDatabase:SetFavoriteProject(curItem.id)
     else
-        Toast:ShowPage(L "取消收藏")
+        Toast:ShowPage(L"取消收藏")
         ProjectsDatabase:RemoveFavoriteProject(curItem.id)
     end
 
@@ -463,7 +479,7 @@ function MainPage:HandleGameProcess()
 
             if warnReduceRemainingTime == 1000 then
                 if self.playerBalance > 0 then
-                    Toast:ShowPage(L "即将消耗一个金币")
+                    Toast:ShowPage(L"即将消耗一个金币")
                 end
 
                 Store:Set('explorer/warnReduceRemainingTime', warnReduceRemainingTime - 1000)
@@ -473,7 +489,7 @@ function MainPage:HandleGameProcess()
 
             if reduceRemainingTime == 1000 then
                 if self.playerBalance > 0 then
-                    Toast:ShowPage(L "消耗一个金币")
+                    Toast:ShowPage(L"消耗一个金币")
                     self.playerBalance = self.playerBalance - 1
                     self.balance = self.balance - 1
                     Wallet:SetPlayerBalance(self.playerBalance)
@@ -495,15 +511,15 @@ function MainPage:HandleGameProcess()
     )
 end
 
-function MainPage:SelectDownloadedCategory()
+function MainPage:SelectDownloadedCategory(value)
     local MainPagePage = Store:Get("page/MainPage")
 
-    if not MainPagePage then
+    if not MainPagePage or not value then
         return false
     end
 
     self.curPage = 1
-    self.downloadedGame = MainPagePage:GetValue("downloaded_game")
+    self.downloadedGame = value
     self:SetWorksTree(self.categorySelected)
 end
 
@@ -521,7 +537,7 @@ function MainPage:OnWorldLoad()
     if not personalMode then
         Utils.SetTimeOut(
             function()
-                Toast:ShowPage(L "消耗一个金币")
+                Toast:ShowPage(L"消耗一个金币")
             end,
             1000
         )
@@ -536,4 +552,16 @@ function MainPage:CanGoBack()
     end
 
     MainPage:Close()
+end
+
+function MainPage:OpenProject(id)
+    if type(id) ~= 'number' then
+        return false
+    end
+
+    ParaGlobal.ShellExecute("open", format("%s/pbl/project/%d/", KeepworkService:GetKeepworkUrl(), id), "", "", 1)
+end
+
+function MainPage:GetPage()
+    return Store:Get('page/MainPage')
 end
