@@ -16,8 +16,9 @@ local FileDownloader = commonlib.gettable("Mod.WorldShare.service.FileDownloader
 local InternetLoadWorld = commonlib.gettable("MyCompany.Aries.Creator.Game.Login.InternetLoadWorld")
 local RemoteWorld = commonlib.gettable("MyCompany.Aries.Creator.Game.Login.RemoteWorld")
 local Wallet = NPL.load("(gl)Mod/ExplorerApp/database/Wallet.lua")
-
 local Screen = commonlib.gettable("System.Windows.Screen")
+local LocalLoadWorld = commonlib.gettable("MyCompany.Aries.Game.MainLogin.LocalLoadWorld")
+local Translation = commonlib.gettable("MyCompany.Aries.Game.Common.Translation")
 
 local Store = NPL.load("(gl)Mod/WorldShare/store/Store.lua")
 local Utils = NPL.load("(gl)Mod/WorldShare/helper/Utils.lua")
@@ -32,6 +33,8 @@ local Wallet = NPL.load("../database/Wallet.lua")
 local ProjectsDatabase = NPL.load("../database/Projects.lua")
 local SyncMain = NPL.load("(gl)Mod/WorldShare/cellar/Sync/Main.lua")
 local Toast = NPL.load("./Toast/Toast.lua")
+local LocalService = NPL.load("(gl)Mod/WorldShare/service/LocalService.lua")
+local HttpRequest = NPL.load("(gl)Mod/WorldShare/service/HttpRequest.lua")
 
 local MainPage = NPL.export()
 
@@ -43,7 +46,11 @@ MainPage.worksTree = {}
 MainPage.downloadedGame = "all"
 MainPage.curPage = 1
 
-function MainPage:ShowPage()
+function MainPage:ShowPage(callback)
+    if type(callback) then
+        self.CloseCallback = callback
+    end
+
     self.balance = Wallet:GetUserBalance()
     self.playerBalance = Wallet:GetPlayerBalance()
 
@@ -89,6 +96,10 @@ function MainPage:Close()
     local MainPagePage = Store:Get("page/MainPage")
 
     if MainPagePage then
+        if type(self.CloseCallback) == 'function' then
+            self.CloseCallback()
+        end
+
         MainPagePage:CloseWindow()
     end
 end
@@ -160,7 +171,13 @@ function MainPage:SetCategoryTree()
 
             for key, item in ipairs(data.rows) do
                 if item and item.tagname ~= "paracraft专用" then
-                    self.remoteCategoryTree[#self.remoteCategoryTree + 1] = {value = item.tagname or ""}
+                    local curItem = {value = item.tagname or ""}
+
+                    if item and item.extra and item.extra.enTagname and self:IsEnglish() then
+                        curItem.enValue = item.extra.enTagname
+                    end
+
+                    self.remoteCategoryTree[#self.remoteCategoryTree + 1] = curItem
                 end
             end
 
@@ -341,42 +358,42 @@ function MainPage:DownloadWorld(index)
         return false
     end
 
-    if not ProjectsDatabase:IsProjectDownloaded(curItem.id) then
-        KeepworkServiceProjects:GetProjectDetailById(
-            curItem.id,
-            function(data, err)
-                if not data or not data.world or not data.world.archiveUrl or err ~= 200 then
-                    Toast:ShowPage(L"网络不太稳定")
-                    return false
-                end
+    KeepworkServiceProjects:GetProjectDetailById(
+        curItem.id,
+        function(data, err)
+            if not data or not data.world or not data.world.archiveUrl or err ~= 200 then
+                Toast:ShowPage(L"网络不太稳定")
+                return false
+            end
 
-                local archiveUrl = data.world.archiveUrl
+            local archiveUrl = data.world.archiveUrl
 
-                DownloadWorld.ShowPage(format("【%s%d】 %s %s%s", L"项目ID:", curItem.id, curItem.name, L"作者：", curItem.username))
-                FileDownloader:new():Init(
-                    "official_texture_package",
-                    archiveUrl,
-                    format(
-                        "/worlds/DesignHouse/userworlds/%s_r.zip",
-                        string.match(archiveUrl, "(.+)%.zip%?ref.+$"):gsub("[%W%s]+", "_")
-                    ),
-                    function(bSuccess, downloadPath)
-                        if bSuccess then
-                            Toast:ShowPage(L"下载成功")
-                            ProjectsDatabase:SetDownloadedProject(data)
-                            self:HandleWorldsTree(self.worksTree)
-                            self:Refresh()
-                        end
+            DownloadWorld.ShowPage(
+                format("【%s%d】 %s %s%s", L"项目ID:", curItem.id, curItem.name, L"作者：", curItem.username)
+            )
+            FileDownloader:new():Init(
+                "official_texture_package",
+                archiveUrl,
+                format(
+                    "/worlds/DesignHouse/userworlds/%s_r.zip",
+                    string.match(archiveUrl, "(.+)%.zip%?ref.+$"):gsub("[%W%s]+", "_")
+                ),
+                function(bSuccess, downloadPath)
+                    if bSuccess then
+                        Toast:ShowPage(L"下载成功")
+                        ProjectsDatabase:SetDownloadedProject(data)
+                        self:HandleWorldsTree(self.worksTree)
+                        self:Refresh()
+                    end
 
-                        DownloadWorld.Close()
-                    end,
-                    "access plus 5 mins",
-                    true
-                )
-            end,
-            0
-        )
-    end
+                    DownloadWorld.Close()
+                end,
+                "access plus 5 mins",
+                true
+            )
+        end,
+        0
+    )
 end
 
 function MainPage:SetFavorite(index)
@@ -400,6 +417,36 @@ end
 
 function MainPage:SetCoins()
     Password:ShowPage()
+end
+
+function MainPage:CheckoutNewVersion(worldInfo, callback)
+    if not worldInfo or
+       not worldInfo.archiveUrl or
+       not worldInfo.revision or
+       not worldInfo.projectId then
+        return false
+    end
+
+    local function Handle(data)
+        if not data or not data.world or not data.world.revision then
+            return false
+        end
+
+        if type(callback) ~= 'function' then
+            return false
+        end
+
+        local remoteRevision = tonumber(data.world.revision)
+        local localRevision = tonumber(worldInfo.revision)
+
+        if remoteRevision > localRevision then
+            callback(true)
+        else
+            callback(false)
+        end
+    end
+
+    KeepworkServiceProjects:GetProjectDetailById(worldInfo.projectId, Handle)
 end
 
 function MainPage:SelectProject(index)
@@ -427,64 +474,74 @@ function MainPage:SelectProject(index)
         return false
     end
 
-    world = RemoteWorld.LoadFromHref(projectInfo.world.archiveUrl, "self")
-    world:GetLocalFileName()
+    local function Handle(result)
+        if result then
+            _guihelper.MessageBox(L"发现新版本，重新下载世界")
+            self:DownloadWorld(index)
+            return false
+        end
 
-    local mytimer =
-        commonlib.Timer:new(
-        {
-            callbackFunc = function(timer)
-                InternetLoadWorld.LoadWorld(
-                    world,
-                    nil,
-                    "never",
-                    function(bSucceed, localWorldPath)
-                        if bSucceed then
-                            if not Store:Get("world/personalMode") then
-                                self.playerBalance = self.playerBalance - 1
-                                self.balance = self.balance - 1
-                                Wallet:SetPlayerBalance(self.playerBalance)
-                                Wallet:SetUserBalance(self.balance)
-                                Store:Remove('explorer/reduceRemainingTime')
-                                Store:Remove('explorer/warnReduceRemainingTime')
-                                self:HandleGameProcess()
+        local world = RemoteWorld.LoadFromHref(projectInfo.world.archiveUrl, "self")
+        world:GetLocalFileName()
+
+        local mytimer =
+            commonlib.Timer:new(
+            {
+                callbackFunc = function(timer)
+                    InternetLoadWorld.LoadWorld(
+                        world,
+                        nil,
+                        "never",
+                        function(bSucceed, localWorldPath)
+                            if bSucceed then
+                                if not Store:Get("world/personalMode") then
+                                    self.playerBalance = self.playerBalance - 1
+                                    self.balance = self.balance - 1
+                                    Wallet:SetPlayerBalance(self.playerBalance)
+                                    Wallet:SetUserBalance(self.balance)
+                                    Store:Remove("explorer/reduceRemainingTime")
+                                    Store:Remove("explorer/warnReduceRemainingTime")
+                                    self:HandleGameProcess()
+                                end
+
+                                MainPage:Close()
                             end
-
-                            MainPage:Close()
                         end
-                    end
-                )
-            end
-        }
-    )
+                    )
+                end
+            }
+        )
 
-    -- prevent recursive calls.
-    mytimer:Change(2, nil)
-    Store:Set("explorer/mode", "recommend")
+        -- prevent recursive calls.
+        mytimer:Change(2, nil)
+        Store:Set("explorer/mode", "recommend")
+    end
+
+    self:CheckoutNewVersion(projectInfo.world, Handle)
 end
 
 function MainPage:HandleGameProcess()
-    if not Store:Get('explorer/warnReduceRemainingTime') then
-        Store:Set('explorer/warnReduceRemainingTime', (1000 * 60 * 10) - (60 * 1000))
+    if not Store:Get("explorer/warnReduceRemainingTime") then
+        Store:Set("explorer/warnReduceRemainingTime", (1000 * 60 * 10) - (60 * 1000))
     end
 
-    if not Store:Get('explorer/reduceRemainingTime') then
-        Store:Set('explorer/reduceRemainingTime', 1000 * 60 * 10)
+    if not Store:Get("explorer/reduceRemainingTime") then
+        Store:Set("explorer/reduceRemainingTime", 1000 * 60 * 10)
     end
 
     Utils.SetTimeOut(
         function()
-            local reduceRemainingTime = Store:Get('explorer/reduceRemainingTime')
-            local warnReduceRemainingTime = Store:Get('explorer/warnReduceRemainingTime')
+            local reduceRemainingTime = Store:Get("explorer/reduceRemainingTime")
+            local warnReduceRemainingTime = Store:Get("explorer/warnReduceRemainingTime")
 
             if warnReduceRemainingTime == 1000 then
                 if self.playerBalance > 0 then
                     Toast:ShowPage(L"即将消耗一个金币")
                 end
 
-                Store:Set('explorer/warnReduceRemainingTime', warnReduceRemainingTime - 1000)
+                Store:Set("explorer/warnReduceRemainingTime", warnReduceRemainingTime - 1000)
             elseif warnReduceRemainingTime > 0 then
-                Store:Set('explorer/warnReduceRemainingTime', warnReduceRemainingTime - 1000)
+                Store:Set("explorer/warnReduceRemainingTime", warnReduceRemainingTime - 1000)
             end
 
             if reduceRemainingTime == 1000 then
@@ -495,15 +552,15 @@ function MainPage:HandleGameProcess()
                     Wallet:SetPlayerBalance(self.playerBalance)
                     Wallet:SetUserBalance(self.balance)
 
-                    Store:Set('explorer/reduceRemainingTime', reduceRemainingTime - 1000)
-                    Store:Remove('explorer/reduceRemainingTime')
-                    Store:Remove('explorer/warnReduceRemainingTime')
+                    Store:Set("explorer/reduceRemainingTime", reduceRemainingTime - 1000)
+                    Store:Remove("explorer/reduceRemainingTime")
+                    Store:Remove("explorer/warnReduceRemainingTime")
                     self:HandleGameProcess()
                 else
                     TimeUp:ShowPage()
                 end
             elseif reduceRemainingTime > 0 then
-                Store:Set('explorer/reduceRemainingTime', reduceRemainingTime - 1000)
+                Store:Set("explorer/reduceRemainingTime", reduceRemainingTime - 1000)
                 self:HandleGameProcess()
             end
         end,
@@ -545,7 +602,7 @@ function MainPage:OnWorldLoad()
 end
 
 function MainPage:CanGoBack()
-    local canGoBack = Store:Get('explorer/canGoBack')
+    local canGoBack = Store:Get("explorer/canGoBack")
 
     if canGoBack == false then
         return false
@@ -555,7 +612,7 @@ function MainPage:CanGoBack()
 end
 
 function MainPage:OpenProject(id)
-    if type(id) ~= 'number' then
+    if type(id) ~= "number" then
         return false
     end
 
@@ -563,5 +620,13 @@ function MainPage:OpenProject(id)
 end
 
 function MainPage:GetPage()
-    return Store:Get('page/MainPage')
+    return Store:Get("page/MainPage")
+end
+
+function MainPage:IsEnglish()
+    if Translation.GetCurrentLanguage() == 'enUS' then
+        return true
+    else
+        return false
+    end
 end
