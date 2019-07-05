@@ -375,7 +375,7 @@ function MainPage:DownloadWorld(index)
                 "official_texture_package",
                 archiveUrl,
                 format(
-                    "/worlds/DesignHouse/userworlds/%s_r.zip",
+                    LocalLoadWorld.GetWorldFolder() .. "/userworlds/%s_r.zip",
                     string.match(archiveUrl, "(.+)%.zip%?ref.+$"):gsub("[%W%s]+", "_")
                 ),
                 function(bSuccess, downloadPath)
