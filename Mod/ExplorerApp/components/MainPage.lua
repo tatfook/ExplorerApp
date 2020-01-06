@@ -23,7 +23,7 @@ local Translation = commonlib.gettable("MyCompany.Aries.Game.Common.Translation"
 local Store = NPL.load("(gl)Mod/WorldShare/store/Store.lua")
 local Utils = NPL.load("(gl)Mod/WorldShare/helper/Utils.lua")
 local KeepworkService = NPL.load("(gl)Mod/WorldShare/service/KeepworkService.lua")
-local KeepworkServiceProjects = NPL.load("../service/KeepworkService/Projects.lua")
+local KeepworkServiceProject = NPL.load("../service/KeepworkService/Project.lua")
 local KeepworkEsServiceProjects = NPL.load("../service/KeepworkEsService/Projects.lua")
 local Password = NPL.load("./Password/Password.lua")
 local GameOver = NPL.load("./GameProcess/GameOver/GameOver.lua")
@@ -66,8 +66,7 @@ function MainPage:ShowPage(callback)
         }
     )
 
-    local params =
-        Utils:ShowWindow(
+    local params = Mod.WorldShare.Utils.ShowWindow(
         0,
         0,
         "Mod/ExplorerApp/components/MainPage.html",
@@ -162,7 +161,7 @@ function MainPage:SetCategoryTree()
 
     MainPagePage:GetNode("categoryTree"):SetAttribute("DataSource", self.categoryTree)
 
-    KeepworkServiceProjects:GetAllTags(
+    KeepworkServiceProject:GetAllTags(
         function(data, err)
             if err ~= 200 or type(data) ~= "table" or not data.rows then
                 self:SetWorksTree(MainPage.categoryTree[1], Mod.WorldShare.Store:Getter('explorer/GetSortKey'))
@@ -200,45 +199,42 @@ function MainPage:SetWorksTree(categoryItem, sort)
         return false
     end
 
-    if not sort then
-        return false
-    end
+    Mod.WorldShare.MsgBox:Show(L"请稍后...", nil, nil, nil, nil, 10)
 
     if categoryItem.value == L"收藏" then
-        if sort == 'recommend' or sort == 'synthesize' then
-            sort = nil
-        end
-
         local allFavoriteProjects = ProjectsDatabase:GetAllFavoriteProjects()
 
-        KeepworkServiceProjects:GetProjectById(
+        KeepworkServiceProject:GetProjectByIds(
+            self.mainId,
             allFavoriteProjects,
-            sort,
             { page = self.curPage },
             function(data, err)
+                Mod.WorldShare.MsgBox:Close()
+
                 if not data or not data.rows then
                     return false
                 end
 
                 self.categorySelected = categoryItem
 
-                -- map to es data format
-                for key, item in ipairs(data.rows) do
-                    if item.extra and item.extra.imageUrl then
-                        item.cover = item.extra.imageUrl
-                    end
+                local mapData = {}
 
-                    if item.user and item.user.username then
-                        item.username = item.user.username
-                    end
+                -- map data struct
+                for key, item in ipairs(data.rows) do
+                    mapData[#mapData + 1] = {
+                        id = item.id,
+                        name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or "",
+                        cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or "",
+                        username = item.user and type(item.user.username) == 'string' and item.user.username or ""
+                    }
                 end
 
                 local rows = {}
 
                 if self.downloadedGame == "all" then
-                    rows = data.rows
+                    rows = mapData
                 elseif self.downloadedGame == "local" then
-                    for key, item in ipairs(data.rows) do
+                    for key, item in ipairs(mapData) do
                         if ProjectsDatabase:IsProjectDownloaded(item.id) then
                             rows[#rows + 1] = item
                         end
@@ -265,12 +261,18 @@ function MainPage:SetWorksTree(categoryItem, sort)
         return true
     end
 
+    if not sort then
+        return false
+    end
+
     if sort == 'recommend' then
-        KeepworkServiceProjects:GetRecommandProjects(
+        KeepworkServiceProject:GetRecommandProjects(
             categoryItem.id,
             self.mainId,
             { page = self.curPage },
             function(data, err)
+                Mod.WorldShare.MsgBox:Close()
+
                 if not data or err ~= 200 then
                     return false
                 end
@@ -332,6 +334,8 @@ function MainPage:SetWorksTree(categoryItem, sort)
         sort,
         { page = self.curPage },
         function(data, err)
+            Mod.WorldShare.MsgBox:Close()
+
             if type(data) ~= 'table' or type(data.hits) ~= 'table' or err ~= 200 then
                 return false
             end
@@ -374,7 +378,7 @@ function MainPage:SetWorksTree(categoryItem, sort)
     )
 end
 
-function MainPage:Search(sort)
+function MainPage:Search()
     local MainPage = Mod.WorldShare.Store:Get("page/MainPage")
 
     if not MainPage then
@@ -387,9 +391,9 @@ function MainPage:Search(sort)
         return false
     end
 
-    KeepworkServiceProjects:GetProjectById(
-        {projectId},
-        sort,
+    KeepworkServiceProject:GetProjectByIds(
+        self.mainId,
+        { projectId },
         {},
         function(data, err)
             if not data or not data.rows then
@@ -445,7 +449,7 @@ function MainPage:DownloadWorld(index)
         return false
     end
 
-    KeepworkServiceProjects:GetProjectDetailById(
+    KeepworkServiceProject:GetProjectDetailById(
         curItem.id,
         function(data, err)
             if not data or not data.world or not data.world.archiveUrl or err ~= 200 then
@@ -541,7 +545,7 @@ function MainPage:CheckoutNewVersion(worldInfo, callback)
         end
     end
 
-    KeepworkServiceProjects:GetProjectDetailById(worldInfo.projectId, Handle)
+    KeepworkServiceProject:GetProjectDetailById(worldInfo.projectId, Handle)
 end
 
 function MainPage:SelectProject(index)
