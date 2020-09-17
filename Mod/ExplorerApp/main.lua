@@ -39,7 +39,7 @@ function ExplorerApp:init()
 end
 
 function ExplorerApp:Init(callback)
-    if not Mod.WorldShare then
+    if not Mod or not Mod.WorldShare then
         _guihelper.MessageBox(L"ExplorerApp 依赖 WorldShare Mod")
         return false
     end
@@ -75,7 +75,7 @@ function ExplorerApp:OnWorldLoad()
     self.curTask = ExplorerTask:new()
 
     MainPage:OnWorldLoad()
-    ProactiveEnd:OnWorldLoad()
+    -- ProactiveEnd:OnWorldLoad()
 end
 
 function ExplorerApp:OnLeaveWorld()
