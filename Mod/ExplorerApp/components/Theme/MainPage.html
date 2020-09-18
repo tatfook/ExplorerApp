@@ -296,7 +296,96 @@
             end
 
             function get_world_date()
-                return os.date("%Y-%m-%d %H:%M", Mod.WorldShare.Utils:UnifiedTimestampFormat(Eval("updated_at")))
+                if Eval("updated_at") then
+                    local timestamp = Mod.WorldShare.Utils:UnifiedTimestampFormat(Eval("updated_at"))
+                    local now = os.time()
+
+                    local timeDiff = now - timestamp
+
+                    if timeDiff < 0 then
+                        return ''
+                    end
+
+                    ------------ min ------------
+
+                    if timeDiff > 0 and timeDiff < 30 then
+                        return L"刚刚"
+                    end
+
+                    if timeDiff >= 30 and timeDiff < 60 then
+                        return L"1分钟前"
+                    end
+
+                    if timeDiff >= 60 and timeDiff < 120 then
+                        return L"2分钟前"
+                    end
+
+                    if timeDiff >= 120 and timeDiff < 180 then
+                        return L"3分钟前"
+                    end
+
+                    if timeDiff >= 180 and timeDiff < 240 then
+                        return L"4分钟前"
+                    end
+
+                    if timeDiff >= 240 and timeDiff < 300 then
+                        return L"5分钟前"
+                    end
+
+                    if timeDiff >= 300 and timeDiff < 360 then
+                        return L"6分钟前"
+                    end
+
+                    if timeDiff >= 360 and timeDiff < 420 then
+                        return L"7分钟前"
+                    end
+
+                    if timeDiff >= 420 and timeDiff < 480 then
+                        return L"8分钟前"
+                    end
+
+                    if timeDiff >= 480 and timeDiff < 540 then
+                        return L"9分钟前"
+                    end
+
+                    if timeDiff >= 540 and timeDiff < 600 then
+                        return L"10分钟前"
+                    end
+
+                    ------------ hours ------------
+
+                    if timeDiff >= 600 and timeDiff < 86400 then
+                        local h = math.ceil(timeDiff / 3600)
+
+                        return format(L"%d小时前", h)
+                    end
+
+                    ------------ days ------------
+
+                    if timeDiff > 36000 and timeDiff < 2592000 then
+                        local d = math.ceil(timeDiff / 86400)
+
+                        return format(L"%d天前", d)
+                    end
+
+                    ------------ months ------------
+
+                    if timeDiff > 2592000 and timeDiff < 31104000 then
+                        local m = math.ceil(timeDiff / 2592000)
+
+                        return format(L"%d个月前", m)
+                    end
+
+                    ------------ years ------------
+
+                    if timeDiff > 31104000 and timeDiff < 622080000 then
+                        local y = math.ceil(timeDiff / 31104000)
+
+                        return format(L"%d年前", y)
+                    end
+
+                    return os.date("%Y-%m-%d %H:%M", timestamp)
+                end
             end
 
             function get_project_views()
@@ -450,7 +539,7 @@
                 width = 316,
                 height = 30,
                 padding = 0,
-                background = "Texture/Aries/Creator/keepwork/explorer_32bits.png#198 132 16 16:4 4 4 4",
+                background = "Texture/Aries/Creator/keepwork/explorer_32bits.png#205 162 32 16:5 5 5 5",
             },
             list_search_bar_radius = {
                 position = 'relative',
@@ -461,7 +550,7 @@
             list_search_textfield = {
                 width = 266,
                 height = 30,
-                background = ''
+                background = '',
             },
             list_search_button = {
                 position = 'relative',
@@ -642,7 +731,7 @@
         <div class="area" name="area">
             <div class="strip" name="strip">
                 <div class="list_search_bar" style="<%=get_english_style('width: 250px;')%>">
-                    <input type="text" name="project_id" class="list_search_textfield" spacing="4" EmptyText='<%=L"请输入你搜索的内容"%>' rows="1"/>
+                    <input type="text" name="project_id" class="list_search_textfield" spacing="4" EmptyText='<%=L"请输入项目ID"%>' rows="1" />
                     <div class="list_search_button">
                         <%=L"搜索"%>
                         <input type="button" class="list_search_button_click" DefaultButton="true" onclick="search()" />
@@ -695,10 +784,10 @@
                             </Columns>
                         </pe:gridview>
                     </div>
-                    <div class="list_filter" style="height: 40px;width: 80px;">
+                    <!-- <div class="list_filter" style="height: 40px;width: 80px;">
                         <input class="list_filter_button" onclick="select_sort()" type="button" value='<%=get_cur_sort()%>' />
                         <div class="sort_icon"></div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="list">
                     <div class="list_content">
