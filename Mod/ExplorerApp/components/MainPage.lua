@@ -294,6 +294,9 @@ function MainPage:SetMyClassListWorksTree(classId)
                 updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or "",
                 user = item.user and type(item.user) == 'table' and item.user or {},
                 isVipWorld = isVipWorld,
+                recent_view = item.lastVisit,
+                recent_like = item.lastStar,
+                total_comment = item.lastComment
             }
         end
 
@@ -365,6 +368,9 @@ function MainPage:SetMyFavoriteWorksTree()
                 updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or "",
                 user = item.user and type(item.user) == 'table' and item.user or {},
                 isVipWorld = isVipWorld,
+                recent_view = item.lastVisit,
+                recent_like = item.lastStar,
+                total_comment = item.lastComment
             }
         end
 
@@ -441,6 +447,9 @@ function MainPage:SetWorksTree(categoryItem)
                         updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or "",
                         user = item.user and type(item.user) == 'table' and item.user or {},
                         isVipWorld = isVipWorld,
+                        recent_view = item.lastVisit,
+                        recent_like = item.lastStar,
+                        total_comment = item.lastComment
                     }
                 end
 
