@@ -13,10 +13,11 @@ local EsBaseApi = NPL.load('(gl)Mod/WorldShare/api/Es/BaseApi.lua')
 
 local EsProjectsApi = NPL.export()
 
--- url: "/projects"
+-- url: /projects
 -- method: GET
 -- [[]]
 -- return object
 function EsProjectsApi:Projects(params, success, error)
     EsBaseApi:Get('/projects', params, nil, success)
 end
+

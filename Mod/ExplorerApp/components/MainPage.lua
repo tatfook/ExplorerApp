@@ -28,9 +28,10 @@ local ProjectsDatabase = NPL.load("../database/Projects.lua")
 -- service
 local KeepworkService = NPL.load("(gl)Mod/WorldShare/service/KeepworkService.lua")
 local KeepworkServiceSession = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/Session.lua')
-local KeepworkServiceProject = NPL.load("../service/KeepworkService/Project.lua")
+local KeepworkServiceProject = NPL.load("../service/KeepworkService/KeepworkServiceProject.lua")
 local KeepworkEsServiceProject = NPL.load("../service/KeepworkEsService/Project.lua")
 local WorldShareKeepworkServiceProject = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/Project.lua')
+local KeepworkServiceSchoolAndOrg = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/SchoolAndOrg.lua')
 
 -- UI
 local SyncMain = NPL.load("(gl)Mod/WorldShare/cellar/Sync/Main.lua")
@@ -42,39 +43,27 @@ local ProactiveEnd = NPL.load("./GameProcess/ProactiveEnd/ProactiveEnd.lua")
 
 local MainPage = NPL.export()
 
-MainPage.categorySelected = {
-    -- value = L"收藏"
-}
-MainPage.categoryTree = {
-    -- {value = L"收藏"}
-}
+MainPage.categorySelected = {}
+MainPage.categoryTree = {}
 MainPage.worksTree = {}
 MainPage.downloadedGame = "all"
 MainPage.curPage = 1
 MainPage.mainId = 0
 MainPage.curSelected = 1
+MainPage.sortList = {
+    recommend = { value = L'推荐', key = 'recommend' },
+    synthesize = { value = L'综合', key = 'synthesize' },
+    updatedAt = { value = L'最新', key = 'updated_at' },
+    recentView = { value = L"热门", key = 'recent_view' },
+}
 
 function MainPage:ShowPage(callback)
     if type(callback) then
         self.CloseCallback = callback
     end
 
-    self.balance = Wallet:GetUserBalance()
-    self.playerBalance = Wallet:GetPlayerBalance()
-
-    Mod.WorldShare.Store:Set("explorer/selectSortIndex", 3)
-    Mod.WorldShare.Store:Set(
-        "explorer/sortList",
-        {
-            {value = L"推荐", key="recommend"},
-            {value = L"综合", key="synthesize"},
-            {value = L"最新", key="updated_at"},
-            {value = L"热门", key="recent_view"}
-        }
-    )
-
     local params = Mod.WorldShare.Utils.ShowWindow(
-        1100,
+        1150,
         650,
         "Mod/ExplorerApp/components/Theme/MainPage.html",
         "Mod.ExplorerApp.MainPage"
@@ -91,6 +80,7 @@ function MainPage:ShowPage(callback)
 
     if MainPagePage then
         self:SetCategoryTree()
+        self:GetMyClassList()
     end
 end
 
@@ -151,6 +141,35 @@ function MainPage:UpdateSort()
     self:SetWorksTree(self.categorySelected, Mod.WorldShare.Store:Getter('explorer/GetSortKey'))
 end
 
+function MainPage:GetMyClassList()
+    local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
+
+    if not MainPagePage then
+        return false
+    end
+
+    KeepworkServiceSchoolAndOrg:GetUserAllSchools(function(data, err)
+        if not data or not data.id then
+            return
+        end
+
+        self.classList = {}
+
+        KeepworkServiceSchoolAndOrg:GetMyClassList(data.id, function(data, err)
+            if data and type(data) == 'table' then
+                for key, item in ipairs(data) do
+                    self.classList[#self.classList + 1] = {
+                        id = item.id,
+                        name = item.name
+                    }
+                end
+
+                MainPagePage:GetNode('class_list'):SetUIAttribute("DataSource", self.classList)
+            end
+        end)
+    end)
+end
+
 function MainPage:SetCategoryTree()
     local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
 
@@ -158,125 +177,235 @@ function MainPage:SetCategoryTree()
         return false
     end
 
-    MainPagePage:GetNode("categoryTree"):SetAttribute("DataSource", self.categoryTree)
-
     KeepworkServiceProject:GetAllTags(
         function(data, err)
             if err ~= 200 or type(data) ~= "table" or not data.rows then
-                self:SetWorksTree(MainPage.categoryTree[1], Mod.WorldShare.Store:Getter('explorer/GetSortKey'))
-                return false
+                return
             end
 
-            self.remoteCategoryTree = {}
+            self.categoryTree = {
+                { id = -1, value = L'热门', color = 'YELLOW' },
+                { id = -2, value = L'最新', color = 'YELLOW' },
+            }
+
+            self.categorySelected = { id = -1, value = L'热门', color = 'YELLOW' }
 
             for key, item in ipairs(data.rows) do
                 if item and item.tagname ~= "paracraft专用" then
-                    local curItem = { value = item.tagname or "", id = item.id }
+                    local curItem = { id = item.id, value = item.tagname or "" }
 
                     if item and item.extra and item.extra.enTagname and self:IsEnglish() then
                         curItem.enValue = item.extra.enTagname
                     end
 
-                    self.remoteCategoryTree[#self.remoteCategoryTree + 1] = curItem
+                    -- filter yellow button
+                    -- local value = ''
+
+                    if curItem and curItem.value == '大赛作品' then
+                        curItem.color = 'YELLOW'
+                    elseif curItem and curItem.value == '我的学校' then
+                        curItem.color = 'YELLOW'
+                    elseif curItem and curItem.value == '编程' then
+                        curItem.color = 'BLACK'
+                    elseif curItem and curItem.value == '短片' then
+                        curItem.color = 'BLACK'
+                    elseif curItem and curItem.value == '场景' then
+                        curItem.color = 'BLACK'
+                    elseif curItem and curItem.value == '机器人' then
+                        curItem.color = 'BLACK'
+                    elseif curItem and curItem.value == '计算机' then
+                        curItem.color = 'BLACK'
+                    elseif curItem and curItem.value == '互动' then
+                        curItem.color = 'BLACK'
+                    elseif curItem and curItem.value == '科学' then
+                        curItem.color = 'BLACK'
+                    elseif curItem and curItem.value == '语文' then
+                        curItem.color = 'BLACK'
+                    elseif curItem and curItem.value == '人文' then
+                        curItem.color = 'BLACK'
+                    elseif curItem and curItem.value == '艺术' then
+                        curItem.color = 'BLACK'
+                    elseif curItem and curItem.value == '数学' then
+                        curItem.color = 'BLACK'
+                    elseif curItem and curItem.value == '生物' then
+                        curItem.color = 'BLACK'
+                    elseif curItem and curItem.value == '设计' then
+                        curItem.color = 'BLACK'
+                    end
+
+                    self.categoryTree[#self.categoryTree + 1] = curItem
                 else
                     self.mainId = item.id
                 end
             end
 
-            -- self.remoteCategoryTree[#self.remoteCategoryTree + 1] = { value = L"收藏", id = -1 }
-
-            MainPagePage:GetNode("categoryTree"):SetAttribute("DataSource", self.remoteCategoryTree)
-            self:SetWorksTree({ value = 'all' }, Mod.WorldShare.Store:Getter('explorer/GetSortKey'))
+            MainPagePage:GetNode('categoryTree'):SetUIAttribute("DataSource", self.categoryTree)
+            self:SetWorksTree(self.categorySelected)
         end
     )
 end
 
-function MainPage:SetWorksTree(categoryItem, sort)
+function MainPage:SetMyClassListWorksTree(classId)
     local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
 
     if not MainPagePage then
         return false
     end
 
-    if not categoryItem or type(categoryItem) ~= 'table' or not categoryItem.value then
+    if not classId then
+        classId = self.classId
+    else
+        self.classId = classId
+        self.worksTree = {}
+        self.curSelected = 1
+        self.isSearching = false
+        self.isFavorite = false
+        self.isClassList = true
+        self.categorySelected = {}
+    end
+
+    KeepworkServiceProject:GetMySchoolProjects(
+        classId,
+        { page = self.curPage },
+        function(data, err)
+        if not data or
+            type(data) ~= 'table' or
+            not data.rows or
+            type(data.rows) ~= 'table' or
+            err ~= 200 then
+            return
+        end
+
+        local mapData = {}
+
+        -- map data struct
+        for key, item in ipairs(data.rows) do
+            local isVipWorld = false
+
+            if item.extra and item.extra.isVipWorld == 1 then
+                isVipWorld = true
+            end
+
+            mapData[#mapData + 1] = {
+                id = item.id,
+                name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or "",
+                cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or "",
+                username = item.user and type(item.user.username) == 'string' and item.user.username or "",
+                updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or "",
+                user = item.user and type(item.user) == 'table' and item.user or {},
+                isVipWorld = isVipWorld,
+            }
+        end
+
+        local rows = mapData
+
+        if self.curPage ~= 1 then
+            self:HandleWorldsTree(rows, function(rows)
+                for key, item in ipairs(rows) do
+                    self.worksTree[#self.worksTree + 1] = item
+                end
+
+                MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+            end)
+        else
+            self:HandleWorldsTree(rows, function(rows)
+                self.worksTree = rows
+
+                MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+            end)
+        end
+    end)
+end
+
+function MainPage:SetMyFavoriteWorksTree()
+    if not KeepworkServiceSession:IsSignedIn() then
+        return
+    end
+    
+    local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
+
+    if not MainPagePage then
         return false
     end
 
     Mod.WorldShare.MsgBox:Show(L"请稍候...", nil, nil, nil, nil, 10)
-    
+
+    self.curSelected = 1
     self.isSearching = false
+    self.isFavorite = true
+    self.categorySelected = {}
     MainPagePage:SetValue("search_value", "")
 
-    if categoryItem.value == L"收藏" then
-        local allFavoriteProjects = ProjectsDatabase:GetAllFavoriteProjects()
+    KeepworkServiceProject:GetMyFavoriteProjects({ page = self.curPage }, function(data, err)
+        Mod.WorldShare.MsgBox:Close()
 
-        KeepworkServiceProject:GetProjectByIds(
-            self.mainId,
-            allFavoriteProjects,
-            { page = self.curPage },
-            function(data, err)
-                Mod.WorldShare.MsgBox:Close()
+        if not data or
+            type(data) ~= 'table' or
+            not data.rows or
+            type(data.rows) ~= 'table' or
+            err ~= 200 then
+            return
+        end
 
-                if not data or not data.rows then
-                    return false
-                end
+        local mapData = {}
 
-                self.categorySelected = categoryItem
+        -- map data struct
+        for key, item in ipairs(data.rows) do
+            local isVipWorld = false
 
-                local mapData = {}
-
-                -- map data struct
-                for key, item in ipairs(data.rows) do
-                    mapData[#mapData + 1] = {
-                        id = item.id,
-                        name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or "",
-                        cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or "",
-                        username = item.user and type(item.user.username) == 'string' and item.user.username or ""
-                    }
-                end
-
-                local rows = {}
-
-                if self.downloadedGame == "all" then
-                    rows = mapData
-                elseif self.downloadedGame == "local" then
-                    for key, item in ipairs(mapData) do
-                        if ProjectsDatabase:IsProjectDownloaded(item.id) then
-                            rows[#rows + 1] = item
-                        end
-                    end
-                else
-                    return false
-                end
-
-                if self.curPage ~= 1 then
-                    self:HandleWorldsTree(rows, function(rows)
-                        for key, item in ipairs(rows) do
-                            self.worksTree[#self.worksTree + 1] = item
-                        end
-
-                        MainPagePage:GetNode("worksTree"):SetAttribute("DataSource", self.worksTree)
-                        self:Refresh()
-                    end)
-                else
-                    self:HandleWorldsTree(rows, function(rows)
-                        self.worksTree = rows
-
-                        MainPagePage:GetNode("worksTree"):SetAttribute("DataSource", self.worksTree)
-                        self:Refresh()
-                    end)
-                end
+            if item.extra and item.extra.isVipWorld == 1 then
+                isVipWorld = true
             end
-        )
 
-        return true
-    end
+            mapData[#mapData + 1] = {
+                id = item.id,
+                name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or "",
+                cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or "",
+                username = item.user and type(item.user.username) == 'string' and item.user.username or "",
+                updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or "",
+                user = item.user and type(item.user) == 'table' and item.user or {},
+                isVipWorld = isVipWorld,
+            }
+        end
 
-    if not sort then
+        local rows = mapData
+
+        if self.curPage ~= 1 then
+            self:HandleWorldsTree(rows, function(rows)
+                for key, item in ipairs(rows) do
+                    self.worksTree[#self.worksTree + 1] = item
+                end
+
+                MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+            end)
+        else
+            self:HandleWorldsTree(rows, function(rows)
+                self.worksTree = rows
+
+                MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+            end)
+        end
+    end)
+end
+
+function MainPage:SetWorksTree(categoryItem)
+    local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
+
+    if not MainPagePage then
         return false
     end
 
-    if sort == 'recommend' then
+    if not categoryItem or type(categoryItem) ~= 'table' or not categoryItem.id then
+        return false
+    end
+
+    Mod.WorldShare.MsgBox:Show(L"请稍候...", nil, nil, nil, nil, 10)
+
+    self.curSelected = 1
+    self.isSearching = false
+    MainPagePage:SetValue("search_value", "")
+
+    if categoryItem.id ~= -1 and categoryItem.id ~= -2 then
         KeepworkServiceProject:GetRecommandProjects(
             categoryItem.id,
             self.mainId,
@@ -284,8 +413,12 @@ function MainPage:SetWorksTree(categoryItem, sort)
             function(data, err)
                 Mod.WorldShare.MsgBox:Close()
 
-                if not data or type(data) ~= 'table' or not data.rows or type(data.rows) ~= 'table' or err ~= 200 then
-                    return false
+                if not data or
+                   type(data) ~= 'table' or
+                   not data.rows or
+                   type(data.rows) ~= 'table' or
+                   err ~= 200 then
+                    return
                 end
 
                 self.categorySelected = categoryItem
@@ -294,6 +427,12 @@ function MainPage:SetWorksTree(categoryItem, sort)
 
                 -- map data struct
                 for key, item in ipairs(data.rows) do
+                    local isVipWorld = false
+
+                    if item.extra and item.extra.isVipWorld == 1 then
+                        isVipWorld = true
+                    end
+
                     mapData[#mapData + 1] = {
                         id = item.id,
                         name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or "",
@@ -301,22 +440,11 @@ function MainPage:SetWorksTree(categoryItem, sort)
                         username = item.user and type(item.user.username) == 'string' and item.user.username or "",
                         updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or "",
                         user = item.user and type(item.user) == 'table' and item.user or {},
+                        isVipWorld = isVipWorld,
                     }
                 end
 
-                local rows = {}
-
-                if self.downloadedGame == "all" then
-                    rows = mapData
-                elseif self.downloadedGame == "local" then
-                    for key, item in ipairs(mapData) do
-                        if ProjectsDatabase:IsProjectDownloaded(item.id) then
-                            rows[#rows + 1] = item
-                        end
-                    end
-                else
-                    return false
-                end
+                local rows = mapData
 
                 if self.curPage ~= 1 then
                     self:HandleWorldsTree(rows, function(rows)
@@ -324,119 +452,107 @@ function MainPage:SetWorksTree(categoryItem, sort)
                             self.worksTree[#self.worksTree + 1] = item
                         end
 
-                        MainPagePage:GetNode("worksTree"):SetAttribute("DataSource", self.worksTree)
-                        self:Refresh()
+                        MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
                     end)
                 else
                     self:HandleWorldsTree(rows, function(rows)
                         self.worksTree = rows
 
-                        MainPagePage:GetNode("worksTree"):SetAttribute("DataSource", self.worksTree)
-                        self:Refresh()
+                        MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
                     end)
                 end
-
-                
             end
         )
-        return true
-    end
 
-    if sort == 'synthesize' then
-        sort = nil
-    end
+        return
+    else
+        -- hotest and newest
+        local sort = ''
 
-    local filter = { "paracraft专用" }
-
-    if categoryItem.value ~= 'all' then
-        filter[#filter + 1] = categoryItem.value
-    end
-
-    KeepworkEsServiceProject:GetEsProjectsByFilter(
-        filter,
-        sort,
-        { page = self.curPage },
-        function(data, err)
-            if not data or type(data) ~= 'table' or not data.hits or type(data.hits) ~= 'table' or err ~= 200  then
-                return false
-            end
-
-            local usernames = {}
-
-            for key, item in ipairs(data.hits) do
-                if item and type(item) == 'table' and item.username and type(item.username) == 'string' then
-                    local beExisted = false
-
-                    for uKey, uItem in ipairs(usernames) do
-                        if uItem and type(uItem) == 'string' and uItem == item.username then
-                            beExisted = true
-                        end
-                    end
-
-                    if not beExisted then
-                        usernames[#usernames + 1] = item.username
-                    end
-                end
-            end
-
-            KeepworkServiceSession:GetUsersByUsernames(usernames, function(usersData, usersErr)
-                if not usersData or type(usersData) ~= 'table' or not usersData.rows or type(usersData.rows) ~= 'table' or err ~= 200  then
+        if categoryItem.id == -1 then
+            sort = self.sortList.updatedAt.key
+        elseif categoryItem.id == -2 then
+            sort = self.sortList.recentView.key
+        else
+            return
+        end
+    
+        KeepworkEsServiceProject:GetEsProjectsByFilter(
+            { 'paracraft专用' },
+            sort,
+            { page = self.curPage },
+            function(data, err)
+                if not data or type(data) ~= 'table' or not data.hits or type(data.hits) ~= 'table' or err ~= 200  then
                     return false
                 end
-                Mod.WorldShare.MsgBox:Close()
-                
-                self.categorySelected = categoryItem
+
+                local usernames = {}
     
-                for key, item in pairs(data.hits) do
-                    if item and type(item) == 'table' then
-                        for uKey, uItem in ipairs(usersData.rows) do
-                            if uItem and type(uItem) == 'table' then
-                                if uItem.username == item.username then
-                                    item.user = commonlib.copy(uItem)
-                                end
+                for key, item in ipairs(data.hits) do
+                    if item and type(item) == 'table' and item.username and type(item.username) == 'string' then
+                        local beExisted = false
+    
+                        for uKey, uItem in ipairs(usernames) do
+                            if uItem and type(uItem) == 'string' and uItem == item.username then
+                                beExisted = true
                             end
                         end
-
-                        if item.world_tag_name then
-                            item.name = item.world_tag_name
+    
+                        if not beExisted then
+                            usernames[#usernames + 1] = item.username
                         end
                     end
                 end
+
+                KeepworkServiceSession:GetUsersByUsernames(usernames, function(usersData, usersErr)
+                    if not usersData or type(usersData) ~= 'table' or not usersData.rows or type(usersData.rows) ~= 'table' or err ~= 200  then
+                        return false
+                    end
+                    
+                    self.categorySelected = categoryItem
+        
+                    for key, item in pairs(data.hits) do
+                        if item and type(item) == 'table' then
+                            for uKey, uItem in ipairs(usersData.rows) do
+                                if uItem and type(uItem) == 'table' then
+                                    if uItem.username == item.username then
+                                        item.user = commonlib.copy(uItem)
+                                    end
+                                end
+                            end
     
-                local rows = {}
-    
-                if self.downloadedGame == "all" then
-                    rows = data.hits
-                elseif self.downloadedGame == "local" then
-                    for key, item in ipairs(data.hits) do
-                        if ProjectsDatabase:IsProjectDownloaded(item.id) then
-                            rows[#rows + 1] = item
+                            if item.world_tag_name then
+                                item.name = item.world_tag_name
+                            end
+
+
+                            
                         end
                     end
-                else
-                    return false
-                end
+
+                    local rows = data.hits
+        
+                    if self.curPage ~= 1 then
+                        self:HandleWorldsTree(rows, function(rows)
+                            for key, item in ipairs(rows) do
+                                self.worksTree[#self.worksTree + 1] = item
+                            end
     
-                if self.curPage ~= 1 then
-                    self:HandleWorldsTree(rows, function(rows)
-                        for key, item in ipairs(rows) do
-                            self.worksTree[#self.worksTree + 1] = item
-                        end
-
-                        MainPagePage:GetNode("worksTree"):SetAttribute("DataSource", self.worksTree)
-                        self:Refresh()
-                    end)
-                else
-                    self:HandleWorldsTree(rows, function(rows)
-                        self.worksTree = rows
-
-                        MainPagePage:GetNode("worksTree"):SetAttribute("DataSource", self.worksTree)
-                        self:Refresh()
-                    end)
-                end
-            end)
-        end
-    )
+                            MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+                            Mod.WorldShare.MsgBox:Close()
+                        end)
+                    else
+                        self:HandleWorldsTree(rows, function(rows)
+                            self.worksTree = rows
+    
+                            MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+                            Mod.WorldShare.MsgBox:Close()
+                        end)
+                    end
+                end)
+            end
+        )
+    end
 end
 
 function MainPage:Search()
@@ -447,6 +563,7 @@ function MainPage:Search()
     end
 
     if not self.isSearching then
+        self.curSelected = 1
         self.isSearching = true
         self.searchValue = MainPagePage:GetValue("search_value")
     end
@@ -655,10 +772,10 @@ end
 function MainPage:SelectProject(index)
     self.curProjectIndex = index
 
-    if self.playerBalance <= 0 and not Mod.WorldShare.Store:Get("world/personalMode") then
-        GameOver:ShowPage(3)
-        return false
-    end
+    -- if self.playerBalance <= 0 and not Mod.WorldShare.Store:Get("world/personalMode") then
+    --     GameOver:ShowPage(3)
+    --     return false
+    -- end
 
     local curItem = self.worksTree[index]
 
@@ -688,8 +805,7 @@ function MainPage:SelectProject(index)
             local world = RemoteWorld.LoadFromHref(projectInfo.world.archiveUrl, "self")
             world:GetLocalFileName()
 
-            -- set remote world value here bacause local path
-            Mod.WorldShare.Store:Set('world/currentRemoteWorld', world)
+            Mod.WorldShare.Store:Set('world/currentRemoteFile', projectInfo.world.archiveUrl)
 
             local mytimer =
                 commonlib.Timer:new(
