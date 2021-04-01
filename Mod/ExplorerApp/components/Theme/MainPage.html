@@ -919,20 +919,32 @@
                                     <div class="<%= get_work_item_style() %>">
                                         <input type="button" class="click" name='<%=Eval("index")%>' onclick="select_project" />
                                         <pe:if condition='<%= is_vip() %>' >
-                                            <pe:container zorder='2' style="background:;">
+                                            <pe:container zorder='4' style="background:;">
                                                 <div class='vip_icon'></div>
                                             </pe:container>
                                         </pe:if>
                                         <pe:if condition="<%= has_rated() %>">
                                             <pe:container zorder='3' style="position: relative;background: ;">
-                                                <div style="width: 70px;height: 36px;
+                                                <pe:if condition='<%= is_vip() %>'>
+                                                    <div style="width: 90x;height: 36px;
+                                                            margin-top: -7px;
+                                                            margin-left: -7px;
+                                                            padding-top: 4px;
+                                                            padding-left: 30px;
+                                                            background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#651 231 90 36)">
+                                                        <%= get_art_number()%>
+                                                    </div>
+                                                </pe:if>
+                                                <pe:if condition='<%= not is_vip() %>'>
+                                                    <div style="width: 70px;height: 36px;
                                                             margin-top: -7px;
                                                             margin-left: -7px;
                                                             padding-top: 4px;
                                                             padding-left: 6px;
                                                             background: url(Texture/Aries/Creator/keepwork/worldshare_32bits.png#356 136 70 36)">
-                                                    <%= get_art_number()%>
-                                                </div>
+                                                        <%= get_art_number()%>
+                                                    </div>
+                                                </pe:if>
                                             </pe:container>
                                         </pe:if>
                                         <div style="width: 265px;height: 130px;background-color: #afafaf;">
