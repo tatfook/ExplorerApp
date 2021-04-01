@@ -295,7 +295,8 @@ function MainPage:SetMyClassListWorksTree(classId)
                 user = item.user and type(item.user) == 'table' and item.user or {},
                 isVipWorld = isVipWorld,
                 recent_view = item.lastVisit,
-                recent_like = item.lastStar,
+                total_like = item.lastStar,
+                total_mark = item.favorite,
                 total_comment = item.lastComment
             }
         end
@@ -335,6 +336,7 @@ function MainPage:SetMyFavoriteWorksTree()
 
     self.curSelected = 1
     self.isSearching = false
+    self.isClassList = false
     self.isFavorite = true
     self.categorySelected = {}
     MainPagePage:SetValue("search_value", "")
@@ -369,7 +371,8 @@ function MainPage:SetMyFavoriteWorksTree()
                 user = item.user and type(item.user) == 'table' and item.user or {},
                 isVipWorld = isVipWorld,
                 recent_view = item.lastVisit,
-                recent_like = item.lastStar,
+                total_like = item.lastStar,
+                total_mark = item.favorite,
                 total_comment = item.lastComment
             }
         end
@@ -409,6 +412,8 @@ function MainPage:SetWorksTree(categoryItem)
 
     self.curSelected = 1
     self.isSearching = false
+    self.isClassList = false
+    self.isFavorite = false
     MainPagePage:SetValue("search_value", "")
 
     if categoryItem.id ~= -1 and categoryItem.id ~= -2 then
@@ -448,7 +453,8 @@ function MainPage:SetWorksTree(categoryItem)
                         user = item.user and type(item.user) == 'table' and item.user or {},
                         isVipWorld = isVipWorld,
                         recent_view = item.lastVisit,
-                        recent_like = item.lastStar,
+                        total_like = item.lastStar,
+                        total_mark = item.favorite,
                         total_comment = item.lastComment
                     }
                 end
@@ -533,9 +539,6 @@ function MainPage:SetWorksTree(categoryItem)
                             if item.world_tag_name then
                                 item.name = item.world_tag_name
                             end
-
-
-                            
                         end
                     end
 
@@ -630,6 +633,7 @@ function MainPage:HandleWorldsTree(rows, callback)
         end
 
         item.isFavorite = false
+        item.isStar = false
 
         projectIds[#projectIds + 1] = item.id
     end
@@ -661,9 +665,19 @@ function MainPage:HandleWorldsTree(rows, callback)
                 end
             end
 
-            if callback and type(callback) == 'function' then
-                callback(rows)
-            end
+            WorldShareKeepworkServiceProject:GetStaredProjects(projectIds, function(data, err)
+                for key, item in ipairs(rows) do
+                    for dKey, dItem in ipairs(data.rows) do
+                        if tonumber(item.id) == tonumber(dItem.projectId) then
+                            item.isStar = true
+                        end
+                    end
+                end
+
+                if callback and type(callback) == 'function' then
+                    callback(rows)
+                end
+            end)
         end)
     else
         if callback and type(callback) == 'function' then
@@ -780,11 +794,6 @@ end
 
 function MainPage:SelectProject(index)
     self.curProjectIndex = index
-
-    -- if self.playerBalance <= 0 and not Mod.WorldShare.Store:Get("world/personalMode") then
-    --     GameOver:ShowPage(3)
-    --     return false
-    -- end
 
     local curItem = self.worksTree[index]
 
