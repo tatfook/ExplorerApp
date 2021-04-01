@@ -535,7 +535,7 @@
                 keepwork.world.favorite({objectType = 5, objectId = worldinfo.id}, function(status)
                     worldinfo.isFavorite = true
                     worldinfo.total_mark = worldinfo.total_mark + 1
-                    page:Refresh(0.01)
+                    page:CallMethod('worksTree', 'DataBind')
                 end)
             end
 
@@ -548,7 +548,7 @@
                 keepwork.world.unfavorite({objectType = 5, objectId = worldinfo.id}, function(status)
                     worldinfo.isFavorite = false
                     worldinfo.total_mark = worldinfo.total_mark - 1
-                    page:Refresh(0.01)
+                    page:CallMethod('worksTree', 'DataBind')
                 end)
             end
 
@@ -579,7 +579,7 @@
                 keepwork.world.star({router_params = {id = worldinfo.id}}, function(err, msg, data)
                     worldinfo.isStar = true
                     worldinfo.total_like = worldinfo.total_like + 1
-                    page:Refresh(0.01)
+                    page:CallMethod('worksTree', 'DataBind')
                 end)
             end
 
@@ -924,9 +924,16 @@
                                             </pe:container>
                                         </pe:if>
                                         <pe:if condition="<%= has_rated() %>">
-                                            <div style="position: relative;width: 70px;height: 36px;margin-top: -7px;margin-left: -7px;padding-top: 4px;padding-left: 6px;background: url(Texture/Aries/Creator/keepwork/worldshare_32bits.png#356 136 70 36)">
-                                                <%= get_art_number()%>
-                                            </div>
+                                            <pe:container zorder='3' style="position: relative;background: ;">
+                                                <div style="width: 70px;height: 36px;
+                                                            margin-top: -7px;
+                                                            margin-left: -7px;
+                                                            padding-top: 4px;
+                                                            padding-left: 6px;
+                                                            background: url(Texture/Aries/Creator/keepwork/worldshare_32bits.png#356 136 70 36)">
+                                                    <%= get_art_number()%>
+                                                </div>
+                                            </pe:container>
                                         </pe:if>
                                         <div style="width: 265px;height: 130px;background-color: #afafaf;">
                                             <pe:if condition='<%= not is_selected() %>'>
@@ -1062,13 +1069,6 @@
                                                     </span>
                                                 </div>
                                             </div>
-                                            <!-- <div>
-                                                <div class="share_world_info">
-                                                    <div style="float:left;width:265px;">
-                                                        <%= get_world_date() %>
-                                                    </div>
-                                                </div>
-                                            </div> -->
                                             <div style="position: relative;
                                                         margin-top: 10px;
                                                         float:left;
@@ -1081,19 +1081,6 @@
                                                 </pe:if>
                                             </div>
                                             <div align="right" style="margin-right: 14px;width: 58px;height: 46px;margin-top: -20x;">
-                                                <!-- LIKE -->
-                                                <!-- <input type="button"
-                                                       class="<%= get_like_button_style() %>"
-                                                       onclick="like"
-                                                       tooptip='<%= L"喜欢" %>'
-                                                       name='<%= Eval("index") %>' /> -->
-                                                <!-- SHARE -->
-                                                <!-- <input type="button"
-                                                       class="share_button"
-                                                       onclick="share"
-                                                       tooptip='<%= L"分享" %>'
-                                                       name='<%= Eval("index") %>' /> -->
-                                                <!-- ENTER -->
                                                 <input type="button"
                                                        class="enter_button"
                                                        onclick="enter"
