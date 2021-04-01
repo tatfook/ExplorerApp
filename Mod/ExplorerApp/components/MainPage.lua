@@ -294,10 +294,10 @@ function MainPage:SetMyClassListWorksTree(classId)
                 updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or "",
                 user = item.user and type(item.user) == 'table' and item.user or {},
                 isVipWorld = isVipWorld,
-                recent_view = item.lastVisit,
-                total_like = item.lastStar,
+                total_view = item.visit,
+                total_like = item.star,
                 total_mark = item.favorite,
-                total_comment = item.lastComment
+                total_comment = item.comment
             }
         end
 
@@ -370,10 +370,10 @@ function MainPage:SetMyFavoriteWorksTree()
                 updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or "",
                 user = item.user and type(item.user) == 'table' and item.user or {},
                 isVipWorld = isVipWorld,
-                recent_view = item.lastVisit,
-                total_like = item.lastStar,
+                total_view = item.visit,
+                total_like = item.star,
                 total_mark = item.favorite,
-                total_comment = item.lastComment
+                total_comment = item.comment
             }
         end
 
@@ -452,10 +452,9 @@ function MainPage:SetWorksTree(categoryItem)
                         updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or "",
                         user = item.user and type(item.user) == 'table' and item.user or {},
                         isVipWorld = isVipWorld,
-                        recent_view = item.lastVisit,
-                        total_like = item.lastStar,
-                        total_mark = item.favorite,
-                        total_comment = item.lastComment
+                        total_view = item.visit,
+                        total_like = item.star,
+                        total_mark = item.favorite
                     }
                 end
 
@@ -646,21 +645,16 @@ function MainPage:HandleWorldsTree(rows, callback)
             }, 
             userId = Mod.WorldShare.Store:Get('user/userId'),
         }, function(status, msg, data)
-            if not data or
-               type(data) ~= 'table' or
-               not data.rows or
-               type(data.rows) ~= 'table' or
-               #data.rows == 0 then
-                if callback and type(callback) == 'function' then
-                    callback(rows)
-                end
-                return
-            end
-
-            for key, item in ipairs(rows) do
-                for dKey, dItem in ipairs(data.rows) do
-                    if tonumber(item.id) == tonumber(dItem.objectId) then
-                        item.isFavorite = true
+            if data and
+               type(data) == 'table' and
+               data.rows and
+               type(data.rows) == 'table' and
+               #data.rows ~= 0 then
+                for key, item in ipairs(rows) do
+                    for dKey, dItem in ipairs(data.rows) do
+                        if tonumber(item.id) == tonumber(dItem.objectId) then
+                            item.isFavorite = true
+                        end
                     end
                 end
             end
