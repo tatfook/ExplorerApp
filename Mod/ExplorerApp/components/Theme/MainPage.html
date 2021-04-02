@@ -990,33 +990,35 @@
                                                                   background:;' />
                                                 </pe:container>
                                             </pe:if>
-                                            <div style='position: relative;
-                                                        width: 28px;
-                                                        height: 26px;
-                                                        margin-left: 230px;
-                                                        margin-top: 5px;
-                                                        background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#347 289 28 26);'>
-                                                <pe:container visible='true' name='<%= "share_button_gray_" .. Eval("index") %>' style='position: relative;background:;'>
-                                                    <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#385 294 14 14'
-                                                         style='width: 14px;
-                                                                height: 14px;
-                                                                margin-top: 4px;
-                                                                margin-left: 6px;' />
-                                                </pe:container>
-                                                <pe:container visible='false' name='<%= "share_button_blue_" .. Eval("index") %>' style='position: relative;background:;'>
-                                                    <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#415 294 14 14'
-                                                         style='width: 14px;
-                                                                height: 14px;
-                                                                margin-top: 4px;
-                                                                margin-left: 6px;' />
-                                                </pe:container>
-                                                <input type='button'
-                                                       name='<%= Eval("index") %>'
-                                                       onmouseenter='on_mouse_enter_share_button'
-                                                       onmouseleave='on_mouse_leave_share_button'
-                                                       onclick='share'
-                                                       style='width: 28px;height: 26px;background: url();' />
-                                            </div>
+                                            <pe:if condition='<%= is_selected() %>'>
+                                                <div style='position: relative;
+                                                            width: 28px;
+                                                            height: 26px;
+                                                            margin-left: 230px;
+                                                            margin-top: 5px;
+                                                            background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#347 289 28 26);'>
+                                                    <pe:container visible='true' name='<%= "share_button_gray_" .. Eval("index") %>' style='position: relative;background:;'>
+                                                        <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#385 294 14 14'
+                                                             style='width: 14px;
+                                                                    height: 14px;
+                                                                    margin-top: 4px;
+                                                                    margin-left: 6px;' />
+                                                    </pe:container>
+                                                    <pe:container visible='false' name='<%= "share_button_blue_" .. Eval("index") %>' style='position: relative;background:;'>
+                                                        <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#415 294 14 14'
+                                                             style='width: 14px;
+                                                                    height: 14px;
+                                                                    margin-top: 4px;
+                                                                    margin-left: 6px;' />
+                                                    </pe:container>
+                                                    <input type='button'
+                                                           name='<%= Eval("index") %>'
+                                                           onmouseenter='on_mouse_enter_share_button'
+                                                           onmouseleave='on_mouse_leave_share_button'
+                                                           onclick='share'
+                                                           style='width: 28px;height: 26px;background: url();' />
+                                                </div>
+                                            </pe:if>
                                             <div style="position: relative;width: 265px;height: 130px;background: url(Texture/Aries/Creator/keepwork/worldshare_32bits.png#394 211 32 32:9 9 9 9)"></div>
                                             <div style="<%= 'width: 265px;height: 130px;background: url(' .. (Eval('cover') and Eval('cover') or '') .. ')' %>">
                                                 <pe:if condition="<%= has_username() %>">
