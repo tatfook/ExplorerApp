@@ -153,7 +153,12 @@ function MainPage:GetMyClassList()
             return
         end
 
-        self.classList = {}
+        self.classList = {
+            {
+                id = -1,
+                name = L'全校'
+            }
+        }
 
         KeepworkServiceSchoolAndOrg:GetMyClassList(data.id, function(data, err)
             if data and type(data) == 'table' then
@@ -262,6 +267,10 @@ function MainPage:SetMyClassListWorksTree(classId)
         self.isFavorite = false
         self.isClassList = true
         self.categorySelected = {}
+    end
+
+    if classId == -1 then
+        classId = nil
     end
 
     KeepworkServiceProject:GetMySchoolProjects(
