@@ -54,7 +54,7 @@ MainPage.sortList = {
     recommend = { value = L'推荐', key = 'recommend' },
     synthesize = { value = L'综合', key = 'synthesize' },
     updatedAt = { value = L'最新', key = 'updated_at' },
-    recentView = { value = L"热门", key = 'recent_view' },
+    score = { value = L"热门", key = 'score' },
 }
 
 function MainPage:ShowPage(callback)
@@ -493,9 +493,9 @@ function MainPage:SetWorksTree(categoryItem)
         local sort = ''
 
         if categoryItem.id == -1 then
-            sort = self.sortList.updatedAt.key
+            sort = self.sortList.score.key
         elseif categoryItem.id == -2 then
-            sort = self.sortList.recentView.key
+            sort = self.sortList.updatedAt.key
         else
             return
         end
