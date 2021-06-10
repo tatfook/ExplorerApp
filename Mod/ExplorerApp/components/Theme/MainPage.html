@@ -12,6 +12,7 @@
             
             -- service
             local KeepworkService = NPL.load("(gl)Mod/WorldShare/service/KeepworkService.lua")
+            local KeepworkServiceSession = NPL.load("(gl)Mod/WorldShare/service/KeepworkService/Session.lua")
 
             -- lib
             local UniString = commonlib.gettable("System.Core.UniString")
@@ -571,6 +572,8 @@
             end
 
             function star(index)
+                KeepworkServiceSession:AddRice('thumbsup')
+
                 page:FindControl('star_item_' .. index).visible = false
                 page:FindControl('stared_item_' .. index).visible = true
 

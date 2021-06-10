@@ -832,21 +832,24 @@ function MainPage:SelectProject(index)
                 commonlib.Timer:new(
                 {
                     callbackFunc = function(timer)
+                        -- add rice
+                        KeepworkServiceSession:AddRice('explorer')
+
                         InternetLoadWorld.LoadWorld(
                             world,
                             nil,
                             "never",
                             function(bSucceed, localWorldPath)
                                 if bSucceed then
-                                    if not Mod.WorldShare.Store:Get("world/personalMode") then
-                                        self.playerBalance = self.playerBalance - 1
-                                        self.balance = self.balance - 1
-                                        Wallet:SetPlayerBalance(self.playerBalance)
-                                        Wallet:SetUserBalance(self.balance)
-                                        Mod.WorldShare.Store:Remove("explorer/reduceRemainingTime")
-                                        Mod.WorldShare.Store:Remove("explorer/warnReduceRemainingTime")
-                                        self:HandleGameProcess()
-                                    end
+                                    -- if not Mod.WorldShare.Store:Get("world/personalMode") then
+                                    --     self.playerBalance = self.playerBalance - 1
+                                    --     self.balance = self.balance - 1
+                                    --     Wallet:SetPlayerBalance(self.playerBalance)
+                                    --     Wallet:SetUserBalance(self.balance)
+                                    --     Mod.WorldShare.Store:Remove("explorer/reduceRemainingTime")
+                                    --     Mod.WorldShare.Store:Remove("explorer/warnReduceRemainingTime")
+                                    --     self:HandleGameProcess()
+                                    -- end
 
                                     MainPage:Close()
                                 end
