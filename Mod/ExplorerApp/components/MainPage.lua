@@ -57,8 +57,8 @@ MainPage.sortList = {
     score = { value = L"热门", key = 'score' },
 }
 
-function MainPage:ShowPage(callback)
-    if type(callback) then
+function MainPage:ShowPage(callback, classId)
+    if callback and type(callback) == 'function' then
         self.CloseCallback = callback
     end
 
@@ -79,8 +79,15 @@ function MainPage:ShowPage(callback)
     local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
 
     if MainPagePage then
-        self:SetCategoryTree()
-        self:GetMyClassList()
+        if classId and type(classId) == 'number' then
+            self:SetCategoryTree(true)
+            self.curPage = 1
+            self:SetMyClassListWorksTree(classId)
+        else
+            self:SetCategoryTree()     
+        end
+
+        self:GetMyClassList() 
     end
 end
 
@@ -175,7 +182,7 @@ function MainPage:GetMyClassList()
     end)
 end
 
-function MainPage:SetCategoryTree()
+function MainPage:SetCategoryTree(notGetWorks)
     local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
 
     if not MainPagePage then
@@ -245,7 +252,10 @@ function MainPage:SetCategoryTree()
             end
 
             MainPagePage:GetNode('categoryTree'):SetUIAttribute("DataSource", self.categoryTree)
-            self:SetWorksTree(self.categorySelected)
+
+            if not notGetWorks then
+                self:SetWorksTree(self.categorySelected)
+            end
         end
     )
 end

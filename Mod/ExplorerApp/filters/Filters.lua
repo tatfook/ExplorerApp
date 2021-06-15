@@ -20,8 +20,8 @@ local Filters = NPL.export()
 function Filters:Init()
     GameLogic.GetFilters():add_filter(
         'cellar.explorer.show',
-        function()
-            ExplorerApp:Init();
+        function(...)
+            ExplorerApp:Init(...);
         end
     )
 
