@@ -885,15 +885,47 @@ function MainPage:SelectProject(index)
                     return
                 end
 
-                _guihelper.MessageBox(
-                    format(L"即将离开【%s】进入【%s】", currentEnterWorld.text, data.name),
-                    function(res)
-                        if res and res == _guihelper.DialogResult.Yes then
-                            Handle()
+                local function enter()
+                    _guihelper.MessageBox(
+                        format(L"即将离开【%s】进入【%s】", currentEnterWorld.text, data.name),
+                        function(res)
+                            if res and res == _guihelper.DialogResult.Yes then
+                                Handle()
+                            end
+                        end,
+                        _guihelper.MessageBoxButtons.YesNo
+                    )
+                end
+
+                echo(data, true)
+
+                -- vip enter
+                if data and
+                   data.extra and
+                   ((data.extra.vipEnabled and data.extra.vipEnabled == 1) or
+                   (data.extra.isVipWorld and data.extra.isVipWorld == 1)) then
+                    if not KeepworkServiceSession:IsSignedIn() then
+                        LoginModal:CheckSignedIn(L"该项目需要登录后访问", function(bIsSuccessed)
+                            if bIsSuccessed then
+                                self:EnterWorldById(pid, refreshMode)
+                            end
+                        end)
+                    else
+                        local username = Mod.WorldShare.Store:Get("user/username")
+    
+                        if data.username and data.username ~= username then
+                            GameLogic.IsVip('Vip', true, function(result)
+                                if result then
+                                    enter()
+                                end
+                            end, 'Vip')
+                        else
+                            enter()
                         end
-                    end,
-                    _guihelper.MessageBoxButtons.YesNo
-                )
+                    end
+                else
+                    enter()
+                end
             end)
         end
     end
