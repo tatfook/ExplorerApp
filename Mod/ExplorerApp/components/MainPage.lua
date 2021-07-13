@@ -843,7 +843,7 @@ function MainPage:SelectProject(index)
                 {
                     callbackFunc = function(timer)
                         -- add rice
-                        KeepworkServiceSession:AddRice('explorer')
+                        -- KeepworkServiceSession:AddRice('explorer')
 
                         InternetLoadWorld.LoadWorld(
                             world,
@@ -896,8 +896,6 @@ function MainPage:SelectProject(index)
                         _guihelper.MessageBoxButtons.YesNo
                     )
                 end
-
-                echo(data, true)
 
                 -- vip enter
                 if data and
