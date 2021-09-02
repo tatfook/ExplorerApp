@@ -57,10 +57,12 @@ MainPage.sortList = {
     score = { value = L"热门", key = 'score' },
 }
 
-function MainPage:ShowPage(callback, classId)
+function MainPage:ShowPage(callback, classId, defaulOpenValue)
     if callback and type(callback) == 'function' then
         self.CloseCallback = callback
     end
+
+    self.defaulOpenValue = defaulOpenValue
 
     local params = Mod.WorldShare.Utils.ShowWindow(
         1150,
@@ -246,6 +248,11 @@ function MainPage:SetCategoryTree(notGetWorks)
                     end
 
                     self.categoryTree[#self.categoryTree + 1] = curItem
+
+                    if self.defaulOpenValue and curItem.value == self.defaulOpenValue then
+                        self.categorySelected = curItem
+                        self.defaulOpenValue = nil
+                    end
                 else
                     self.mainId = item.id
                 end

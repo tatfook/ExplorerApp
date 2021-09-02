@@ -47,7 +47,7 @@ function ExplorerApp:init()
     Filters:Init()
 end
 
-function ExplorerApp:Init(callback, classId)
+function ExplorerApp:Init(callback, classId, defaulOpenValue)
     if not Mod or not Mod.WorldShare then
         _guihelper.MessageBox(L"ExplorerApp 依赖 WorldShare Mod")
         return false
@@ -56,7 +56,7 @@ function ExplorerApp:Init(callback, classId)
     -- register explorer store to store list
     Mod.WorldShare.Store.storeList.explorer = ExplorerStore
 
-    MainPage:ShowPage(callback, classId)
+    MainPage:ShowPage(callback, classId, defaulOpenValue)
 end
 
 function ExplorerApp:OnWorldLoad()
