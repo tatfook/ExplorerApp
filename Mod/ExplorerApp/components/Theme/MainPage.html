@@ -9,6 +9,7 @@
             local KpUserTag = NPL.load('(gl)script/apps/Aries/Creator/Game/mcml/keepwork/KpUserTag.lua')
             local ShareWorld = NPL.load('(gl)Mod/WorldShare/cellar/ShareWorld/ShareWorld.lua')
             local LoginModal = NPL.load('(gl)Mod/WorldShare/cellar/LoginModal/LoginModal.lua')
+            local VipPage = NPL.load('(gl)script/apps/Aries/Creator/Game/Tasks/User/VipPage.lua')
             
             -- service
             local KeepworkService = NPL.load('(gl)Mod/WorldShare/service/KeepworkService.lua')
@@ -708,9 +709,10 @@
             end
 
             function open_vip()
-                echo(1111, true)
-                GameLogic.IsVip('RedSummerCampWorks', true, function(result)
+                GameLogic.IsVip('RedSummerCampMain', true, function(result)
                     if result then
+                        -- force show vip page
+                        VipPage.ShowPage('red_summer_camp_main')
                     end
                 end)
             end
