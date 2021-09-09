@@ -1,52 +1,53 @@
 --[[
 Title: Explorer App Page
 Author(s):  big
-Date: 2019.01.21
+CreateDate: 2019.01.21
+ModifyDate: 2021.09.09
 Place: Foshan
 use the lib:
 ------------------------------------------------------------
-local MainPage = NPL.load("(gl)Mod/ExplorerApp/components/MainPage.lua")
+local MainPage = NPL.load('(gl)Mod/ExplorerApp/components/MainPage.lua')
 ------------------------------------------------------------
 ]]
 
 -- pkg libs
-NPL.load("(gl)Mod/WorldShare/service/FileDownloader/FileDownloader.lua")
-NPL.load("(gl)script/apps/Aries/Creator/Game/Login/DownloadWorld.lua")
+NPL.load('(gl)Mod/WorldShare/service/FileDownloader/FileDownloader.lua')
+NPL.load('(gl)script/apps/Aries/Creator/Game/Login/DownloadWorld.lua')
 
-local FileDownloader = commonlib.gettable("Mod.WorldShare.service.FileDownloader.FileDownloader")
-local DownloadWorld = commonlib.gettable("MyCompany.Aries.Game.MainLogin.DownloadWorld")
-local InternetLoadWorld = commonlib.gettable("MyCompany.Aries.Creator.Game.Login.InternetLoadWorld")
-local RemoteWorld = commonlib.gettable("MyCompany.Aries.Creator.Game.Login.RemoteWorld")
-local Screen = commonlib.gettable("System.Windows.Screen")
-local LocalLoadWorld = commonlib.gettable("MyCompany.Aries.Game.MainLogin.LocalLoadWorld")
-local Translation = commonlib.gettable("MyCompany.Aries.Game.Common.Translation")
+local FileDownloader = commonlib.gettable('Mod.WorldShare.service.FileDownloader.FileDownloader')
+local DownloadWorld = commonlib.gettable('MyCompany.Aries.Game.MainLogin.DownloadWorld')
+local InternetLoadWorld = commonlib.gettable('MyCompany.Aries.Creator.Game.Login.InternetLoadWorld')
+local RemoteWorld = commonlib.gettable('MyCompany.Aries.Creator.Game.Login.RemoteWorld')
+local Screen = commonlib.gettable('System.Windows.Screen')
+local LocalLoadWorld = commonlib.gettable('MyCompany.Aries.Game.MainLogin.LocalLoadWorld')
+local Translation = commonlib.gettable('MyCompany.Aries.Game.Common.Translation')
 
 -- databse
-local Wallet = NPL.load("(gl)Mod/ExplorerApp/database/Wallet.lua")
-local ProjectsDatabase = NPL.load("../database/Projects.lua")
+local Wallet = NPL.load('(gl)Mod/ExplorerApp/database/Wallet.lua')
+local ProjectsDatabase = NPL.load('../database/Projects.lua')
 
 -- service
-local KeepworkService = NPL.load("(gl)Mod/WorldShare/service/KeepworkService.lua")
+local KeepworkService = NPL.load('(gl)Mod/WorldShare/service/KeepworkService.lua')
 local KeepworkServiceSession = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/Session.lua')
-local KeepworkServiceProject = NPL.load("../service/KeepworkService/KeepworkServiceProject.lua")
-local KeepworkEsServiceProject = NPL.load("../service/KeepworkEsService/Project.lua")
+local KeepworkServiceProject = NPL.load('../service/KeepworkService/KeepworkServiceProject.lua')
+local KeepworkEsServiceProject = NPL.load('../service/KeepworkEsService/Project.lua')
 local WorldShareKeepworkServiceProject = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/Project.lua')
 local KeepworkServiceSchoolAndOrg = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/SchoolAndOrg.lua')
 
 -- UI
-local SyncMain = NPL.load("(gl)Mod/WorldShare/cellar/Sync/Main.lua")
-local Toast = NPL.load("./Toast/Toast.lua")
-local Password = NPL.load("./Password/Password.lua")
-local GameOver = NPL.load("./GameProcess/GameOver/GameOver.lua")
-local TimeUp = NPL.load("./GameProcess/TimeUp/TimeUp.lua")
-local ProactiveEnd = NPL.load("./GameProcess/ProactiveEnd/ProactiveEnd.lua")
+local SyncMain = NPL.load('(gl)Mod/WorldShare/cellar/Sync/Main.lua')
+local Toast = NPL.load('./Toast/Toast.lua')
+local Password = NPL.load('./Password/Password.lua')
+local GameOver = NPL.load('./GameProcess/GameOver/GameOver.lua')
+local TimeUp = NPL.load('./GameProcess/TimeUp/TimeUp.lua')
+local ProactiveEnd = NPL.load('./GameProcess/ProactiveEnd/ProactiveEnd.lua')
 
 local MainPage = NPL.export()
 
 MainPage.categorySelected = {}
 MainPage.categoryTree = {}
 MainPage.worksTree = {}
-MainPage.downloadedGame = "all"
+MainPage.downloadedGame = 'all'
 MainPage.curPage = 1
 MainPage.mainId = 0
 MainPage.curSelected = 1
@@ -54,7 +55,7 @@ MainPage.sortList = {
     recommend = { value = L'推荐', key = 'recommend' },
     synthesize = { value = L'综合', key = 'synthesize' },
     updatedAt = { value = L'最新', key = 'updated_at' },
-    score = { value = L"热门", key = 'score' },
+    score = { value = L'热门', key = 'score' },
 }
 
 function MainPage:ShowPage(callback, classId, defaulOpenValue)
@@ -65,20 +66,34 @@ function MainPage:ShowPage(callback, classId, defaulOpenValue)
     self.defaulOpenValue = defaulOpenValue
 
     local params = Mod.WorldShare.Utils.ShowWindow(
-        1150,
-        650,
-        "Mod/ExplorerApp/components/Theme/MainPage.html",
-        "Mod.ExplorerApp.MainPage"
+        {
+            url = 'Mod/ExplorerApp/components/Theme/MainPage.html',
+            name = 'Mod.ExplorerApp.MainPage',
+            isShowTitleBar = false,
+            DestroyOnClose = true, -- prevent many ViewProfile pages staying in memory
+            style = CommonCtrl.WindowFrame.ContainerStyle,
+            zorder = 0,
+            allowDrag = false,
+            bShow = nil,
+            directPosition = true,
+            align = '_fi',
+            x = 0,
+            y = 0,
+            width = 0,
+            height = 0,
+            cancelShowAnimation = true,
+            bToggleShowHide = true,
+        }
     )
 
     params._page.OnClose = function()
         self.worksTree = {}
-        self.downloadedGame = "all"
+        self.downloadedGame = 'all'
         self.curPage = 1
         self.mainId = 0
     end
 
-    local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
+    local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if MainPagePage then
         if classId and type(classId) == 'number' then
@@ -93,12 +108,8 @@ function MainPage:ShowPage(callback, classId, defaulOpenValue)
     end
 end
 
-function MainPage:SetPage()
-    Mod.WorldShare.Store:Set("page/MainPage", document:GetPageCtrl())
-end
-
 function MainPage:Refresh(times)
-    local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
+    local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if MainPagePage then
         MainPagePage:Refresh(times or 0.01)
@@ -106,7 +117,7 @@ function MainPage:Refresh(times)
 end
 
 function MainPage:Close()
-    local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
+    local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if MainPagePage then
         if type(self.CloseCallback) == 'function' then
@@ -118,7 +129,7 @@ function MainPage:Close()
 end
 
 function MainPage.OnScreenSizeChange()
-    local MainPage = Mod.WorldShare.Store:Get("page/MainPage")
+    local MainPage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if not MainPage then
         return false
@@ -127,16 +138,16 @@ function MainPage.OnScreenSizeChange()
     local height = math.floor(Screen:GetHeight())
     local width = math.floor(Screen:GetWidth())
 
-    local areaNode = MainPage:GetNode("area")
-    areaNode:SetCssStyle("height", height)
-    areaNode:SetCssStyle("width", width)
+    local areaNode = MainPage:GetNode('area')
+    areaNode:SetCssStyle('height', height)
+    areaNode:SetCssStyle('width', width)
 
-    local stripNode = MainPage:GetNode("strip")
-    stripNode:SetCssStyle("margin-left", (width - 960) / 2)
+    local stripNode = MainPage:GetNode('strip')
+    stripNode:SetCssStyle('margin-left', (width - 960) / 2)
 
-    local areaContentNode = MainPage:GetNode("area_content")
-    areaContentNode:SetCssStyle("height", (height - 45))
-    areaContentNode:SetCssStyle("margin-left", (width - 960) / 2)
+    local areaContentNode = MainPage:GetNode('area_content')
+    areaContentNode:SetCssStyle('height', (height - 45))
+    areaContentNode:SetCssStyle('margin-left', (width - 960) / 2)
 
     MainPage:Refresh(0)
 end
@@ -151,7 +162,7 @@ function MainPage:UpdateSort()
 end
 
 function MainPage:GetMyClassList()
-    local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
+    local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if not MainPagePage then
         return false
@@ -178,14 +189,14 @@ function MainPage:GetMyClassList()
                     }
                 end
 
-                MainPagePage:GetNode('class_list'):SetUIAttribute("DataSource", self.classList)
+                MainPagePage:GetNode('class_list'):SetUIAttribute('DataSource', self.classList)
             end
         end)
     end)
 end
 
 function MainPage:SetCategoryTree(notGetWorks)
-    local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
+    local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if not MainPagePage then
         return false
@@ -193,7 +204,7 @@ function MainPage:SetCategoryTree(notGetWorks)
 
     KeepworkServiceProject:GetAllTags(
         function(data, err)
-            if err ~= 200 or type(data) ~= "table" or not data.rows then
+            if err ~= 200 or type(data) ~= 'table' or not data.rows then
                 return
             end
 
@@ -205,8 +216,8 @@ function MainPage:SetCategoryTree(notGetWorks)
             self.categorySelected = { id = -1, value = L'热门', color = 'YELLOW' }
 
             for key, item in ipairs(data.rows) do
-                if item and item.tagname ~= "paracraft专用" then
-                    local curItem = { id = item.id, value = item.tagname or "" }
+                if item and item.tagname ~= 'paracraft专用' then
+                    local curItem = { id = item.id, value = item.tagname or '' }
 
                     if item and item.extra and item.extra.enTagname and self:IsEnglish() then
                         curItem.enValue = item.extra.enTagname
@@ -258,7 +269,7 @@ function MainPage:SetCategoryTree(notGetWorks)
                 end
             end
 
-            MainPagePage:GetNode('categoryTree'):SetUIAttribute("DataSource", self.categoryTree)
+            MainPagePage:GetNode('categoryTree'):SetUIAttribute('DataSource', self.categoryTree)
 
             if not notGetWorks then
                 self:SetWorksTree(self.categorySelected)
@@ -268,7 +279,7 @@ function MainPage:SetCategoryTree(notGetWorks)
 end
 
 function MainPage:SetMyClassListWorksTree(classId)
-    local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
+    local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if not MainPagePage then
         return false
@@ -314,10 +325,10 @@ function MainPage:SetMyClassListWorksTree(classId)
 
             mapData[#mapData + 1] = {
                 id = item.id,
-                name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or "",
-                cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or "",
-                username = item.user and type(item.user.username) == 'string' and item.user.username or "",
-                updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or "",
+                name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or '',
+                cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or '',
+                username = item.user and type(item.user.username) == 'string' and item.user.username or '',
+                updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or '',
                 user = item.user and type(item.user) == 'table' and item.user or {},
                 isVipWorld = isVipWorld,
                 total_view = item.visit,
@@ -335,13 +346,13 @@ function MainPage:SetMyClassListWorksTree(classId)
                     self.worksTree[#self.worksTree + 1] = item
                 end
 
-                MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+                MainPagePage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
             end)
         else
             self:HandleWorldsTree(rows, function(rows)
                 self.worksTree = rows
 
-                MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+                MainPagePage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
             end)
         end
     end)
@@ -352,20 +363,20 @@ function MainPage:SetMyFavoriteWorksTree()
         return
     end
     
-    local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
+    local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if not MainPagePage then
         return false
     end
 
-    Mod.WorldShare.MsgBox:Show(L"请稍候...", nil, nil, nil, nil, 10)
+    Mod.WorldShare.MsgBox:Show(L'请稍候...', nil, nil, nil, nil, 10)
 
     self.curSelected = 1
     self.isSearching = false
     self.isClassList = false
     self.isFavorite = true
     self.categorySelected = {}
-    MainPagePage:SetValue("search_value", "")
+    MainPagePage:SetValue('search_value', '')
 
     KeepworkServiceProject:GetMyFavoriteProjects({ page = self.curPage }, function(data, err)
         Mod.WorldShare.MsgBox:Close()
@@ -390,10 +401,10 @@ function MainPage:SetMyFavoriteWorksTree()
 
             mapData[#mapData + 1] = {
                 id = item.id,
-                name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or "",
-                cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or "",
-                username = item.user and type(item.user.username) == 'string' and item.user.username or "",
-                updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or "",
+                name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or '',
+                cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or '',
+                username = item.user and type(item.user.username) == 'string' and item.user.username or '',
+                updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or '',
                 user = item.user and type(item.user) == 'table' and item.user or {},
                 isVipWorld = isVipWorld,
                 total_view = item.visit,
@@ -411,20 +422,20 @@ function MainPage:SetMyFavoriteWorksTree()
                     self.worksTree[#self.worksTree + 1] = item
                 end
 
-                MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+                MainPagePage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
             end)
         else
             self:HandleWorldsTree(rows, function(rows)
                 self.worksTree = rows
 
-                MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+                MainPagePage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
             end)
         end
     end)
 end
 
 function MainPage:SetWorksTree(categoryItem)
-    local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
+    local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if not MainPagePage then
         return false
@@ -434,13 +445,13 @@ function MainPage:SetWorksTree(categoryItem)
         return false
     end
 
-    Mod.WorldShare.MsgBox:Show(L"请稍候...", nil, nil, nil, nil, 10)
+    Mod.WorldShare.MsgBox:Show(L'请稍候...', nil, nil, nil, nil, 10)
 
     self.curSelected = 1
     self.isSearching = false
     self.isClassList = false
     self.isFavorite = false
-    MainPagePage:SetValue("search_value", "")
+    MainPagePage:SetValue('search_value', '')
 
     if categoryItem.id ~= -1 and categoryItem.id ~= -2 then
         KeepworkServiceProject:GetRecommandProjects(
@@ -472,10 +483,10 @@ function MainPage:SetWorksTree(categoryItem)
 
                     mapData[#mapData + 1] = {
                         id = item.id,
-                        name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or "",
-                        cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or "",
-                        username = item.user and type(item.user.username) == 'string' and item.user.username or "",
-                        updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or "",
+                        name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or '',
+                        cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or '',
+                        username = item.user and type(item.user.username) == 'string' and item.user.username or '',
+                        updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or '',
                         user = item.user and type(item.user) == 'table' and item.user or {},
                         isVipWorld = isVipWorld,
                         total_view = item.visit,
@@ -492,13 +503,13 @@ function MainPage:SetWorksTree(categoryItem)
                             self.worksTree[#self.worksTree + 1] = item
                         end
 
-                        MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+                        MainPagePage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
                     end)
                 else
                     self:HandleWorldsTree(rows, function(rows)
                         self.worksTree = rows
 
-                        MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+                        MainPagePage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
                     end)
                 end
             end
@@ -575,14 +586,14 @@ function MainPage:SetWorksTree(categoryItem)
                                 self.worksTree[#self.worksTree + 1] = item
                             end
     
-                            MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+                            MainPagePage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
                             Mod.WorldShare.MsgBox:Close()
                         end)
                     else
                         self:HandleWorldsTree(rows, function(rows)
                             self.worksTree = rows
     
-                            MainPagePage:GetNode("worksTree"):SetUIAttribute("DataSource", self.worksTree)
+                            MainPagePage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
                             Mod.WorldShare.MsgBox:Close()
                         end)
                     end
@@ -593,7 +604,7 @@ function MainPage:SetWorksTree(categoryItem)
 end
 
 function MainPage:Search()
-    local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
+    local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if not MainPagePage then
         return false
@@ -602,7 +613,7 @@ function MainPage:Search()
     if not self.isSearching then
         self.curSelected = 1
         self.isSearching = true
-        self.searchValue = MainPagePage:GetValue("search_value")
+        self.searchValue = MainPagePage:GetValue('search_value')
     end
 
     local searchValue = self.searchValue
@@ -625,8 +636,8 @@ function MainPage:Search()
                     self.worksTree[#self.worksTree + 1] = item
                 end
 
-                MainPagePage:GetNode("worksTree"):SetAttribute("DataSource", self.worksTree)
-                MainPagePage:SetValue("search_value", searchValue)
+                MainPagePage:GetNode('worksTree'):SetAttribute('DataSource', self.worksTree)
+                MainPagePage:SetValue('search_value', searchValue)
 
                 self:Refresh()
             end)
@@ -634,8 +645,8 @@ function MainPage:Search()
             self:HandleWorldsTree(data.hits, function(rows)
                 self.worksTree = rows
 
-                MainPagePage:GetNode("worksTree"):SetAttribute("DataSource", self.worksTree)
-                MainPagePage:SetValue("search_value", searchValue)
+                MainPagePage:GetNode('worksTree'):SetAttribute('DataSource', self.worksTree)
+                MainPagePage:SetValue('search_value', searchValue)
 
                 self:Refresh()
             end)
@@ -644,7 +655,7 @@ function MainPage:Search()
 end
 
 function MainPage:HandleWorldsTree(rows, callback)
-    if not rows or type(rows) ~= "table" then
+    if not rows or type(rows) ~= 'table' then
         return false
     end
 
@@ -667,7 +678,7 @@ function MainPage:HandleWorldsTree(rows, callback)
         keepwork.project.favorite_search({
             objectType = 5,
             objectId = {
-                ["$in"] = projectIds,
+                ['$in'] = projectIds,
             }, 
             userId = Mod.WorldShare.Store:Get('user/userId'),
         }, function(status, msg, data)
@@ -707,7 +718,7 @@ function MainPage:HandleWorldsTree(rows, callback)
 end
 
 function MainPage:DownloadWorld(index)
-    Toast:ShowPage(L"开始下载")
+    Toast:ShowPage(L'开始下载')
     local curItem = self.worksTree[index]
 
     if not curItem or not curItem.id then
@@ -718,39 +729,39 @@ function MainPage:DownloadWorld(index)
         curItem.id,
         function(data, err)
             if not data or not data.world or not data.world.archiveUrl or err ~= 200 then
-                Toast:ShowPage(L"网络不太稳定")
+                Toast:ShowPage(L'网络不太稳定')
                 return false
             end
 
             local archiveUrl = data.world.archiveUrl
-            local downloadFileName = string.match(archiveUrl, "(.+)%.zip")
+            local downloadFileName = string.match(archiveUrl, '(.+)%.zip')
 
             if type(downloadFileName) ~= 'string' then
-                Toast:ShowPage(L"数据错误")
+                Toast:ShowPage(L'数据错误')
                 return false
             end
 
-            downloadFileName = format(LocalLoadWorld.GetWorldFolder() .. "/userworlds/%s_r.zip", downloadFileName:gsub("[%W%s]+", "_"))
+            downloadFileName = format(LocalLoadWorld.GetWorldFolder() .. '/userworlds/%s_r.zip', downloadFileName:gsub('[%W%s]+', '_'))
 
             DownloadWorld.ShowPage(
-                format("【%s%d】 %s %s%s", L"项目ID:", curItem.id, curItem.name, L"作者：", curItem.username)
+                format('【%s%d】 %s %s%s', L'项目ID:', curItem.id, curItem.name, L'作者：', curItem.username)
             )
             FileDownloader:new():Init(
-                "official_texture_package",
+                'official_texture_package',
                 archiveUrl,
                 downloadFileName,
                 function(bSuccess, downloadPath)
                     if bSuccess then
-                        Toast:ShowPage(L"下载成功")
+                        Toast:ShowPage(L'下载成功')
                         ProjectsDatabase:SetDownloadedProject(data)
                         self:SelectProject(index)
                     else
-                        Toast:ShowPage(L"文件下载失败，请确认世界是否存在")
+                        Toast:ShowPage(L'文件下载失败，请确认世界是否存在')
                     end
 
                     DownloadWorld.Close()
                 end,
-                "access plus 5 mins",
+                'access plus 5 mins',
                 true
             )
         end,
@@ -766,10 +777,10 @@ function MainPage:SetFavorite(index)
     end
 
     if not ProjectsDatabase:IsFavoriteProject(curItem.id) then
-        Toast:ShowPage(L"收藏成功")
+        Toast:ShowPage(L'收藏成功')
         ProjectsDatabase:SetFavoriteProject(curItem.id)
     else
-        Toast:ShowPage(L"取消收藏")
+        Toast:ShowPage(L'取消收藏')
         ProjectsDatabase:RemoveFavoriteProject(curItem.id)
     end
 
@@ -825,46 +836,46 @@ function MainPage:SelectProject(index)
 end
 
 function MainPage:HandleGameProcess()
-    if not Mod.WorldShare.Store:Get("explorer/warnReduceRemainingTime") then
-        Mod.WorldShare.Store:Set("explorer/warnReduceRemainingTime", (1000 * 60 * 10) - (60 * 1000))
+    if not Mod.WorldShare.Store:Get('explorer/warnReduceRemainingTime') then
+        Mod.WorldShare.Store:Set('explorer/warnReduceRemainingTime', (1000 * 60 * 10) - (60 * 1000))
     end
 
-    if not Mod.WorldShare.Store:Get("explorer/reduceRemainingTime") then
-        Mod.WorldShare.Store:Set("explorer/reduceRemainingTime", 1000 * 60 * 10)
+    if not Mod.WorldShare.Store:Get('explorer/reduceRemainingTime') then
+        Mod.WorldShare.Store:Set('explorer/reduceRemainingTime', 1000 * 60 * 10)
     end
 
     Mod.WorldShare.Utils.SetTimeOut(
         function()
-            local reduceRemainingTime = Mod.WorldShare.Store:Get("explorer/reduceRemainingTime")
-            local warnReduceRemainingTime = Mod.WorldShare.Store:Get("explorer/warnReduceRemainingTime")
+            local reduceRemainingTime = Mod.WorldShare.Store:Get('explorer/reduceRemainingTime')
+            local warnReduceRemainingTime = Mod.WorldShare.Store:Get('explorer/warnReduceRemainingTime')
 
             if warnReduceRemainingTime == 1000 then
                 if self.playerBalance > 0 then
-                    Toast:ShowPage(L"即将消耗一个金币")
+                    Toast:ShowPage(L'即将消耗一个金币')
                 end
 
-                Mod.WorldShare.Store:Set("explorer/warnReduceRemainingTime", warnReduceRemainingTime - 1000)
+                Mod.WorldShare.Store:Set('explorer/warnReduceRemainingTime', warnReduceRemainingTime - 1000)
             elseif warnReduceRemainingTime > 0 then
-                Mod.WorldShare.Store:Set("explorer/warnReduceRemainingTime", warnReduceRemainingTime - 1000)
+                Mod.WorldShare.Store:Set('explorer/warnReduceRemainingTime', warnReduceRemainingTime - 1000)
             end
 
             if reduceRemainingTime == 1000 then
                 if self.playerBalance > 0 then
-                    Toast:ShowPage(L"消耗一个金币")
+                    Toast:ShowPage(L'消耗一个金币')
                     self.playerBalance = self.playerBalance - 1
                     self.balance = self.balance - 1
                     Wallet:SetPlayerBalance(self.playerBalance)
                     Wallet:SetUserBalance(self.balance)
 
-                    Mod.WorldShare.Store:Set("explorer/reduceRemainingTime", reduceRemainingTime - 1000)
-                    Mod.WorldShare.Store:Remove("explorer/reduceRemainingTime")
-                    Mod.WorldShare.Store:Remove("explorer/warnReduceRemainingTime")
+                    Mod.WorldShare.Store:Set('explorer/reduceRemainingTime', reduceRemainingTime - 1000)
+                    Mod.WorldShare.Store:Remove('explorer/reduceRemainingTime')
+                    Mod.WorldShare.Store:Remove('explorer/warnReduceRemainingTime')
                     self:HandleGameProcess()
                 else
                     TimeUp:ShowPage()
                 end
             elseif reduceRemainingTime > 0 then
-                Mod.WorldShare.Store:Set("explorer/reduceRemainingTime", reduceRemainingTime - 1000)
+                Mod.WorldShare.Store:Set('explorer/reduceRemainingTime', reduceRemainingTime - 1000)
                 self:HandleGameProcess()
             end
         end,
@@ -873,7 +884,7 @@ function MainPage:HandleGameProcess()
 end
 
 function MainPage:SelectDownloadedCategory(value)
-    local MainPagePage = Mod.WorldShare.Store:Get("page/MainPage")
+    local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if not MainPagePage or not value then
         return false
@@ -885,20 +896,20 @@ function MainPage:SelectDownloadedCategory(value)
 end
 
 function MainPage:GetSortIndex()
-    return Mod.WorldShare.Store:Get("explorer/selectSortIndex")
+    return Mod.WorldShare.Store:Get('explorer/selectSortIndex')
 end
 
 function MainPage:GetSortList()
-    return Mod.WorldShare.Store:Get("explorer/sortList")
+    return Mod.WorldShare.Store:Get('explorer/sortList')
 end
 
 function MainPage:OnWorldLoad()
-    local personalMode = Mod.WorldShare.Store:Get("world/personalMode")
+    local personalMode = Mod.WorldShare.Store:Get('world/personalMode')
 
     if not personalMode then
         Mod.WorldShare.Utils.SetTimeOut(
             function()
-                Toast:ShowPage(L"消耗一个金币")
+                Toast:ShowPage(L'消耗一个金币')
             end,
             1000
         )
@@ -906,7 +917,7 @@ function MainPage:OnWorldLoad()
 end
 
 function MainPage:CanGoBack()
-    local canGoBack = Mod.WorldShare.Store:Get("explorer/canGoBack")
+    local canGoBack = Mod.WorldShare.Store:Get('explorer/canGoBack')
 
     if canGoBack == false then
         return false
@@ -916,15 +927,15 @@ function MainPage:CanGoBack()
 end
 
 function MainPage:OpenProject(id)
-    if type(id) ~= "number" then
+    if type(id) ~= 'number' then
         return false
     end
 
-    ParaGlobal.ShellExecute("open", format("%s/pbl/project/%d/", KeepworkService:GetKeepworkUrl(), id), "", "", 1)
+    ParaGlobal.ShellExecute('open', format('%s/pbl/project/%d/', KeepworkService:GetKeepworkUrl(), id), '', '', 1)
 end
 
 function MainPage:GetPage()
-    return Mod.WorldShare.Store:Get("page/MainPage")
+    return Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 end
 
 function MainPage:IsEnglish()

@@ -1,29 +1,28 @@
 <html>
 <body>
 <pe:mcml>
-    <script refresh="false" type="text/npl" src="MainPage.lua">
+    <script refresh='false' type='text/npl' src='MainPage.lua'>
         <![CDATA[
             -- UI
-            local MainPage = NPL.load("(gl)Mod/ExplorerApp/components/MainPage.lua")
-            local Sort = NPL.load("(gl)Mod/ExplorerApp/components/Sort/Sort.lua")
-            local KpUserTag = NPL.load("(gl)script/apps/Aries/Creator/Game/mcml/keepwork/KpUserTag.lua")
-            local ShareWorld = NPL.load("(gl)Mod/WorldShare/cellar/ShareWorld/ShareWorld.lua")
+            local MainPage = NPL.load('(gl)Mod/ExplorerApp/components/MainPage.lua')
+            local Sort = NPL.load('(gl)Mod/ExplorerApp/components/Sort/Sort.lua')
+            local KpUserTag = NPL.load('(gl)script/apps/Aries/Creator/Game/mcml/keepwork/KpUserTag.lua')
+            local ShareWorld = NPL.load('(gl)Mod/WorldShare/cellar/ShareWorld/ShareWorld.lua')
             local LoginModal = NPL.load('(gl)Mod/WorldShare/cellar/LoginModal/LoginModal.lua')
             
             -- service
-            local KeepworkService = NPL.load("(gl)Mod/WorldShare/service/KeepworkService.lua")
-            local KeepworkServiceSession = NPL.load("(gl)Mod/WorldShare/service/KeepworkService/Session.lua")
+            local KeepworkService = NPL.load('(gl)Mod/WorldShare/service/KeepworkService.lua')
+            local KeepworkServiceSession = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/Session.lua')
 
             -- lib
-            local UniString = commonlib.gettable("System.Core.UniString")
+            local UniString = commonlib.gettable('System.Core.UniString')
 
-            MainPage.SetPage()
             local page = document:GetPageCtrl()
 
             global_type = type
 
             function select_category(index)
-                page:GetNode("worksTree"):SetUIAttribute("DataSource", {})
+                page:GetNode('worksTree'):SetUIAttribute('DataSource', {})
 
                 select_value = nil
 
@@ -65,9 +64,19 @@
 
             function get_image(cover)
                 if not cover then
-                    return "position:relative;top:0px;left:0;width:250px;height:120px;background:url();"
+                    return [[position: relative;
+                             top: 0px;
+                             left: 0px;
+                             width: 250px;
+                             height: 120px;
+                             background:;']]
                 else
-                    return "position:relative;top:0px;left:0;width:250px;height:120px;background:url(" .. cover .. ");"
+                    return [[position: relative;
+                             top: 0px;
+                             left: 0px;
+                             width: 250px;
+                             height: 120px;
+                             background:url(]] .. cover .. [[);]]
                 end
             end
 
@@ -135,7 +144,7 @@
             end
 
             function get_project_url_text(id)
-                return format("%s/pbl/project/%d/", KeepworkService:GetKeepworkUrl(), id or 0)
+                return format('%s/pbl/project/%d/', KeepworkService:GetKeepworkUrl(), id or 0)
             end
 
             function is_english()
@@ -152,70 +161,134 @@
                 local value = Eval('value')
 
                 if value == '最新' then
-                    return '<img style="width: 83px;height: 19px;margin-left: 23px;margin-top:10px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#248 360 83 19" />'
+                    return [[<img style='width: 83px;
+                                         height: 19px;
+                                         margin-left: 23px;
+                                         margin-top:10px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#248 360 83 19' />]]
                 end
 
                 if value == '热门' then
-                    return '<img style="width: 79px;height: 26px;margin-left: 27px;margin-top:6px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#367 357 79 26" />'
+                    return [[<img style='width: 79px;
+                                         height: 26px;
+                                         margin-left: 27px;
+                                         margin-top:6px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#367 357 79 26' />]]
                 end
 
                 if value == '大赛作品' then
-                    return '<img style="width: 89px;height: 27px;margin-left: 23px;margin-top: 6px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#19 357 89 27" />'
+                    return [[<img style='width: 89px;
+                                         height: 27px;
+                                         margin-left: 23px;
+                                         margin-top: 6px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#19 357 89 27' />]]
                 end
 
                 if value == '编程' then
-                    return '<img style="width: 81px;height: 27px;margin-left: 25px;margin-top: 6px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#250 485 81 27" />'
+                    return [[<img style='width: 81px;
+                                         height: 27px;
+                                         margin-left: 25px;
+                                         margin-top: 6px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#250 485 81 27' />]]
                 end
                 
                 if value == '短片' then
-                    return '<img style="width: 80px;height: 24px;margin-left: 25px;margin-top: 7px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#138 486 80 24" />'
+                    return [[<img style='width: 80px;
+                                         height: 24px;
+                                         margin-left: 25px;
+                                         margin-top: 7px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#138 486 80 24' />]]
                 end
 
                 if value == '互动' then
-                    return '<img style="width: 80px;height: 29px;margin-left: 25px;margin-top: 6px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#364 440 80 29" />'
+                    return [[<img style='width: 80px;
+                                         height: 29px;
+                                         margin-left: 25px;
+                                         margin-top: 6px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#364 440 80 29' />]]
                 end
 
                 if value == '场景' then
-                    return '<img style="width: 83px;height: 28px;margin-left: 23px;margin-top: 6px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#16 483 83 28" />'
+                    return [[<img style='width: 83px;
+                                         height: 28px;
+                                         margin-left: 23px;
+                                         margin-top: 6px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#16 483 83 28' />]]
                 end
 
                 if value == '机器人' then
-                    return '<img style="width: 91px;height: 25px;margin-left: 26px;margin-top: 7px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#480 441 91 25" />'
+                    return [[<img style='width: 91px;
+                                         height: 25px;
+                                         margin-left: 26px;
+                                         margin-top: 7px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#480 441 91 25' />]]
                 end
 
                 if value == '计算机' then
-                    return '<img style="width: 91px;height: 23px;margin-left: 26px;margin-top: 8px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#479 401 91 23" />'
+                    return [[<img style='width: 91px;
+                                         height: 23px;
+                                         margin-left: 26px;
+                                         margin-top: 8px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#479 401 91 23' />]]
                 end
 
                 if value == '科学' then
-                    return '<img style="width: 78px;height: 26px;margin-left: 29px;margin-top: 7px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#141 441 78 26" />'
+                    return [[<img style='width: 78px;
+                                         height: 26px;
+                                         margin-left: 29px;
+                                         margin-top: 7px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#141 441 78 26' />]]
                 end
 
                 if value == '语文' then
-                    return '<img style="width: 75px;height: 26px;margin-left: 31px;margin-top: 7px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#255 441 75 26" />'
+                    return [[<img style='width: 75px;
+                                         height: 26px;
+                                         margin-left: 31px;
+                                         margin-top: 7px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#255 441 75 26' />]]
                 end
 
                 if value == '数学' then
-                    return '<img style="width: 75px;height: 25px;margin-left: 32px;margin-top: 8px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#256 400 75 25" />'
+                    return [[<img style='width: 75px;
+                                         height: 25px;
+                                         margin-left: 32px;
+                                         margin-top: 8px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#256 400 75 25' />]]
                 end
 
                 if value == '生物' then
-                    return '<img style="width: 76px;height: 28px;margin-left: 31px;margin-top: 6px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#143 398 76 28" />'
+                    return [[<img style='width: 76px;
+                                         height: 28px;
+                                         margin-left: 31px;
+                                         margin-top: 6px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#143 398 76 28' />]]
                 end
 
                 if value == '人文' then
-                    return '<img style="width: 77px;height: 26px;margin-left: 29px;margin-top: 6px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#21 441 77 26" />'
+                    return [[<img style='width: 77px;
+                                         height: 26px;
+                                         margin-left: 29px;
+                                         margin-top: 6px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#21 441 77 26' />]]
                 end
 
                 if value == '艺术' then
-                    return '<img style="width: 76px;height: 28px;margin-left: 31px;margin-top: 5px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#370 398 76 28" />'
+                    return [[<img style='width: 76px;
+                                         height: 28px;
+                                         margin-left: 31px;
+                                         margin-top: 5px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#370 398 76 28' />]]
                 end
 
                 if value == '设计' then
-                    return '<img style="width: 76px;height: 28px;margin-left: 31px;margin-top: 7px;" src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#23 399 76 28" />'
+                    return [[<img style='width: 76px;
+                                         height: 28px;
+                                         margin-left: 31px;
+                                         margin-top: 7px;'
+                                  src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#23 399 76 28' />]]
                 end
 
-                return '<div style="margin-top: 8px;">' .. value .. '</div>';
+                return '<div style="margin-top: 8px;">' .. value .. '</div>'
             end
 
             function get_menubar_button_style()
@@ -256,8 +329,8 @@
                 local point = Eval('point')
 
                 if not point or
-                    global_type(point) ~= "number"  then
-                    return ""
+                    global_type(point) ~= 'number'  then
+                    return ''
                 end
 
                 local number = point
@@ -267,51 +340,51 @@
 
                 number = tostring(nRet)
 
-                local returnString = ""
+                local returnString = ''
 
-                for item in string.gmatch(number, ".") do
-                    if item == "1" then
-                        returnString = returnString .. "<img style='width: 11px;height: 18px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;108 287 11 18' />"
+                for item in string.gmatch(number, '.') do
+                    if item == '1' then
+                        returnString = returnString .. [[<img style='width: 11px;height: 18px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;108 287 11 18' />]]
                     end
 
-                    if item == "2" then
-                        returnString = returnString .. "<img style='width: 14px;height: 18px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;122 287 14 18' />"
+                    if item == '2' then
+                        returnString = returnString .. [[<img style='width: 14px;height: 18px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;122 287 14 18' />]]
                     end
 
-                    if item == "3" then
-                        returnString = returnString .. "<img style='width: 11px;height: 20px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;139 286 11 20' />"
+                    if item == '3' then
+                        returnString = returnString .. [[<img style='width: 11px;height: 20px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;139 286 11 20' />]]
                     end
 
-                    if item == "4" then
-                        returnString = returnString .. "<img style='width: 14px;height: 18px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;152 287 15 18' />"
+                    if item == '4' then
+                        returnString = returnString .. [[<img style='width: 14px;height: 18px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;152 287 15 18' />]]
                     end
                     
-                    if item == "5" then
-                        returnString = returnString .. "<img style='width: 14px;height: 19px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;170 287 15 19' />"
+                    if item == '5' then
+                        returnString = returnString .. [[<img style='width: 14px;height: 19px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;170 287 15 19' />]]
                     end
 
-                    if item == "6" then
-                        returnString = returnString .. "<img style='width: 14px;height: 19px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;188 287 14 19' />"
+                    if item == '6' then
+                        returnString = returnString .. [[<img style='width: 14px;height: 19px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;188 287 14 19' />]]
                     end
 
-                    if item == "7" then
-                        returnString = returnString .. "<img style='width: 14px;height: 18px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;204 287 14 18' />"
+                    if item == '7' then
+                        returnString = returnString .. [[<img style='width: 14px;height: 18px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;204 287 14 18' />]]
                     end
                         
-                    if item == "8" then
-                        returnString = returnString .. "<img style='width: 15px;height: 19px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;221 287 15 19' />"
+                    if item == '8' then
+                        returnString = returnString .. [[<img style='width: 15px;height: 19px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;221 287 15 19' />]]
                     end
                         
-                    if item == "9" then
-                        returnString = returnString .. "<img style='width: 13px;height: 19px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;257 287 13 19' />"
+                    if item == '9' then
+                        returnString = returnString .. [[<img style='width: 13px;height: 19px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;257 287 13 19' />]]
                     end
 
-                    if item == "0" then
-                        returnString = returnString .. "<img style='width: 15px;height: 19px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;238 287 15 19' />"
+                    if item == '0' then
+                        returnString = returnString .. [[<img style='width: 15px;height: 19px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;238 287 15 19' />]]
                     end
                         
-                    if item == "." then
-                        returnString = returnString .. "<img style='width: 6px;height: 7px;margin-top: 11px;margin-right: 2px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;273 293 6 7' />"
+                    if item == '.' then
+                        returnString = returnString .. [[<img style='width: 6px;height: 7px;margin-top: 11px;margin-right: 2px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png;273 293 6 7' />]]
                     end
                 end
 
@@ -319,18 +392,21 @@
             end
 
             function get_world_date()
-                if Eval("updated_at") then
+                if Eval('updated_at') then
                     local allStr = ''
-                    local timestamp = Mod.WorldShare.Utils:UnifiedTimestampFormat(Eval("updated_at"))
-                    local formatDate = os.date("%Y-%m-%d %H:%M", timestamp)
+                    local timestamp = Mod.WorldShare.Utils:UnifiedTimestampFormat(Eval('updated_at'))
+                    local formatDate = os.date('%Y-%m-%d %H:%M', timestamp)
                     local recentDate = Mod.WorldShare.Utils:RecentDatetimeFormat(timestamp)
 
-                    return '<div>' ..
-                        '<div style="position: relative">' .. formatDate .. '</div>' ..
-                        '<div align="right" style="text-align: right;width: 80px;height: 20px;">' ..
-                            recentDate ..
-                        '</div>' ..
-                    '</div>'
+                    return [[<div>
+                                <div style='position: relative'>]] .. formatDate .. [[</div>
+                                <div align='right'
+                                     style='text-align: right;
+                                            width: 80px;
+                                            height: 20px;'>
+                                        ]] .. recentDate .. [[
+                                </div>
+                            </div>]]
                 else
                     reutrn ''
                 end
@@ -339,7 +415,7 @@
             function get_project_views()
                 local total_view = Eval('total_view')
 
-                if total_view and global_type(total_view) == "number" then
+                if total_view and global_type(total_view) == 'number' then
                     return total_view
                 else
                     return 0
@@ -349,7 +425,7 @@
             function get_project_thumbs()
                 local total_like = Eval('total_like')
 
-                if total_like and global_type(total_like) == "number" then
+                if total_like and global_type(total_like) == 'number' then
                     return total_like
                 else
                     return 0
@@ -363,7 +439,7 @@
             function get_project_comments()
                 local total_comment = Eval('total_comment')
 
-                if total_comment and global_type(total_comment) == "number" then
+                if total_comment and global_type(total_comment) == 'number' then
                     return total_comment
                 else
                     return 0
@@ -397,8 +473,8 @@
             function get_user_icon()
                 local user = Eval('user')
 
-                if not user or global_type(user) ~= "table" then
-                    return ""
+                if not user or global_type(user) ~= 'table' then
+                    return ''
                 end
 
                 local user_info = {}
@@ -425,14 +501,14 @@
             function get_username()
                 local user = Eval('user')
 
-                if not user or global_type(user) ~= "table" then
-                    return Eval('username') or "<%= '暂无' %>"
+                if not user or global_type(user) ~= 'table' then
+                    return Eval('username') or '<%= "暂无" %>'
                 end
 
                 if user.username then
                     return user.username
                 else
-                    return Eval('username') or "<%= '暂无' %>"
+                    return Eval('username') or '<%= "暂无" %>'
                 end
             end
 
@@ -509,7 +585,7 @@
             end
 
             function get_item_padding_style()
-                local index = Eval("index")
+                local index = Eval('index')
                 local style = ''
 
                 if index <= 3 then
@@ -630,6 +706,14 @@
 
                 return 'width: ' .. (total + 75) .. 'px;'
             end
+
+            function open_vip()
+                echo(1111, true)
+                GameLogic.IsVip('RedSummerCampWorks', true, function(result)
+                    if result then
+                    end
+                end)
+            end
         ]]>
     </script>
     <style type='text/mcss' src='Mod/ExplorerApp/components/Theme/Mcss/MainPageMcss.mcss'>
@@ -659,23 +743,23 @@
                 width = 1150,
             },
             menubar = {
-                float = "left",
+                float = 'left',
                 width = 170,
-                height = 565,
+                height = 600,
                 ['margin-left'] = 25,
                 ['margin-top'] = 10,
             },
             menubar_button = {
                 width = 140,
                 height = 40,
-                background = "Texture/Aries/Creator/keepwork/explorer_32bits.png#336 125 32 32:10 10 10 10",
+                background = 'Texture/Aries/Creator/keepwork/explorer_32bits.png#336 125 32 32:10 10 10 10',
                 ['margin-left'] = 4,
                 ['margin-bottom'] = 6,
             },
             menubar_button_selected = {
                 width = 140,
                 height = 40,
-                background = "Texture/Aries/Creator/keepwork/explorer_32bits.png#299 125 32 32:10 10 10 10",
+                background = 'Texture/Aries/Creator/keepwork/explorer_32bits.png#299 125 32 32:10 10 10 10',
                 ['margin-left'] = 4,
                 ['margin-bottom'] = 6,
             },
@@ -694,11 +778,11 @@
                 float = 'left',
                 ['margin-left'] = 10,
                 ['margin-top'] = 4,
-                textcolor = "#ffffff",
+                textcolor = '#ffffff',
                 width = 316,
                 height = 30,
                 padding = 0,
-                background = "Texture/Aries/Creator/keepwork/explorer_32bits.png#205 162 32 16:5 5 5 5",
+                background = 'Texture/Aries/Creator/keepwork/explorer_32bits.png#205 162 32 16:5 5 5 5',
             },
             list_search_textfield = {
                 width = 266,
@@ -708,8 +792,8 @@
             list_search_button = {
                 position = 'relative',
                 align = 'right',
-                color = "#000000",
-                background = "Texture/Aries/Creator/keepwork/explorer_32bits.png#225 127 36 28:6 5 7 6",
+                color = '#000000',
+                background = 'Texture/Aries/Creator/keepwork/explorer_32bits.png#225 127 36 28:6 5 7 6',
                 height = 30,
                 width = 57,
                 ['text-align'] = 'center',
@@ -736,7 +820,7 @@
                 ['margin-bottom'] = 10,
                 ['padding-left'] = 9,
                 ['padding-top'] = 9,
-                background = "Texture/Aries/Creator/keepwork/worldshare_32bits.png;435 212 30 30:11 11 11 11",
+                background = 'Texture/Aries/Creator/keepwork/worldshare_32bits.png;435 212 30 30:11 11 11 11',
             },
             work_item_selected = {
                 height = 210,
@@ -745,7 +829,7 @@
                 ['margin-bottom'] = 10,
                 ['padding-left'] = 9,
                 ['padding-top'] = 9,
-                background = "Texture/Aries/Creator/keepwork/worldshare_32bits.png;471 212 30 30:11 11 11 11",
+                background = 'Texture/Aries/Creator/keepwork/worldshare_32bits.png;471 212 30 30:11 11 11 11',
             },
             work_item_vip_selected = {
                 height = 210,
@@ -754,7 +838,7 @@
                 ['margin-bottom'] = 10,
                 ['padding-left'] = 9,
                 ['padding-top'] = 9,
-                background = "Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png;7 173 64 64:20 20 20 20",
+                background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png;7 173 64 64:20 20 20 20',
             },
             work_item_info = {
                 height = 60,
@@ -766,13 +850,13 @@
                 position = 'relative',
                 height = 180,
                 width = 250,
-                background = "Texture/Aries/Creator/keepwork/explorer_32bits.png;37 28 16 15:4 4 4 4",
+                background = 'Texture/Aries/Creator/keepwork/explorer_32bits.png;37 28 16 15:4 4 4 4',
             },
             download = {
                 float = 'left'
                 width = 30,
                 height = 18,
-                background = "",
+                background = '',
             },
             download_icon = {
                 width = 11,
@@ -783,7 +867,7 @@
             },
             favorite = {
                 float = 'left',
-                background = "",
+                background = '',
                 width = 30,
                 height = 18
             },
@@ -811,33 +895,33 @@
                 float = 'left',
                 width = 38,
                 height = 38,
-                ["margin-right"] = 6,
-                background = "Texture/Aries/Creator/keepwork/worldshare_32bits.png;109 459 40 40"
+                ['margin-right'] = 6,
+                background = 'Texture/Aries/Creator/keepwork/worldshare_32bits.png;109 459 40 40'
             },
             enter_button = {
                 float = 'left',
                 width = 46,
                 height = 46,
-                ["margin-right"] = 6,
-                background = "Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#445 282 46 46"
+                ['margin-right'] = 6,
+                background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#445 282 46 46'
             },
             share_world_name = {
-                ["text-singleline"] = "true",
+                ['text-singleline'] = 'true',
                 width = 220,
-                float = "left",
-                ["base-font-size"] = 16,
-                ["font-size"] = 16,
-                ["margin-top"] = 2,
-                ["text-align"] = "left",
-                color = "#000000",
+                float = 'left',
+                ['base-font-size'] = 16,
+                ['font-size'] = 16,
+                ['margin-top'] = 2,
+                ['text-align'] = 'left',
+                color = '#000000',
             },
             share_world_info = {
-                ["text-singleline"] = "true",
-                float = "left",
-                ["margin-left"] = 0,
+                ['text-singleline'] = 'true',
+                float = 'left',
+                ['margin-left'] = 0,
                 height = 18,
-                ["font-size"] = 12,
-                color = "#9e9e9e",
+                ['font-size'] = 12,
+                color = '#9e9e9e',
             },
             vip_icon = {
                 position = 'relative',
@@ -849,17 +933,87 @@
             }
         }
     </style>
-    <kp:window width="1150" height="630" help_type="explore" icon="Texture/Aries/Creator/keepwork/Window/title/biaoti_tansuo_32bits.png" onclose="close()">
-        <div class="area" name="area">
+    <style type='type/mcss' src='Mod/WorldShare/cellar/Opus/OpusMcss.mcss'></style>
+    <style type='type/mcss' src='Mod/WorldShare/cellar/Theme/Mcss/Theme1.mcss'></style>
+    <pe:container
+        alignment='_fi'
+        zorder='-1'
+        width='100%'
+        height='100%'
+        style='position:relative;background-color:#dcdcdc'>
+    </pe:container>
+    <pe:container
+        alignment='_fi'
+        zorder='-1'
+        width='100%'
+        height='100%'
+        class='red_summer_camp_bg'>
+    </pe:container>
+    <div>
+        <div>
+            <div align='right'
+                 style='width: 67px;
+                        height: 70px;
+                        position: relative;
+                        margin-right: 20px;
+                        margin-top: 8px;'>
+                <div onclick='open_vip'
+                     style='background: url(Texture/Aries/Creator/keepwork/RedSummerCamp/works/works_32bits.png#304 111 67 70);
+                            width: 67px;
+                            height: 70px;'></div>
+            </div>
+            <div style='background: url(Texture/Aries/Creator/keepwork/RedSummerCamp/courses/courses_32bits.png#7 249 169 56);
+                        width: 169px;
+                        height: 56px;
+                        float: left;'>
+                <div align='center'
+                     onclick='close'
+                     style='background: url(Texture/Aries/Creator/keepwork/RedSummerCamp/works/works_32bits.png#5 67 38 33);
+                            width: 38px;
+                            height: 33px;
+                            margin-top: 12px;
+                            margin-left: -20px;'></div>
+            </div>
+            <div style='float: left;
+                        width: 283px;
+                        height: 56px;
+                        margin-left: -73px;
+                        background: url(Texture/Aries/Creator/keepwork/RedSummerCamp/shentongbei/shentongbei_32bits.png#17 794 283 56)'>
+                <div align='center'
+                     style='background:;
+                            color: #FFFFFF;
+                            font-size: 20px;
+                            base-font-size: 30px;
+                            font-weight: bolder;
+                            width: 85px;
+                            height: 20px;
+                            margin-top: 15px;
+                            float: left;'>
+                    <%= L'推荐列表' %>
+                </div>
+            </div>
+        </div>
+        <div class='area'
+             name='area'
+             style='width: 1150px;'
+             align='center'>
             <div class='strip'>
-                <div style="float: left;margin-left: 10px;margin-top: 8px;padding-left: 500px;">
-                    <input type="button"
-                           onclick="show_my_school_list"
-                           style="width: 140px;
+                <div style='float: left;
+                            margin-left: 10px;
+                            margin-top: 8px;
+                            padding-left: 500px;'>
+                    <input type='button'
+                           onclick='show_my_school_list'
+                           style='width: 140px;
                                   height: 24px;
-                                  background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#544 33 140 24)" />
-                    <pe:container name="my_school_popup" visible="false" zorder="1" style="position: relative;display:none;background:">
-                        <div style="width: 144px;
+                                  background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#544 33 140 24)' />
+                    <pe:container name='my_school_popup'
+                                  visible='false'
+                                  zorder='1'
+                                  style='position: relative;
+                                         display:none;
+                                         background:'>
+                        <div style='width: 144px;
                                     height: 200px;
                                     margin-left: -2px;
                                     padding-top: 2px;
@@ -867,17 +1021,17 @@
                                     padding-left: 6px;
                                     padding-right: 6px;
                                     color: white;
-                                    background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#306 169 68 68:18 18 18 18);">
+                                    background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#306 169 68 68:18 18 18 18);'>
                             <pe:gridview name='class_list'>
                                 <Columns>
                                     <div>
-                                        <input type="button"
-                                               style="width: 130px;
+                                        <input type='button'
+                                               style='width: 130px;
                                                       height: 20px;
                                                       margin-top: 6px;
                                                       color: #FFFFFF;
-                                                      background: url()"
-                                               onclick="select_class"
+                                                      background: url()'
+                                               onclick='select_class'
                                                value='<%= Eval("name") %>'
                                                name='<%= Eval("id") %>' />
                                     </div>
@@ -886,84 +1040,104 @@
                         </div>
                     </pe:container>
                 </div>
-                <div style="float: left;margin-left: 10px;margin-top: 8px;">
-                    <input type="button"
-                           onclick="my_favorite_projects"
-                           style="width: 110px;
+                <div style='float: left;margin-left: 10px;margin-top: 8px;'>
+                    <input type='button'
+                           onclick='my_favorite_projects'
+                           style='width: 110px;
                                   height: 24px;
-                                  background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#544 69 110 24)" />
+                                  background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#544 69 110 24)' />
                 </div>
-                <div class="list_search_bar">
-                    <input type="text" name="search_value" class="list_search_textfield" spacing="4" EmptyText='<%=L"请输入你要搜索的内容"%>' rows="1" />
-                    <div class="list_search_button">
-                        <%=L"搜索"%>
-                        <input type="button" class="list_search_button_click" DefaultButton="true" onclick="search()" />
+                <div class='list_search_bar'>
+                    <input type='text'
+                           name='search_value'
+                           class='list_search_textfield'
+                           spacing='4'
+                           EmptyText='<%= L"请输入你要搜索的内容" %>'
+                           EmptyTextColor='#FF444444'
+                           rows='1' />
+                    <div class='list_search_button'>
+                        <%=L'搜索'%>
+                        <input type='button'
+                               class='list_search_button_click'
+                               DefaultButton='true'
+                               onclick='search()' />
                     </div>
                 </div>
             </div>
             <div class='area_content'>
-                <div class="menubar">
+                <div class='menubar'>
                     <div>
-                        <pe:gridview RememberScrollPos="true" name="categoryTree" DefaultNodeHeight="48" pagesize="100" ItemsPerLine="1" AllowPaging="false">
+                        <pe:gridview RememberScrollPos='true'
+                                     name='categoryTree'
+                                     DefaultNodeHeight='48'
+                                     pagesize='100' ItemsPerLine='1'
+                                     AllowPaging='false'>
                             <Columns>
-                                <div class="<%= get_menubar_button_style() %>" style="text-align: center;">
-                                    <div style="position: relative;">
+                                <div class='<%= get_menubar_button_style() %>'
+                                     style='text-align: center;'>
+                                    <div style='position: relative;'>
                                         <%= get_menubar_button_value() %>
                                     </div>
-                                    <input type="button" style="position: relative;width: 140px;height: 40px;background: ;" name="<%= Eval('index') %>" onclick="select_category()" />
+                                    <input type='button'
+                                           style='position: relative;
+                                                  width: 140px;
+                                                  height: 40px;
+                                                  background:;'
+                                           name='<%= Eval("index") %>'
+                                           onclick='select_category()' />
                                 </div>
                             </Columns>
                         </pe:gridview>
                     </div>
                 </div>
-                <div class="list">
-                    <div class="list_content">
+                <div class='list'>
+                    <div class='list_content'>
                         <pe:gridview
-                            RememberScrollPos="true"
-                            name="worksTree"
-                            style="padding-left: 20px;"
-                            DefaultNodeHeight="235"
-                            pagesize="<%=get_page_size%>"
-                            ItemsPerLine="3"
-                            VerticalScrollBarStep="100"
-                            AllowPaging="false">
+                            RememberScrollPos='true'
+                            name='worksTree'
+                            style='padding-left: 20px;'
+                            DefaultNodeHeight='235'
+                            pagesize='<%= get_page_size %>'
+                            ItemsPerLine='3'
+                            VerticalScrollBarStep='100'
+                            AllowPaging='false'>
                             <Columns>
                                 <div style='<%= get_item_padding_style() %>'>
-                                    <div class="<%= get_work_item_style() %>">
-                                        <input type="button" class="click" name='<%=Eval("index")%>' onclick="select_project" />
+                                    <div class='<%= get_work_item_style() %>'>
+                                        <input type='button' class='click' name='<%=Eval("index")%>' onclick='select_project' />
                                         <pe:if condition='<%= is_vip() %>' >
-                                            <pe:container zorder='4' style="background:;">
+                                            <pe:container zorder='4' style='background:;'>
                                                 <div class='vip_icon'></div>
                                             </pe:container>
                                         </pe:if>
-                                        <pe:if condition="<%= has_rated() %>">
-                                            <pe:container zorder='3' style="position: relative;background: ;">
+                                        <pe:if condition='<%= has_rated() %>'>
+                                            <pe:container zorder='3' style='position: relative;background: ;'>
                                                 <pe:if condition='<%= is_vip() %>'>
-                                                    <div style="width: 90x;height: 36px;
+                                                    <div style='width: 90x;height: 36px;
                                                             margin-top: -7px;
                                                             margin-left: -7px;
                                                             padding-top: 4px;
                                                             padding-left: 30px;
-                                                            background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#651 231 90 36)">
+                                                            background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#651 231 90 36)'>
                                                         <%= get_art_number()%>
                                                     </div>
                                                 </pe:if>
                                                 <pe:if condition='<%= not is_vip() %>'>
-                                                    <div style="width: 70px;height: 36px;
+                                                    <div style='width: 70px;height: 36px;
                                                             margin-top: -7px;
                                                             margin-left: -7px;
                                                             padding-top: 4px;
                                                             padding-left: 6px;
-                                                            background: url(Texture/Aries/Creator/keepwork/worldshare_32bits.png#356 136 70 36)">
+                                                            background: url(Texture/Aries/Creator/keepwork/worldshare_32bits.png#356 136 70 36)'>
                                                         <%= get_art_number()%>
                                                     </div>
                                                 </pe:if>
                                             </pe:container>
                                         </pe:if>
-                                        <div style="width: 265px;height: 130px;background-color: #afafaf;">
+                                        <div style='width: 265px;height: 130px;background-color: #afafaf;'>
                                             <pe:if condition='<%= not is_selected() %>'>
                                                 <input type='button'
-                                                       name='<%=Eval("index")%>'
+                                                       name='<%= Eval("index") %>'
                                                        onmouseenter='on_mouse_enter'
                                                        style='position: relative;
                                                               width: 265px;
@@ -973,17 +1147,17 @@
                                                               visible='false'
                                                               zorder='1'
                                                               style='position: relative;background:;'>
-                                                    <div style="height: 130px;
+                                                    <div style='height: 130px;
                                                                 width: 265px;
-                                                                background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#705 32 66 64:10 10 10 10)">
+                                                                background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#705 32 66 64:10 10 10 10)'>
                                                         <img style='width: 85px;
                                                                     height: 17px;
                                                                     margin-top: 55px;
                                                                     margin-left: 95px;'
-                                                             src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#784 35 85 17" />
+                                                             src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#784 35 85 17' />
                                                     </div>
                                                     <input type='button'
-                                                           name='<%=Eval("index")%>'
+                                                           name='<%= Eval("index") %>'
                                                            onmouseleave='on_mouse_leave'
                                                            ondoubleclick='enter'
                                                            style='position: relative;
@@ -1000,14 +1174,18 @@
                                                             margin-left: 230px;
                                                             margin-top: 5px;
                                                             background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#347 289 28 26);'>
-                                                    <pe:container visible='true' name='<%= "share_button_gray_" .. Eval("index") %>' style='position: relative;background:;'>
+                                                    <pe:container visible='true'
+                                                                  name='<%= "share_button_gray_" .. Eval("index") %>'
+                                                                  style='position: relative;background:;'>
                                                         <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#385 294 14 14'
                                                              style='width: 14px;
                                                                     height: 14px;
                                                                     margin-top: 4px;
                                                                     margin-left: 6px;' />
                                                     </pe:container>
-                                                    <pe:container visible='false' name='<%= "share_button_blue_" .. Eval("index") %>' style='position: relative;background:;'>
+                                                    <pe:container visible='false'
+                                                                  name='<%= "share_button_blue_" .. Eval("index") %>'
+                                                                  style='position: relative;background:;'>
                                                         <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#415 294 14 14'
                                                              style='width: 14px;
                                                                     height: 14px;
@@ -1019,60 +1197,122 @@
                                                            onmouseenter='on_mouse_enter_share_button'
                                                            onmouseleave='on_mouse_leave_share_button'
                                                            onclick='share'
-                                                           style='width: 28px;height: 26px;background: url();' />
+                                                           style='width: 28px;
+                                                                  height: 26px;
+                                                                  background: url();' />
                                                 </div>
                                             </pe:if>
-                                            <div style="position: relative;width: 265px;height: 130px;background: url(Texture/Aries/Creator/keepwork/worldshare_32bits.png#394 211 32 32:9 9 9 9)"></div>
-                                            <div style="<%= 'width: 265px;height: 130px;background: url(' .. (Eval('cover') and Eval('cover') or '') .. ')' %>">
-                                                <pe:if condition="<%= has_username() %>">
-                                                    <div style="width: 265px;height: 30px;margin-top: 100px;font-size: 12px;padding-top: 5px;padding-left: 4px;color: #ffffff;background-color: #000000a3">
+                                            <div style='position: relative;
+                                                        width: 265px;
+                                                        height: 130px;
+                                                        background: url(Texture/Aries/Creator/keepwork/worldshare_32bits.png#394 211 32 32:9 9 9 9)'></div>
+                                            <div style='<%= "width: 265px;height: 130px;background: url(" .. (Eval("cover") and Eval("cover") or "") .. ")" %>'>
+                                                <pe:if condition='<%= has_username() %>'>
+                                                    <div style='width: 265px;
+                                                                height: 30px;
+                                                                margin-top: 100px;
+                                                                font-size: 12px;
+                                                                padding-top: 5px;
+                                                                padding-left: 4px;
+                                                                color: #ffffff;
+                                                                background-color: #000000a3'>
                                                         <%= get_user_icon() %>
-                                                        <div style="float:left;margin-left: 4px;">
+                                                        <div style='float:left;margin-left: 4px;'>
                                                             <%= get_username() %>
                                                         </div>
-                                                        <div align="right"
+                                                        <div align='right'
                                                              style='<%= "font-size: 12px;base-font-size: 12px;color: #FFFFFF;margin-top: 0px;height: 20px;float: left;" .. get_numbers_width() %>'>
-                                                            <div style="float:left">
-                                                                <img src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#652 167 18 13" style="width: 18px;height: 13px;margin-top: 2px;" />
-                                                                <div style="float:left;margin-left: 2px;max-width: 45px;">
+                                                            <div style='float:left'>
+                                                                <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#652 167 18 13'
+                                                                     style='width: 18px;height: 13px;margin-top: 2px;' />
+                                                                <div style='float:left;margin-left: 2px;max-width: 45px;'>
                                                                     <%= Mod.WorldShare.Utils.ShortNumber(get_project_views()) %>
                                                                 </div>
                                                             </div>
-                                                            <div style="float:left;margin-left: 8px;">
+                                                            <div style='float:left;margin-left: 8px;'>
                                                                 <div style='float: left;width: 16px;height: 16px;'>
-                                                                    <pe:container visible='<%= is_star(1) %>' name='<%= "star_item_" .. Eval("index") %>' style="position: relative;background:;">
+                                                                    <pe:container visible='<%= is_star(1) %>'
+                                                                                  name='<%= "star_item_" .. Eval("index") %>'
+                                                                                  style='position: relative;background:;'>
                                                                         <div>
-                                                                            <img src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#704 166 16 15" style="width: 16px;height: 16px;margin-top: 1px;" />
+                                                                            <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#704 166 16 15'
+                                                                                 style='width: 16px;
+                                                                                        height: 16px;
+                                                                                        margin-top: 1px;' />
                                                                         </div>
-                                                                        <input type='button' name='<%= Eval("index") %>' onclick='star()' style='background:;width: 16px;height: 17px;margin-top: -16px;' />
+                                                                        <input type='button'
+                                                                               name='<%= Eval("index") %>'
+                                                                               onclick='star()'
+                                                                               style='background:;
+                                                                                      width: 16px;
+                                                                                      height: 17px;
+                                                                                      margin-top: -16px;' />
                                                                     </pe:container>
-                                                                    <pe:container visible='<%= is_star(2) %>' name='<%= "stared_item_" .. Eval("index") %>' style="position: relative;background:;">
+                                                                    <pe:container visible='<%= is_star(2) %>'
+                                                                                  name='<%= "stared_item_" .. Eval("index") %>'
+                                                                                  style='position: relative;
+                                                                                         background:;'>
                                                                         <div>
-                                                                            <img src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#703 196 17 16" style="width: 16px;height: 16px;margin-top: 1px;" />
+                                                                            <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#703 196 17 16'
+                                                                                 style='width: 16px;
+                                                                                        height: 16px;
+                                                                                        margin-top: 1px;' />
                                                                         </div>
-                                                                        <input type='button' name='<%= Eval("index") %>' onclick='unstar()' style='background:;width: 16px;height: 17px;margin-top: -16px;' />
+                                                                        <input type='button'
+                                                                               name='<%= Eval("index") %>'
+                                                                               onclick='unstar()'
+                                                                               style='background:;
+                                                                                      width: 16px;
+                                                                                      height: 17px;
+                                                                                      margin-top: -16px;' />
                                                                     </pe:container>
                                                                 </div>
-                                                                <div style="float:left;margin-left: 2px;max-width: 45px;">
+                                                                <div style='float:left;margin-left: 2px;max-width: 45px;'>
                                                                     <%= Mod.WorldShare.Utils.ShortNumber(get_project_thumbs()) %>
                                                                 </div>
                                                             </div>
-                                                            <div style="float:left;margin-left: 8px;">
+                                                            <div style='float:left;margin-left: 8px;'>
                                                                 <div style='float: left;width: 16px;height: 16px;'>
-                                                                    <pe:container visible='<%= is_favorite(1) %>' name='<%= "favorite_item_" .. Eval("index") %>' style="position: relative;background:;">
+                                                                    <pe:container visible='<%= is_favorite(1) %>'
+                                                                                  name='<%= "favorite_item_" .. Eval("index") %>'
+                                                                                  style='position: relative;
+                                                                                         background:;'>
                                                                         <div>
-                                                                            <img src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#747 166 16 15" style="width: 16px;height: 16px;margin-top: 1px;" />
+                                                                            <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#747 166 16 15'
+                                                                                 style='width: 16px;
+                                                                                        height: 16px;
+                                                                                        margin-top: 1px;' />
                                                                         </div>
-                                                                        <input type='button' name='<%= Eval("index") %>' onclick='favorite()' style='background:;width: 16px;height: 17px;margin-top: -16px;' />
+                                                                        <input type='button'
+                                                                               name='<%= Eval("index") %>'
+                                                                               onclick='favorite()'
+                                                                               style='background:;
+                                                                                      width: 16px;
+                                                                                      height: 17px;
+                                                                                      margin-top: -16px;' />
                                                                     </pe:container>
-                                                                    <pe:container visible='<%= is_favorite(2) %>' name='<%= "favorited_item_" .. Eval("index") %>' style="position: relative;background:;">
+                                                                    <pe:container visible='<%= is_favorite(2) %>'
+                                                                                  name='<%= "favorited_item_" .. Eval("index") %>'
+                                                                                  style='position: relative;
+                                                                                         background:;'>
                                                                         <div>
-                                                                            <img src="Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#745 196 17 16" style="width: 16px;height: 16px;margin-top: 1px;" />
+                                                                            <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#745 196 17 16'
+                                                                                 style='width: 16px;
+                                                                                        height: 16px;
+                                                                                        margin-top: 1px;' />
                                                                         </div>
-                                                                        <input type='button' name='<%= Eval("index") %>' onclick='unfavorite()' style='background:;width: 16px;height: 17px;margin-top: -16px;' />
+                                                                        <input type='button'
+                                                                               name='<%= Eval("index") %>'
+                                                                               onclick='unfavorite()'
+                                                                               style='background:;
+                                                                                      width: 16px;
+                                                                                      height: 17px;
+                                                                                      margin-top: -16px;' />
                                                                     </pe:container>
                                                                 </div>
-                                                                <div style="float:left;margin-left: 2px;max-width: 45px;">
+                                                                <div style='float: left;
+                                                                            margin-left: 2px;
+                                                                            max-width: 45px;'>
                                                                     <%= Mod.WorldShare.Utils.ShortNumber(get_project_favorites()) %>
                                                                 </div>
                                                             </div>
@@ -1081,54 +1321,47 @@
                                                 </pe:if>
                                             </div>
                                         </div>
-                                        <div class="work_item_info">
+                                        <div class='work_item_info'>
                                             <div>
-                                                <div class="share_world_name">
-                                                    <%= Mod.WorldShare.Utils.WordsLimit(Eval("name")) %>
-                                                    <span style="color: #9e9e9e;">
+                                                <div class='share_world_name'>
+                                                    <%= Mod.WorldShare.Utils.WordsLimit(Eval('name')) %>
+                                                    <span style='color: #9e9e9e;'>
                                                         #<%= Eval('id') or '' %>
                                                     </span>
                                                 </div>
                                             </div>
-                                            <div style="position: relative;
+                                            <div style='position: relative;
                                                         margin-top: 10px;
                                                         float:left;
-                                                        font-size: 12px;">
+                                                        font-size: 12px;'>
                                                 <pe:if condition='<%= has_school() %>'>
                                                     <div>
-                                                        <img style="width: 19px;height: 16px;margin-right: 5px;" src="Texture/Aries/Creator/keepwork/worldshare_32bits.png#311 311 19 16" />
+                                                        <img style='width: 19px;height: 16px;margin-right: 5px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png#311 311 19 16' />
                                                         <%= Mod.WorldShare.Utils.WordsLimit(Eval('user').school.name) %>
                                                     </div>
                                                 </pe:if>
                                             </div>
-                                            <div align="right" style="margin-right: 14px;width: 58px;height: 46px;margin-top: -20x;">
-                                                <input type="button"
-                                                       class="enter_button"
-                                                       onclick="enter"
+                                            <div align='right' style='margin-right: 14px;width: 58px;height: 46px;margin-top: -20x;'>
+                                                <input type='button'
+                                                       class='enter_button'
+                                                       onclick='enter'
                                                        tooltip='<%= L"进入" %>'
                                                        name='<%= Eval("index") %>' />
                                             </div>
                                         </div>
-                                        <pe:if condition="<%= is_load_more_items(Eval('index')) %>">
-                                            <pe:custom oncreate="<%= lazy_load %>"></pe:custom>
+                                        <pe:if condition='<%= is_load_more_items(Eval("index")) %>'>
+                                            <pe:custom oncreate='<%= lazy_load %>'></pe:custom>
                                         </pe:if>
                                     </div>
                                 </div>
                             </Columns>
-                            <PagerSettings Position="Bottom" height="1" />
-                            <PagerTemplate AutoHidePager="true">
-                                <form>
-                                    <label name="page" style="height:18px;margin-left:59px;margin-top:-95px;color:#ffffff;" />
-                                    <input type="button" name="pre"  invisibleondisabled="false" zorder=2 animstyle="23" tooltip='<%=L"上一页"%>' style="margin-left:35px;margin-top:-93px;width:13px;height:15px;background:url(Texture/Aries/Creator/Theme/GameCommonIcon_32bits.png#224 149 13 15);" Normal_BG="Texture/Aries/Creator/Theme/GameCommonIcon_32bits.png#224 149 13 15" Pressed_BG="Texture/Aries/Creator/Theme/GameCommonIcon_32bits.png;224 167 13 15" />
-                                    <input type="button" name="next" invisibleondisabled="false" zorder=2 animstyle="23" tooltip='<%=L"下一页"%>' style="margin-left:40px;margin-top:-93px;width:13px;height:15px;background:url(Texture/Aries/Creator/Theme/GameCommonIcon_32bits.png#249 149 13 15);" Normal_BG="Texture/Aries/Creator/Theme/GameCommonIcon_32bits.png;249 149 13 15" Pressed_BG="Texture/Aries/Creator/Theme/GameCommonIcon_32bits.png;249 167 13 15" />
-                                </form>
-                            </PagerTemplate>
+                            <PagerSettings Position='Bottom' height='1' />
                         </pe:gridview>
                     </div>
                 </div>
             </div>
         </div>
-    </kp:window>
+    </div>
 </pe:mcml>
 </body>
 </html>
