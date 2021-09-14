@@ -83,6 +83,8 @@ function MainPage:ShowPage(callback, classId, defaulOpenValue)
             height = 0,
             cancelShowAnimation = true,
             bToggleShowHide = true,
+            DesignResolutionWidth = 1280,
+            DesignResolutionHeight = 720,
         }
     )
 
