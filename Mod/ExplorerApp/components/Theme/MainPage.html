@@ -437,7 +437,7 @@
                 local total_mark = Eval('total_mark')
 
                 if not total_mark or
-                   type(total_mark) ~= 'number' or
+                   global_type(total_mark) ~= 'number' or
                    total_mark < 0 then
                     return 0
                 end
