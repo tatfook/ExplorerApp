@@ -434,6 +434,14 @@
             end
 
             function get_project_favorites()
+                local total_mark = Eval('total_mark')
+
+                if not total_mark or
+                   type(total_mark) ~= 'number' or
+                   total_mark < 0 then
+                    return 0
+                end
+
                 return Eval('total_mark')
             end
 
