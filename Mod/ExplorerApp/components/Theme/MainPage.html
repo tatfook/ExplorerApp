@@ -724,6 +724,82 @@
                     end
                 end)
             end
+
+            function submit_opus()
+                local content = [[
+                    <div width='100%%'
+                         style='padding: 30px;
+                                font-size: 16px;
+                                base-font-size: 16px;'>
+                        <div align='center'
+                             style='width: 106px;
+                                    font-size: 26px;
+                                    base-font-size: 26px;
+                                    margin-bottom: 30px;'><%%= L'提交作品' %%></div>
+                        <div>
+                            <%%= L'如果你也想让你的作品展示在推荐列表中，让更多的人看到你的优秀作品，那么你可以将作品通过自荐的方式提交给我们。' %%>
+                        </div>
+                        <div style='margin-top: 20px;'>
+                            <%%= L'作品要求：' %%>
+                        </div>
+                        <div>
+                            <%%= L'1.作品内容积极向上，且内容完整；' %%>
+                        </div>
+                        <div>
+                            <%%= L'2.作品有创意，在创作思路或技术上有独特表现；' %%>
+                        </div>
+                        <div>
+                            <%%= L'3.参赛获奖作品优先采纳。' %%>
+                        </div>
+                        <div style='margin-top: 20px;'>
+                            <%%= L'提交方式：' %%>
+                        </div>
+                        <div>
+                            <%%= L'将作品项目ID及作品说明，通过邮件发送至support@paracraft.cn。' %%>
+                        </div>
+                        <div style='margin-top: 20px;'>
+                            <%%= L'作品提交模板：' %%>
+                        </div>
+                        <div class='theme1_gray_container_background'
+                             width='100%%'
+                             style='height: 130px;
+                                    padding: 20px;
+                                    color: #FFFFFF;'>
+                            <div align='right'
+                                 onclick='copy'
+                                 style='width: 32px;
+                                        top: 40px;
+                                        color: #0000FF;
+                                        position: relative;'>
+                                <%%= L'复制' %%>
+                                <div style='height: 1px;
+                                            width: 32px;
+                                            background-color: #0000FF;'></div>
+                            </div>
+                            <div><%%= L'账号：' %%></div>
+                            <div><%%= L'作品ID：' %%></div>
+                            <div><%%= L'参加的大赛及获奖名次：' %%></div>
+                            <div><%%= L'作品说明：' %%></div>
+                        </div>
+                    </div>
+                ]]
+
+                local script = [[
+                    local Toast = NPL.load('(gl)Mod/ExplorerApp/components/Toast/Toast.lua')
+                    local example = '账号：\n作品ID：\n参加的大赛及获奖名次：\n作品说明：'
+
+                    function copy()
+                        ParaMisc.CopyTextToClipboard(example)
+                        Toast:ShowPage(L'已复制', 3000)
+                    end
+                ]]
+
+                local mcss = [[
+                    <style type='type/mcss' src='Mod/WorldShare/cellar/Theme/Mcss/Theme1.mcss'></style>
+                ]]
+
+                Mod.WorldShare.MsgBox:ShowNotice(content, script, mcss, 540, 560)
+            end
         ]]>
     </script>
     <style type='text/mcss' src='Mod/ExplorerApp/components/Theme/Mcss/MainPageMcss.mcss'>
@@ -950,7 +1026,8 @@
         zorder='-1'
         width='100%'
         height='100%'
-        style='position:relative;background-color:#dcdcdc'>
+        style='position:relative;
+               background-color:#dcdcdc'>
     </pe:container>
     <pe:container
         alignment='_fi'
@@ -1001,6 +1078,19 @@
                             float: left;'>
                     <%= L'推荐列表' %>
                 </div>
+            </div>
+            <div style='float: left;
+                        margin-left: 10px;
+                        font-size: 16px;
+                        base-font-size: 16px;
+                        font-weight: bold;
+                        color: #1ca3d7;
+                        margin-top: 18px;'
+                 onclick='submit_opus'>
+                <%= L'提交作品' %>
+                <div style='height: 1px;
+                            width: 66px;
+                            background-color: #1ca3d7'></div>
             </div>
         </div>
         <div class='area'

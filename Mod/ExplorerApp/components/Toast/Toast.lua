@@ -1,15 +1,14 @@
 --[[
 Title: Toast Component
-Author(s):  big
-Date: 2019.01.26
+Author(s): big
+CreateDate: 2019.01.26
+ModifyDate: 2021.09.28
 Place: Foshan
 use the lib:
 ------------------------------------------------------------
-local Toast = NPL.load("(gl)Mod/ExplorerApp/components/Toast/Toast.lua")
+local Toast = NPL.load('(gl)Mod/ExplorerApp/components/Toast/Toast.lua')
 ------------------------------------------------------------
 ]]
-local Store = NPL.load("(gl)Mod/WorldShare/store/Store.lua")
-local Utils = NPL.load("(gl)Mod/WorldShare/helper/Utils.lua")
 
 local Toast = NPL.export()
 
@@ -18,7 +17,7 @@ Toast.allPreviousMsg = {}
 
 function Toast:ShowPage(msg, nTimes)
     local index = #self.allPreviousMsg + 1
-    local ToastPage = Store:Get("page/Toast")
+    local ToastPage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.Toast')
 
     if ToastPage then
         self:ClosePage()
@@ -31,9 +30,19 @@ function Toast:ShowPage(msg, nTimes)
     self.allPreviousMsg[index] = true
     self.msg = msg
 
-    local params = Mod.WorldShare.Utils.ShowWindow(300, 32, "Mod/ExplorerApp/components/Toast/Toast.html", "Mod.ExplorerApp.Toast", nil, nil, "_ct", false, 3)
+    local params = Mod.WorldShare.Utils.ShowWindow(
+        300,
+        32,
+        'Mod/ExplorerApp/components/Toast/Toast.html',
+        'Mod.ExplorerApp.Toast',
+        nil,
+        nil,
+        '_ct',
+        false,
+        3
+    )
 
-    Utils.SetTimeOut(
+    Mod.WorldShare.Utils.SetTimeOut(
         function()
             if self.allPreviousMsg[index] then
                 self:ClosePage()
@@ -44,15 +53,10 @@ function Toast:ShowPage(msg, nTimes)
     )
 end
 
-function Toast:SetPage()
-    Store:Set("page/Toast", document:GetPageCtrl())
-end
-
 function Toast:ClosePage()
-    local ToastPage = Store:Get("page/Toast")
+    local ToastPage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.Toast')
 
     if ToastPage then
         ToastPage:CloseWindow()
-        Store:Remove("page/Toast")
     end
 end

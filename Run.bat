@@ -1,4 +1,12 @@
 @echo off 
-pushd "%~dp0../../redist/" 
-call "ParaEngineClient.exe" single="false" mc="true" noupdate="true" dev="%~dp0" mod="Test" isDevEnv="true"  
+
+if exist "%~dp0../../redist/ParaEngineClient.exe" (
+    pushd "%~dp0../../redist/" 
+) else (
+    pushd "%~dp0../../" 
+)
+
+call "ParaEngineClient.exe" single="false" mc="true" noupdate="true" dev="%~dp0" mod="ExplorerMod" isDevEnv="true"
+
 popd 
+
