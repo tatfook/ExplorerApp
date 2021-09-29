@@ -755,7 +755,8 @@
                             <%%= L'提交方式：' %%>
                         </div>
                         <div>
-                            <%%= L'将作品项目ID及作品说明，通过邮件发送至support@paracraft.cn。' %%>
+                            <%%= L'将作品项目ID及作品说明，通过邮件发送至' %%>
+                            <a href='mailto:support@paracraft.cn'>support@paracraft.cn</a>
                         </div>
                         <div style='margin-top: 20px;'>
                             <%%= L'作品提交模板：' %%>
@@ -763,8 +764,9 @@
                         <div class='theme1_gray_container_background'
                              width='100%%'
                              style='height: 130px;
+                                    padding-top: 15px;
                                     padding: 20px;
-                                    color: #FFFFFF;'>
+                                    color: #000000;'>
                             <div align='right'
                                  onclick='copy'
                                  style='width: 32px;
@@ -798,7 +800,7 @@
                     <style type='type/mcss' src='Mod/WorldShare/cellar/Theme/Mcss/Theme1.mcss'></style>
                 ]]
 
-                Mod.WorldShare.MsgBox:ShowNotice(content, script, mcss, 540, 560)
+                Mod.WorldShare.MsgBox:ShowNotice(content, script, mcss, 560, 580)
             end
         ]]>
     </script>
