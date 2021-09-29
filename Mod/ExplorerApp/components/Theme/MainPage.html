@@ -729,15 +729,17 @@
                 local content = [[
                     <div width='100%%'
                          style='padding: 30px;
+                                margin-top: -50px;
                                 font-size: 16px;
-                                base-font-size: 16px;'>
+                                base-font-size: 16px;
+                                color: #FFFFFF;'>
                         <div align='center'
                              style='width: 106px;
                                     font-size: 26px;
                                     base-font-size: 26px;
                                     margin-bottom: 30px;'><%%= L'提交作品' %%></div>
                         <div>
-                            <%%= L'如果你也想让你的作品展示在推荐列表中，让更多的人看到你的优秀作品，那么你可以将作品通过自荐的方式提交给我们。' %%>
+                            <%%= L'同学们，想让你的优秀作品被更多人看到并且给你点赞么？快来提交你的创意作品吧，我们会帮你上榜哟，期待你的作品。' %%>
                         </div>
                         <div style='margin-top: 20px;'>
                             <%%= L'作品要求：' %%>
@@ -756,17 +758,18 @@
                         </div>
                         <div>
                             <%%= L'将作品项目ID及作品说明，通过邮件发送至' %%>
-                            <a href='mailto:support@paracraft.cn'>support@paracraft.cn</a>
+                            <a href='mailto:support@paracraft.cn'
+                               style='color: #FFFFFF;'>support@paracraft.cn</a>
                         </div>
                         <div style='margin-top: 20px;'>
                             <%%= L'作品提交模板：' %%>
                         </div>
-                        <div class='theme1_gray_container_background'
+                        <div class='msgbox_gray_radius_background'
                              width='100%%'
                              style='height: 130px;
                                     padding-top: 15px;
                                     padding: 20px;
-                                    color: #000000;'>
+                                    color: #FFFFFF;'>
                             <div align='right'
                                  onclick='copy'
                                  style='width: 32px;
@@ -800,7 +803,7 @@
                     <style type='type/mcss' src='Mod/WorldShare/cellar/Theme/Mcss/Theme1.mcss'></style>
                 ]]
 
-                Mod.WorldShare.MsgBox:ShowNotice(content, script, mcss, 560, 580)
+                Mod.WorldShare.MsgBox:ShowNotice(content, script, mcss, 2, 670, 540)
             end
         ]]>
     </script>
