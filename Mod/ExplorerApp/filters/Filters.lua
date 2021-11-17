@@ -12,8 +12,8 @@ Filters:Init()
 
 local ExplorerApp = commonlib.gettable("Mod.ExplorerApp")
 
--- components
-local MainPage = NPL.load("(gl)Mod/ExplorerApp/components/MainPage.lua")
+-- pages
+local MainPage = NPL.load("(gl)Mod/ExplorerApp/pages/MainPage.lua")
 
 local Filters = NPL.export()
 

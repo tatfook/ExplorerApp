@@ -16,7 +16,7 @@ local PlayContext = commonlib.gettable("MyCompany.Aries.Game.SceneContext.PlayCo
 local AllContext = commonlib.gettable("MyCompany.Aries.Game.AllContext")
 
 local ExplorerTask = commonlib.inherit(commonlib.gettable("MyCompany.Aries.Game.Task"), commonlib.gettable("Mod.ExplorerApp.tasks.ExplorerTask"))
-local ProactiveEnd = NPL.load("(gl)Mod/ExplorerApp/components/GameProcess/ProactiveEnd/ProactiveEnd.lua")
+local ProactiveEnd = NPL.load("(gl)Mod/ExplorerApp/pages/GameProcess/ProactiveEnd/ProactiveEnd.lua")
 
 function ExplorerTask:keyPressEvent(event)
 end
