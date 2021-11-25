@@ -48,8 +48,8 @@ function ParacraftWorldComponent.RenderCallback(mcmlNode, rootName, bindingConte
 
     ParacraftWorldComponentMcmlNode:SetAttribute('page_ctrl', mcmlNode:GetPageCtrl())
 
-    Map3DSystem.mcml_controls.create(
-        nil,
+    local ParacraftWorld = Map3DSystem.mcml_controls.create(
+        'paracraft_world',
         ParacraftWorldComponentMcmlNode,
         nil,
         _parent,
@@ -60,7 +60,5 @@ function ParacraftWorldComponent.RenderCallback(mcmlNode, rootName, bindingConte
         nil,
         self.parentLayout
     )
-
-    return true, true, true
 end
 

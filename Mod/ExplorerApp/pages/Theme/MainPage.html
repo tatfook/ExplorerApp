@@ -613,9 +613,6 @@
             end
 
             function favorite(index)
-                page:FindControl('favorite_item_' .. index).visible = false
-                page:FindControl('favorited_item_' .. index).visible = true
-
                 local worldinfo = MainPage.worksTree[index]
 
                 keepwork.world.favorite({objectType = 5, objectId = worldinfo.id}, function(status)
@@ -626,9 +623,6 @@
             end
 
             function unfavorite(index)
-                page:FindControl('favorite_item_' .. index).visible = true
-                page:FindControl('favorited_item_' .. index).visible = false
-
                 local worldinfo = MainPage.worksTree[index]
 
                 keepwork.world.unfavorite({objectType = 5, objectId = worldinfo.id}, function(status)
@@ -657,11 +651,6 @@
             end
 
             function star(index)
-                -- KeepworkServiceSession:AddRice('thumbsup')
-
-                page:FindControl('star_item_' .. index).visible = false
-                page:FindControl('stared_item_' .. index).visible = true
-
                 local worldinfo = MainPage.worksTree[index]
 
                 keepwork.world.star({router_params = {id = worldinfo.id}}, function(err, msg, data)
@@ -676,15 +665,12 @@
                     return
                 end
 
-                page:FindControl('star_item_' .. index).visible = true
-                page:FindControl('stared_item_' .. index).visible = false
-
                 local worldinfo = MainPage.worksTree[index]
 
                 keepwork.world.star({router_params = {id = worldinfo.id}}, function(err, msg, data)
                     worldinfo.isStar = false
                     worldinfo.total_like = worldinfo.total_like - 1
-                    page:Refresh(0.01)
+                    page:Refresh(0)
                 end)
             end
 
@@ -726,9 +712,9 @@
             end
 
             function has_award()
-                local worldinfo = MainPage.worksTree[Eval('index')]
+                local world_info = MainPage.worksTree[Eval('index')]
 
-                if worldinfo.award then
+                if world_info.extra and world_info.extra.award then
                     return true
                 else
                     return false
@@ -736,7 +722,7 @@
             end
 
             function get_award_info()
-                return MainPage.worksTree[Eval('index')].award
+                return MainPage.worksTree[Eval('index')].extra.award
             end
 
             function submit_opus()

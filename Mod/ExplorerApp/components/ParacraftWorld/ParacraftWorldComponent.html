@@ -11,16 +11,24 @@
                 <pe:if condition='<%= has_award() %>'>
                     <div zorder='3'
                          style='position: relative;
+                                margin-top: -12px;
+                                margin-left: -12px;
                                 background:;'>
+                        <input type='button'
+                               tooltip='<%= get_award_info().desc %>'
+                               value='<%= get_award_info().text %>'
+                               style='min-width: 90px;
+                                      height: 40px;
+                                      position: relative;
+                                      background:;
+                                      color: #FFFFFF00' />
                         <div style='min-width: 90x;
                                     height: 40px;
-                                    margin-top: -8px;
-                                    margin-left: -8px;
                                     padding-top: 4px;
                                     padding-left: 10px;
                                     padding-right: 15px;
                                     background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#651 231 90 36:20 0 20 0)'>
-                            2021 神通杯 一等奖
+                            <%= get_award_info().text %>
                         </div>
                     </div>
                 </pe:if>

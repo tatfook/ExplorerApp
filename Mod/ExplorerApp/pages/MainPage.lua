@@ -535,8 +535,12 @@ function MainPage:SetWorksTree(categoryItem)
             sort,
             { page = self.curPage },
             function(data, err)
-                if not data or type(data) ~= 'table' or not data.hits or type(data.hits) ~= 'table' or err ~= 200  then
-                    return false
+                if not data or
+                   type(data) ~= 'table' or
+                   not data.hits or
+                   type(data.hits) ~= 'table' or
+                   err ~= 200  then
+                    return
                 end
 
                 local usernames = {}
@@ -624,36 +628,40 @@ function MainPage:Search()
         return false
     end
 
-    KeepworkEsServiceProject:Search(searchValue, { page = self.curPage }, function(data, err)
-        if not data or not data.hits then
-            return false
+    KeepworkEsServiceProject:Search(
+        searchValue,
+        { page = self.curPage },
+        function(data, err)
+            if not data or not data.hits then
+                return false
+            end
+
+            Mod.WorldShare.Store:Set('explorer/selectSortIndex', 1)
+            self.categorySelected = {}
+            
+            if self.curPage ~= 1 then
+                self:HandleWorldsTree(data.hits, function(rows)
+                    for key, item in ipairs(rows) do
+                        self.worksTree[#self.worksTree + 1] = item
+                    end
+
+                    MainPagePage:GetNode('worksTree'):SetAttribute('DataSource', self.worksTree)
+                    MainPagePage:SetValue('search_value', searchValue)
+
+                    self:Refresh()
+                end)
+            else
+                self:HandleWorldsTree(data.hits, function(rows)
+                    self.worksTree = rows
+
+                    MainPagePage:GetNode('worksTree'):SetAttribute('DataSource', self.worksTree)
+                    MainPagePage:SetValue('search_value', searchValue)
+
+                    self:Refresh()
+                end)
+            end
         end
-
-        Mod.WorldShare.Store:Set('explorer/selectSortIndex', 1)
-        self.categorySelected = {}
-        
-        if self.curPage ~= 1 then
-            self:HandleWorldsTree(data.hits, function(rows)
-                for key, item in ipairs(rows) do
-                    self.worksTree[#self.worksTree + 1] = item
-                end
-
-                MainPagePage:GetNode('worksTree'):SetAttribute('DataSource', self.worksTree)
-                MainPagePage:SetValue('search_value', searchValue)
-
-                self:Refresh()
-            end)
-        else
-            self:HandleWorldsTree(data.hits, function(rows)
-                self.worksTree = rows
-
-                MainPagePage:GetNode('worksTree'):SetAttribute('DataSource', self.worksTree)
-                MainPagePage:SetValue('search_value', searchValue)
-
-                self:Refresh()
-            end)
-        end
-    end)
+    )
 end
 
 function MainPage:HandleWorldsTree(rows, callback)
