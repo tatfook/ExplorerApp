@@ -714,14 +714,28 @@
             function has_award()
                 local world_info = MainPage.worksTree[Eval('index')]
 
-                if world_info.extra and world_info.extra.award then
-                    return true
+                if world_info.extra and
+                   world_info.extra.award and
+                   world_info.extra.award.text and
+                   world_info.extra.award.text ~= '' then
+                    local text = world_info.extra.award.text
+                    text = text:gsub(' ', '')
+
+                    if text ~= '' then
+                        return true
+                    else
+                        return false
+                    end
                 else
                     return false
                 end
             end
 
             function get_award_info()
+                local desc = MainPage.worksTree[Eval('index')].extra.award.desc
+                desc = Mod.WorldShare.Utils.FormatString(desc, 50)
+                MainPage.worksTree[Eval('index')].extra.award.desc = desc
+
                 return MainPage.worksTree[Eval('index')].extra.award
             end
 
