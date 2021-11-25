@@ -462,12 +462,12 @@
             function get_work_item_style()
                 if MainPage.curSelected == Eval('index') then
                     if is_vip() then
-                        return 'work_item_vip_selected'
+                        return 'work_item_vip_selected_bg'
                     else
-                        return 'work_item_selected'
+                        return 'work_item_selected_bg'
                     end
                 else
-                    return 'work_item'
+                    return 'work_item_bg'
                 end
             end
 
@@ -725,6 +725,20 @@
                 end)
             end
 
+            function has_award()
+                local worldinfo = MainPage.worksTree[Eval('index')]
+
+                if worldinfo.award then
+                    return true
+                else
+                    return false
+                end
+            end
+
+            function get_award_info()
+                return MainPage.worksTree[Eval('index')].award
+            end
+
             function submit_opus()
                 local content = [[
                     <div width='100%%'
@@ -907,29 +921,20 @@
             work_item = {
                 height = 210,
                 width = 285,
-                ['margin-right'] = 10,
-                ['margin-bottom'] = 10,
+                ['margin-left'] = 5,
+                ['margin-top'] = 5,
                 ['padding-left'] = 9,
                 ['padding-top'] = 9,
-                background = 'Texture/Aries/Creator/keepwork/worldshare_32bits.png;435 212 30 30:11 11 11 11',
             },
-            work_item_selected = {
-                height = 210,
-                width = 285,
-                ['margin-right'] = 10,
-                ['margin-bottom'] = 10,
-                ['padding-left'] = 9,
-                ['padding-top'] = 9,
+            work_item_selected_bg = {
                 background = 'Texture/Aries/Creator/keepwork/worldshare_32bits.png;471 212 30 30:11 11 11 11',
+                ['margin-left'] = 1,
             },
-            work_item_vip_selected = {
-                height = 210,
-                width = 285,
-                ['margin-right'] = 10,
-                ['margin-bottom'] = 10,
-                ['padding-left'] = 9,
-                ['padding-top'] = 9,
+            work_item_vip_selected_bg = {
                 background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png;7 173 64 64:20 20 20 20',
+            },
+            work_item_bg = {
+                background = 'Texture/Aries/Creator/keepwork/worldshare_32bits.png;435 212 30 30:11 11 11 11',
             },
             work_item_info = {
                 height = 60,
@@ -1107,11 +1112,12 @@
                             margin-left: 10px;
                             margin-top: 8px;
                             padding-left: 500px;'>
+                    <!-- 我的学校 -->
                     <input type='button'
                            onclick='show_my_school_list'
                            style='width: 140px;
                                   height: 24px;
-                                  background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#544 33 140 24)' />
+                                  background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#544 34 140 23)' />
                     <pe:container name='my_school_popup'
                                   visible='false'
                                   zorder='1'
@@ -1146,11 +1152,12 @@
                     </pe:container>
                 </div>
                 <div style='float: left;margin-left: 10px;margin-top: 8px;'>
+                    <!-- 我的收藏 -->
                     <input type='button'
                            onclick='my_favorite_projects'
                            style='width: 110px;
                                   height: 24px;
-                                  background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#544 69 110 24)' />
+                                  background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#544 70 110 23)' />
                 </div>
                 <div class='list_search_bar'>
                     <input type='text'
