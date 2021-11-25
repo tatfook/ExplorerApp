@@ -732,10 +732,6 @@
             end
 
             function get_award_info()
-                local desc = MainPage.worksTree[Eval('index')].extra.award.desc
-                desc = Mod.WorldShare.Utils.FormatString(desc, 50)
-                MainPage.worksTree[Eval('index')].extra.award.desc = desc
-
                 return MainPage.worksTree[Eval('index')].extra.award
             end
 
