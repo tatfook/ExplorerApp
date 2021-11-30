@@ -487,6 +487,18 @@ function MainPage:SetWorksTree(categoryItem)
                         id = item.id,
                         name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or '',
                         cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or '',
+                        extra = {
+                            award = {     
+                                text = item.extra and
+                                       type(item.extra.award) == 'table' and
+                                       type(item.extra.award.text) == 'string' and
+                                       item.extra.award.text or '',
+                                desc = item.extra and
+                                       type(item.extra.award) == 'table' and
+                                       type(item.extra.award.desc) == 'string' and
+                                       item.extra.award.desc or '',
+                            },
+                        },
                         username = item.user and type(item.user.username) == 'string' and item.user.username or '',
                         updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or '',
                         user = item.user and type(item.user) == 'table' and item.user or {},
