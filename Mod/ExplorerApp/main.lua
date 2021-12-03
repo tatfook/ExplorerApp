@@ -30,9 +30,6 @@ local ExplorerStore = commonlib.gettable('Mod.ExplorerApp.store.Explorer')
 local MainPage = NPL.load('(gl)Mod/ExplorerApp/pages/MainPage.lua')
 local GameOver = NPL.load('(gl)Mod/ExplorerApp/pages/GameProcess/GameOver/GameOver.lua')
 
--- components
-local RegisterComponents = NPL.load('(gl)Mod/ExplorerApp/components/RegisterComponents.lua')
-
 -- utils
 local Utils = NPL.load('(gl)Mod/WorldShare/helper/Utils.lua')
 
@@ -49,7 +46,6 @@ LOG.std(nil, 'info', 'ExplorerApp', 'explorer app version %s', ExplorerApp.versi
 
 function ExplorerApp:init()
     Filters:Init()
-    RegisterComponents:Init()
 end
 
 function ExplorerApp:Init(callback, classId, defaulOpenValue)

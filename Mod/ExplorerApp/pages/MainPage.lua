@@ -26,6 +26,9 @@ local Translation = commonlib.gettable('MyCompany.Aries.Game.Common.Translation'
 local Wallet = NPL.load('(gl)Mod/ExplorerApp/database/Wallet.lua')
 local ProjectsDatabase = NPL.load('../database/Projects.lua')
 
+-- components
+local RegisterComponents = NPL.load('(gl)Mod/ExplorerApp/components/RegisterComponents.lua')
+
 -- service
 local KeepworkService = NPL.load('(gl)Mod/WorldShare/service/KeepworkService.lua')
 local KeepworkServiceSession = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/Session.lua')
@@ -65,6 +68,8 @@ function MainPage:ShowPage(callback, classId, defaulOpenValue)
 
     self.defaulOpenValue = defaulOpenValue
 
+    RegisterComponents:Install()
+
     local params = Mod.WorldShare.Utils.ShowWindow(
         {
             url = 'Mod/ExplorerApp/pages/Theme/MainPage.html',
@@ -93,6 +98,8 @@ function MainPage:ShowPage(callback, classId, defaulOpenValue)
         self.downloadedGame = 'all'
         self.curPage = 1
         self.mainId = 0
+
+        RegisterComponents:Uninstall()
     end
 
     local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
@@ -206,7 +213,9 @@ function MainPage:SetCategoryTree(notGetWorks)
 
     KeepworkServiceProject:GetAllTags(
         function(data, err)
-            if err ~= 200 or type(data) ~= 'table' or not data.rows then
+            if err ~= 200 or
+               type(data) ~= 'table' or
+               not data.rows then
                 return
             end
 
@@ -217,16 +226,37 @@ function MainPage:SetCategoryTree(notGetWorks)
 
             self.categorySelected = { id = -1, value = L'热门', color = 'YELLOW' }
 
+            local level = 1
+
+            local function get_item_level(item)
+                if item.children and
+                   type(item.children) == 'table' and
+                   #item.children > 0 then
+                    level = level + 1
+
+                    for _, child in ipairs(item.children) do
+                        get_item_level(child)
+                    end
+                end
+            end
+
             for key, item in ipairs(data.rows) do
-                if item and item.tagname ~= 'paracraft专用' then
-                    local curItem = { id = item.id, value = item.tagname or '' }
+                if item and
+                   item.tagname ~= 'paracraft专用' and
+                   item.parentId == 0 then
+                    level = 1
+                    get_item_level(item)
+
+                    local curItem = {
+                        id = item.id,
+                        value = item.tagname or '',
+                        level = level,
+                        children = item.children or {}
+                    }
 
                     if item and item.extra and item.extra.enTagname and self:IsEnglish() then
                         curItem.enValue = item.extra.enTagname
                     end
-
-                    -- filter yellow button
-                    -- local value = ''
 
                     if curItem and curItem.value == '大赛作品' then
                         curItem.color = 'YELLOW'
@@ -266,7 +296,9 @@ function MainPage:SetCategoryTree(notGetWorks)
                         self.categorySelected = curItem
                         self.defaulOpenValue = nil
                     end
-                else
+                end
+
+                if item.tagname == 'paracraft专用' then
                     self.mainId = item.id
                 end
             end
@@ -440,14 +472,21 @@ function MainPage:SetWorksTree(categoryItem)
     local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if not MainPagePage then
-        return false
+        return
     end
 
-    if not categoryItem or type(categoryItem) ~= 'table' or not categoryItem.id then
-        return false
+    if not categoryItem or
+       type(categoryItem) ~= 'table' or
+       not categoryItem.id then
+        return
     end
 
     Mod.WorldShare.MsgBox:Show(L'请稍候...', nil, nil, nil, nil, 10)
+
+    if not MainPagePage.lazy_load then
+        MainPagePage.refreshing = true
+        self:Refresh(0)
+    end
 
     self.curSelected = 1
     self.isSearching = false
@@ -462,6 +501,7 @@ function MainPage:SetWorksTree(categoryItem)
             { page = self.curPage },
             function(data, err)
                 Mod.WorldShare.MsgBox:Close()
+                MainPagePage.refreshing = false
 
                 if not data or
                    type(data) ~= 'table' or
@@ -552,6 +592,10 @@ function MainPage:SetWorksTree(categoryItem)
                    not data.hits or
                    type(data.hits) ~= 'table' or
                    err ~= 200  then
+                    self.categorySelected = categoryItem
+                    MainPagePage.refreshing = false
+                    MainPagePage:GetNode('worksTree'):SetUIAttribute('DataSource', {})
+                    Mod.WorldShare.MsgBox:Close()
                     return
                 end
 
@@ -604,6 +648,7 @@ function MainPage:SetWorksTree(categoryItem)
                                 self.worksTree[#self.worksTree + 1] = item
                             end
     
+                            MainPagePage.refreshing = false
                             MainPagePage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
                             Mod.WorldShare.MsgBox:Close()
                         end)
@@ -611,6 +656,7 @@ function MainPage:SetWorksTree(categoryItem)
                         self:HandleWorldsTree(rows, function(rows)
                             self.worksTree = rows
     
+                            MainPagePage.refreshing = false
                             MainPagePage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
                             Mod.WorldShare.MsgBox:Close()
                         end)
