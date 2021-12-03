@@ -25,6 +25,7 @@ function MenuItemComponent.create(rootName, mcmlNode, bindingContext, _parent, l
     self.parentLayout = parentLayout
     self.level = mcmlNode:GetAttributeWithCode('level')
     self.index = mcmlNode:GetAttributeWithCode('index')
+    self.fullButton = mcmlNode:GetBool('full_button')
 
     return mcmlNode:DrawDisplayBlock(
             rootName,
@@ -42,25 +43,9 @@ end
 
 function MenuItemComponent.RenderCallback(mcmlNode, rootName, bindingContext, _parent, left, top, right, bottom, myLayout, css)
     if self.level and self.level > 1 then
-        local button = ParaUI.CreateUIObject(
-                        'button',
-                        'testtest',
-                        '_rt',
-                        -35,
-                        16,
-                        14,
-                        8)
-    
-        button.background = 'Texture/Aries/Creator/keepwork/rank/btn_qiehuan2_14X8_32bits.png#0 0 14 8'
-        button.zorder = 1
-
-        if self:IsSelectedItem(self.index) then
-            button.rotation = 3.14
-        end
-
         local curIndex = self.index
 
-        button:SetScript('onclick', function()
+        local function Handle()
             if self:IsSelectedItem(curIndex) then
                 for key, item in ipairs(selectedItem) do
                     if item == curIndex then
@@ -73,7 +58,43 @@ function MenuItemComponent.RenderCallback(mcmlNode, rootName, bindingContext, _p
             end
 
             mcmlNode:GetPageCtrl():Refresh(0.01)
-        end)
+        end
+
+        if self.fullButton then
+            local fullButton = ParaUI.CreateUIObject(
+                        'button',
+                        'testtest',
+                        '_lt',
+                        0,
+                        0,
+                        self.width - 10,
+                        40)
+    
+            fullButton.background = ''
+            fullButton.zorder = 1
+
+            fullButton:SetScript('onclick', Handle)
+
+            _parent:AddChild(fullButton)
+        end
+
+        local button = ParaUI.CreateUIObject(
+                        'button',
+                        'testtest',
+                        '_rt',
+                        -35,
+                        16,
+                        14,
+                        8)
+    
+        button.background = 'Texture/Aries/Creator/keepwork/rank/btn_qiehuan2_14X8_32bits.png#0 0 14 8'
+        button.zorder = 2
+
+        if self:IsSelectedItem(self.index) then
+            button.rotation = 3.14
+        end
+
+        button:SetScript('onclick', Handle)
 
         _parent:AddChild(button)
     end
