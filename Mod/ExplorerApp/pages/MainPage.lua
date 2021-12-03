@@ -738,6 +738,7 @@ function MainPage:HandleWorldsTree(rows, callback)
 
         item.isFavorite = false
         item.isStar = false
+        item.type = nil
 
         projectIds[#projectIds + 1] = item.id
     end
