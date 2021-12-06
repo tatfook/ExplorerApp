@@ -63,7 +63,7 @@ function MenuItemComponent.RenderCallback(mcmlNode, rootName, bindingContext, _p
         if self.fullButton then
             local fullButton = ParaUI.CreateUIObject(
                         'button',
-                        'testtest',
+                        nil,
                         '_lt',
                         0,
                         0,
@@ -73,14 +73,18 @@ function MenuItemComponent.RenderCallback(mcmlNode, rootName, bindingContext, _p
             fullButton.background = ''
             fullButton.zorder = 1
 
-            fullButton:SetScript('onclick', Handle)
+            fullButton:SetScript('onclick', function()
+                local onClickScript = mcmlNode:GetString('full_button_click')
+                Map3DSystem.mcml_controls.OnPageEvent(mcmlNode, onClickScript, self.index, mcmlNode)
+                Handle()
+            end)
 
             _parent:AddChild(fullButton)
         end
 
         local button = ParaUI.CreateUIObject(
                         'button',
-                        'testtest',
+                        nil,
                         '_rt',
                         -35,
                         16,
