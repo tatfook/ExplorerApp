@@ -124,7 +124,7 @@ function MenuItemComponent.RenderCallback(mcmlNode, rootName, bindingContext, _p
                             type = 'button',
                             onclick = 'select_category_by_id()',
                             name = item.id,
-                            value = item.tagname,
+                            value = Mod.WorldShare.Utils.WordsLimit(item.tagname),
                             align = 'center',
                             width = '100%',
                             style = 'background: url(Texture/Aries/Creator/keepwork/RedSummerCamp/works/works_32bits.png#205 112 86 46:10 10 10 10);\
@@ -186,6 +186,7 @@ function MenuItemComponent:IsSelectedItem(index)
 end
 
 function MenuItemComponent:ClearAllSelectedItems()
-
+    selectedItem:clear()
+    self.xmlRoot = nil
 end
 

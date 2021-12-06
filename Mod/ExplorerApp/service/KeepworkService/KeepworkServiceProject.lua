@@ -56,7 +56,40 @@ function KeepworkServiceProject:GetProjectDetailById(kpProjectId, callback, noTr
 end
 
 function KeepworkServiceProject:GetAllTags(callback)
-    KeepworkSystemTagApi:Search(callback)
+    if not callback or type(callback) ~= 'function' then
+        return
+    end
+
+    KeepworkSystemTagApi:Search(
+        function(data, err)
+            if err ~= 200 or
+               not data or
+               not data.rows then
+                callback()
+                return
+            end
+
+            for key, item in ipairs(data.rows) do
+                if item.children and
+                   type(item.children) == 'table' and
+                   #item.children > 0 then
+                    table.sort(item.children, function(a, b)
+                        if not a.extra or
+                           not a.extra.sn or
+                           not b.extra or
+                           not b.extra.sn then
+                            return false
+                        end
+
+                        return a.extra.sn < b.extra.sn
+                    end)
+                end
+            end
+
+            callback(data, err)
+        end,
+        callback
+    )
 end
 
 -- get recommend works

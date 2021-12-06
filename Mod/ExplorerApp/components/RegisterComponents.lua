@@ -26,5 +26,5 @@ function RegisterComponents:Uninstall()
     Map3DSystem.mcml_controls.UnRegisterUserControl('pe:menu_item')
 
     ParacraftWorldComponent.xmlRoot = nil
-    MenuItemComponent.xmlRoot = nil
+    MenuItemComponent:ClearAllSelectedItems()
 end
