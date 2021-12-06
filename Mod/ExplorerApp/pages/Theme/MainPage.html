@@ -11,6 +11,9 @@
                     local LoginModal = NPL.load('(gl)Mod/WorldShare/cellar/LoginModal/LoginModal.lua')
                     local VipPage = NPL.load('(gl)script/apps/Aries/Creator/Game/Tasks/User/VipPage.lua')
 
+                    -- component
+                    local MenuItemComponent = NPL.load('(gl)Mod/ExplorerApp/components/MenuItem/MenuItemComponent.lua')
+
                     -- service
                     local KeepworkServiceSession = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/Session.lua')
 
@@ -36,6 +39,7 @@
                         page.lazy_load = false
 
                         MainPage.curPage = 1
+                        MenuItemComponent:SetSelectedSubItem(id)
                         MainPage:SetWorksTree({ id = id })
                     end
 
@@ -217,7 +221,9 @@
                                 </div>
                             ]], width, width, height, margin_top, background)
                         else
-                            return '<div style="position: relative;margin-top: 8px;text-align: center;">' .. value .. '</div>'
+                            return '<div style="position: relative;margin-top: 8px;text-align: center;">' ..
+                                    Mod.WorldShare.Utils.WordsLimit(value, 110, 16) ..
+                                    '</div>'
                         end
                     end
 
@@ -599,6 +605,10 @@
                         local item = MainPage.categoryTree[Eval('index')]
 
                         return item.level
+                    end
+
+                    function get_children()
+                        return MainPage.categoryTree[Eval('index')].children or {}
                     end
 
                     function submit_opus()
@@ -1026,7 +1036,8 @@
                                             index='<%= Eval("index") %>'
                                             level='<%= get_item_level() %>'
                                             full_button='true'
-                                            full_button_click='select_category()' />
+                                            full_button_click='select_category()'
+                                            children='<%= get_children() %>' />
                                     </div>
                                 </Columns>
                             </pe:gridview>

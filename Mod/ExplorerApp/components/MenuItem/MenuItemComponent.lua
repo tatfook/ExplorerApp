@@ -2,6 +2,7 @@
 Title: Menu Item Component
 Author(s): big
 CreateDate: 2021.12.2
+ModifyDate: 2021.12.6
 Desc:
 Place: Foshan
 use the lib:
@@ -10,14 +11,12 @@ local MenuItemComponent = NPL.load('(gl)Mod/ExplorerApp/components/MenuItem/Menu
 ------------------------------------------------------------
 ]]
 
--- pages
-local MainPage = NPL.load('(gl)Mod/ExplorerApp/pages/MainPage.lua')
-
 local MenuItemComponent = NPL.export()
 
 local self = MenuItemComponent
 
 local selectedItem = commonlib.Array:new()
+local selectedSubItem = 0
 
 function MenuItemComponent.create(rootName, mcmlNode, bindingContext, _parent, left, top, width, height, style, parentLayout)
     self.width = width
@@ -26,6 +25,7 @@ function MenuItemComponent.create(rootName, mcmlNode, bindingContext, _parent, l
     self.level = mcmlNode:GetAttributeWithCode('level')
     self.index = mcmlNode:GetAttributeWithCode('index')
     self.fullButton = mcmlNode:GetBool('full_button')
+    self.children = mcmlNode:GetAttributeWithCode('children')
 
     return mcmlNode:DrawDisplayBlock(
             rootName,
@@ -75,7 +75,7 @@ function MenuItemComponent.RenderCallback(mcmlNode, rootName, bindingContext, _p
 
             fullButton:SetScript('onclick', function()
                 local onClickScript = mcmlNode:GetString('full_button_click')
-                Map3DSystem.mcml_controls.OnPageEvent(mcmlNode, onClickScript, self.index, mcmlNode)
+                Map3DSystem.mcml_controls.OnPageEvent(mcmlNode, onClickScript, curIndex, mcmlNode)
                 Handle()
             end)
 
@@ -114,7 +114,7 @@ function MenuItemComponent.RenderCallback(mcmlNode, rootName, bindingContext, _p
 
     if self.level and self.level > 1 then
         if self:IsSelectedItem(self.index) then
-            local children = MainPage.categoryTree[self.index].children or {}
+            local children = self.children or {}
             local childrenItems = {}
 
             for key, item in ipairs(children) do
@@ -127,20 +127,27 @@ function MenuItemComponent.RenderCallback(mcmlNode, rootName, bindingContext, _p
                             value = Mod.WorldShare.Utils.WordsLimit(item.tagname),
                             align = 'center',
                             width = '100%',
-                            style = 'background: url(Texture/Aries/Creator/keepwork/RedSummerCamp/works/works_32bits.png#205 112 86 46:10 10 10 10);\
-                                     height: 35px;',
+                            style = 'height: 35px;\
+                                     color: #FFFFFF;\
+                                     background: ""',
                         },
                         name = 'input'
                     },
                     attr = {
-                        style = 'margin-top: 3px;\
+                        style = 'margin-top: 9px;\
                                  margin-bottom: -3px;'
                     },
                     name = 'div'
                 }
+
+                if selectedSubItem == item.id then
+                    childrenItems[key][1].attr.style = 'height: 35px;\
+                                                        color: #FCCE39;\
+                                                        background: url(Texture/Aries/Creator/paracraft/ExplorerApp/anniudiban_24x24_32bits.png#0 0 24 24:7 7 7 7);'
+                end
             end
 
-            local containerHeight = #children * 35 + 10
+            local containerHeight = #children * 41 + 10
 
             xmlRoot[1][1][#xmlRoot[1][1] + 1] = {
                 [1] = childrenItems,
@@ -150,7 +157,10 @@ function MenuItemComponent.RenderCallback(mcmlNode, rootName, bindingContext, _p
                            margin-left: 4px;\
                            margin-top: -1px;\
                            margin-bottom: 8px;\
-                           background-color: #B7B7B7;'
+                           padding-left: 6px;\
+                           padding-right: 6px;\
+                           color: #FFFFFF;\
+                           background: url(Texture/Aries/Creator/paracraft/ExplorerApp/diban_24x24_32bits.png#0 0 24 24:11 11 11 11);'
                 },
                 name='div'
             }
@@ -185,8 +195,13 @@ function MenuItemComponent:IsSelectedItem(index)
     return false
 end
 
+function MenuItemComponent:SetSelectedSubItem(id)
+    selectedSubItem = id
+end
+
 function MenuItemComponent:ClearAllSelectedItems()
     selectedItem:clear()
     self.xmlRoot = nil
+    selectedSubItem = 0
 end
 
