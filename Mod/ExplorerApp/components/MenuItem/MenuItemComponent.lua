@@ -76,6 +76,7 @@ function MenuItemComponent.RenderCallback(mcmlNode, rootName, bindingContext, _p
             fullButton:SetScript('onclick', function()
                 local onClickScript = mcmlNode:GetString('full_button_click')
                 Map3DSystem.mcml_controls.OnPageEvent(mcmlNode, onClickScript, curIndex, mcmlNode)
+                self:SetSelectedSubItem(0)
                 Handle()
             end)
 
