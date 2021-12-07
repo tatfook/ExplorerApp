@@ -97,102 +97,185 @@
                         return #MainPage.worksTree
                     end
 
+                    local all_menubar_icon_style = {
+                        new = {
+                            width = 31,
+                            height = 19,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#248 360 31 19',
+                        },
+                        hot = {
+                            width = 23,
+                            height = 26,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#367 357 23 26',
+                        },
+                        cup = {
+                            width = 29,
+                            height = 27,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#19 357 29 27',
+                        },
+                        code = {
+                            width = 31,
+                            height = 27,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#250 485 31 27',
+                        },
+                        video = {
+                            width = 31,
+                            height = 24,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#138 486 31 24',
+                        },
+                        interact = {
+                            width = 31,
+                            height = 29,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#364 440 31 29',
+                        },
+                        scene = {
+                            width = 34,
+                            height = 28,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#16 483 34 28',
+                        },
+                        robot = {
+                            width = 26,
+                            height = 25,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#480 441 26 25',
+                        },
+                        computer = {
+                            width = 28,
+                            height = 23,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#479 401 28 23',
+                        },
+                        science = {
+                            width = 24,
+                            height = 26,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#141 441 24 26',
+                        },
+                        chinese = {
+                            width = 21,
+                            height = 26,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#255 441 21 26',
+                        },
+                        math = {
+                            width = 25,
+                            height = 25,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#256 400 25 25',
+                        },
+                        organisms = {
+                            width = 27,
+                            height = 28,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#143 398 27 28',
+                        },
+                        human_culture = {
+                            width = 25,
+                            height = 26,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#21 441 25 26',
+                        },
+                        art = {
+                            width = 28,
+                            height = 28,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#370 398 28 28',
+                        },
+                        desgin = {
+                            width = 28,
+                            height = 28,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#23 399 28 28',
+                        }
+                    }
+
                     local all_menubar_button_style = {
                         ['最新'] = {
-                            width = 83,
-                            height = 19,
-                            ['margin-top'] = 10,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#248 360 83 19',
+                            width = 34,
+                            height = 17,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#297 360 34 17',
+                            icon = all_menubar_icon_style.new,
                         },
                         ['热门'] = {
-                            width = 79,
-                            height = 26,
-                            ['margin-top'] = 6,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#367 357 79 26',
+                            width = 34,
+                            height = 15,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#412 363 34 15',
+                            icon = all_menubar_icon_style.hot,
                         },
                         ['大赛作品'] = {
-                            width = 89,
-                            height = 27,
-                            ['margin-top'] = 6,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#19 357 89 27',
+                            width = 54,
+                            height = 12,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#53 365 54 12',
+                            icon = all_menubar_icon_style.cup,
                         },
                         ['编程'] = {
-                            width = 81,
-                            height = 27,
-                            ['margin-top'] = 6,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#250 485 81 27',
+                            width = 34,
+                            height = 16,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#297 490 34 16',
+                            icon = all_menubar_icon_style.code,
                         },
                         ['短片'] = {
-                            width = 80,
-                            height = 24,
-                            ['margin-top'] = 7,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#138 486 80 24',
+                            width = 33,
+                            height = 15,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#185 490 33 15',
+                            icon = all_menubar_icon_style.video,
                         },
                         ['互动'] = {
-                            width = 80,
-                            height = 29,
-                            ['margin-top'] = 6,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#364 440 80 29',
+                            width = 33,
+                            height = 15,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#411 446 33 15',
+                            icon = all_menubar_icon_style.interact,
                         },
                         ['场景'] = {
-                            width = 83,
-                            height = 28,
-                            ['margin-top'] = 6,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#16 483 83 28',
+                            width = 33,
+                            height = 17,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#66 489 33 17',
+                            icon = all_menubar_icon_style.scene,
                         },
                         ['机器人'] = {
-                            width = 91,
-                            height = 25,
-                            ['margin-top'] = 7,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#480 441 91 25',
+                            width = 52,
+                            height = 16,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#519 446 52 16',
+                            icon = all_menubar_icon_style.robot,
                         },
                         ['计算机'] = {
-                            width = 91,
-                            height = 23,
-                            ['margin-top'] = 8,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#479 401 91 23',
+                            width = 53,
+                            height = 16,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#518 404 53 16',
+                            icon = all_menubar_icon_style.computer,
                         },
                         ['科学'] = {
-                            width = 78,
-                            height = 26,
-                            ['margin-top'] = 7,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#141 441 78 26',
+                            width = 34,
+                            height = 16,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#185 446 34 16',
+                            icon = all_menubar_icon_style.science,
                         },
                         ['语文'] = {
-                            width = 75,
-                            height = 26,
-                            ['margin-top'] = 7,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#255 441 75 26',
+                            width = 34,
+                            height = 16,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#297 446 34 16',
+                            icon = all_menubar_icon_style.chinese,
                         },
                         ['数学'] = {
-                            width = 75,
-                            height = 25,
-                            ['margin-top'] = 8,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#256 400 75 25',
+                            width = 34,
+                            height = 17,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#297 403 34 17',
+                            icon = all_menubar_icon_style.math,
                         },
                         ['生物'] = {
-                            width = 76,
-                            height = 28,
-                            ['margin-top'] = 6,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#143 398 76 28',
+                            width = 34,
+                            height = 15,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#186 404 34 15',
+                            icon = all_menubar_icon_style.organisms,
                         },
                         ['人文'] = {
-                            width = 77,
-                            height = 26,
-                            ['margin-top'] = 6,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#21 441 77 26',
+                            width = 33,
+                            height = 15,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#66 446 33 15',
+                            icon = all_menubar_icon_style.human_culture,
                         },
                         ['艺术'] = {
-                            width = 76,
-                            height = 28,
-                            ['margin-top'] = 5,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#370 398 76 28',
+                            width = 34,
+                            height = 17,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#412 403 34 17',
+                            icon = all_menubar_icon_style.art,
                         },
                         ['设计'] = {
-                            width = 76,
-                            height = 28,
-                            ['margin-top'] = 7,
-                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#23 399 76 28',
+                            width = 34,
+                            height = 16,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#65 404 34 16',
+                            icon = all_menubar_icon_style.desgin,
                         },
                     }
 
@@ -207,20 +290,48 @@
                         if all_menubar_button_style[value] then
                             width = all_menubar_button_style[value].width
                             height = all_menubar_button_style[value].height
-                            margin_top = all_menubar_button_style[value]['margin-top']
+                            margin_top = (40 - height) / 2
                             background = all_menubar_button_style[value].background
 
-                            return format([[
+                            local html = ''
+
+                            local text_html = format([[
                                 <div align='center'
-                                    style='width: %dpx;
+                                     style='width: %dpx;
                                             position: relative;'>
                                     <img align='center'
                                         style='width: %dpx;
-                                                height: %dpx;
-                                                margin-top: %dpx;'
+                                               height: %dpx;
+                                               margin-top: %dpx;
+                                               margin-left: 6px;'
                                         src='%s' />
                                 </div>
                             ]], width, width, height, margin_top, background)
+
+                            if all_menubar_button_style[value].icon then
+                                local icon_width = all_menubar_button_style[value].icon.width
+                                local icon_height = all_menubar_button_style[value].icon.height
+                                local icon_margin_top = (40 - icon_height) / 2
+                                local icon_margin_left = ((70 - icon_width) / 2) - 6
+                                local icon_background = all_menubar_button_style[value].icon.background
+
+                                local icon_html = format([[
+                                    <div style='position: relative;'>
+                                        <img align='center'
+                                             style='width: %dpx;
+                                                    height: %dpx;
+                                                    margin-top: %dpx;
+                                                    margin-left: %dpx;'
+                                             src='%s' />
+                                    </div>
+                                ]], icon_width, icon_height, icon_margin_top, icon_margin_left, icon_background)
+
+                                html = icon_html .. text_html
+                            else
+                                html = text_html
+                            end
+
+                            return html
                         else
                             return '<div style="position: relative;margin-top: 8px;text-align: center;">' ..
                                     Mod.WorldShare.Utils.WordsLimit(value, 110, 16) ..
