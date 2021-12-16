@@ -2,7 +2,7 @@
 Title: Explorer App
 Author(s): big
 CreateDate: 2019.01.18
-ModifyDate: 2021.11.17
+ModifyDate: 2021.12.16
 Desc: This is explorer app
 Place: Foshan
 use the lib:
@@ -12,22 +12,16 @@ local ExplorerApp = commonlib.gettable('Mod.ExplorerApp')
 ------------------------------------------------------------
 ]]
 
-NPL.load('(gl)script/apps/Aries/Creator/Game/Tasks/Task.lua')
 NPL.load('(gl)Mod/ExplorerApp/store/ExplorerStore.lua')
-NPL.load('(gl)Mod/ExplorerApp/tasks/ExplorerTask.lua')
-NPL.load('(gl)script/ide/AudioEngine/AudioEngine.lua')
 NPL.load('(gl)script/ide/System/Core/UniString.lua')
 NPL.load('(gl)script/apps/Aries/Creator/Game/Login/LocalLoadWorld.lua')
 NPL.load('(gl)script/apps/Aries/Creator/Game/Common/Translation.lua')
-
--- task
-local ExplorerTask = commonlib.gettable('Mod.ExplorerApp.tasks.ExplorerTask')
 
 -- store
 local ExplorerStore = commonlib.gettable('Mod.ExplorerApp.store.Explorer')
 
 -- pages
-local MainPage = NPL.load('(gl)Mod/ExplorerApp/pages/MainPage.lua')
+local MainPage = NPL.load('(gl)Mod/ExplorerApp/pages/MainPage/MainPage.lua')
 local GameOver = NPL.load('(gl)Mod/ExplorerApp/pages/GameProcess/GameOver/GameOver.lua')
 
 -- utils
@@ -61,17 +55,4 @@ function ExplorerApp:Init(callback, classId, defaulOpenValue)
 end
 
 function ExplorerApp:OnWorldLoad()
-    local mode = Mod.WorldShare.Store:Get('explorer/mode')
-
-    if not mode or mode ~= 'recommend' then
-        return false
-    end
-
-    GameLogic.GetCodeGlobal():RegisterTextEvent('dead', function()
-        GameOver:ShowPage()
-    end)
-
-    self.curTask = ExplorerTask:new()
-
-    MainPage:OnWorldLoad()
 end

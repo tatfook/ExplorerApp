@@ -1,8 +1,12 @@
 <pe:mcml>
-    <div style='width: 310px;height: 230px;'>
+    <div style='width: 310px;
+                height: 230px;'>
         <div style='<%= "position: relative;" %>'>
             <div class='work_item'>
-                <input type='button' class='click' name='<%=Eval("index")%>' onclick='select_project' />
+                <input type='button'
+                       class='click'
+                       name='<%=Eval("index")%>'
+                       onclick='select_project' />
                 <pe:if condition='<%= is_vip() %>' >
                     <pe:container zorder='4' style='background:;'>
                         <div class='vip_icon'></div>
