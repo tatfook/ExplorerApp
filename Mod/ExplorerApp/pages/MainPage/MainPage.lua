@@ -785,10 +785,12 @@ function MainPage:SetWorksTree()
 end
 
 function MainPage:Search()
-    local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage.ExplorerEmbed')
+    local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
+    local ExplorerEmbedPage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage.ExplorerEmbed')
 
-    if not MainPagePage then
-        return false
+    if not MainPagePage or
+       not ExplorerEmbedPage then
+        return
     end
 
     if not self.isSearching then
@@ -800,7 +802,7 @@ function MainPage:Search()
     local searchValue = self.searchValue
 
     if not searchValue or (type(searchValue) ~= 'string' and type(searchValue) ~= 'number') then
-        return false
+        return
     end
 
     KeepworkEsServiceProject:Search(
@@ -808,31 +810,32 @@ function MainPage:Search()
         { page = self.curPage },
         function(data, err)
             if not data or not data.hits then
-                return false
+                return
             end
 
             Mod.WorldShare.Store:Set('explorer/selectSortIndex', 1)
             self.categorySelected = {}
-            
+
             if self.curPage ~= 1 then
                 self:HandleWorldsTree(data.hits, function(rows)
                     for key, item in ipairs(rows) do
                         self.worksTree[#self.worksTree + 1] = item
                     end
 
-                    MainPagePage:GetNode('worksTree'):SetAttribute('DataSource', self.worksTree)
                     MainPagePage:SetValue('search_value', searchValue)
+                    MainPagePage:Refresh(0)
 
-                    self:Refresh()
+                    ExplorerEmbedPage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
+
                 end)
             else
                 self:HandleWorldsTree(data.hits, function(rows)
                     self.worksTree = rows
 
-                    MainPagePage:GetNode('worksTree'):SetAttribute('DataSource', self.worksTree)
                     MainPagePage:SetValue('search_value', searchValue)
+                    MainPagePage:Refresh(0)
 
-                    self:Refresh()
+                    ExplorerEmbedPage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
                 end)
             end
         end
