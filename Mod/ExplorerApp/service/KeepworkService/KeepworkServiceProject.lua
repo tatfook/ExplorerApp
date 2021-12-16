@@ -1,11 +1,12 @@
 --[[
 Title: Keepwork Projects Service
-Author(s):  big
-Date:  2019.01.25
+Author(s): big
+CreateDate: 2019.01.25
+ModifyDate: 2021.12.16
 Place: Foshan
 use the lib:
 ------------------------------------------------------------
-local KeepworkServiceProject = NPL.load("(gl)Mod/ExplorerApp/service/KeepworkService/Project.lua")
+local KeepworkServiceProject = NPL.load('(gl)Mod/ExplorerApp/service/KeepworkService/KeepworkServiceProject.lua')
 ------------------------------------------------------------
 ]]
 -- service
@@ -18,17 +19,12 @@ local KeepworkSystemTagApi = NPL.load('(gl)Mod/ExplorerApp/api/Keepwork/SystemTa
 
 local KeepworkServiceProject = NPL.export()
 
--- url: /projects/search
--- method: POST
--- param: x-page number
--- param: x-per-page number
--- param: classifyTags-like string
--- return object
-function KeepworkServiceProject:GetProjectByIds(mainId, projectIds, pages, callback)
-    KeepworkProjectsApi:SearchForParacraft(
+-- get list by ids
+function KeepworkServiceProject:GetProjectByIds(projectIds, pages, callback)
+    KeepworkProjectsApi:Search(
         pages and pages.perPage and pages.perPage or 10,
         pages and pages.page and pages.page or 1,
-        { tagIds = { mainId }, projectIds = projectIds },
+        { id = { ['$in'] = projectIds } },
         function(data, err)
             if type(callback) ~= 'function' then
                 return false

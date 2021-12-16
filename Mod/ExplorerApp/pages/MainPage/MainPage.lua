@@ -30,6 +30,7 @@ local KeepworkServiceProject = NPL.load('(gl)Mod/ExplorerApp/service/KeepworkSer
 local KeepworkEsServiceProject = NPL.load('(gl)Mod/ExplorerApp/service/KeepworkEsService/Project.lua')
 local WorldShareKeepworkServiceProject = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/Project.lua')
 local KeepworkServiceSchoolAndOrg = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/SchoolAndOrg.lua')
+local LocalServiceHistory = NPL.load('(gl)Mod/WorldShare/service/LocalService/LocalServiceHistory.lua')
 
 -- UI
 local SyncMain = NPL.load('(gl)Mod/WorldShare/cellar/Sync/Main.lua')
@@ -105,8 +106,12 @@ function MainPage:ShowPage(callback, classId, defaulOpenValue)
     end
 end
 
-function MainPage:ShowExporerEmbed()
+function MainPage:ShowExporerEmbed(width, height, x, y)
+    self:CloseExplorerEmbed()
+
     RegisterComponents:Install()
+
+    y = y or -545
 
     local params = Mod.WorldShare.Utils.ShowWindow(
         {
@@ -119,11 +124,11 @@ function MainPage:ShowExporerEmbed()
             allowDrag = false,
             bShow = nil,
             directPosition = true,
-            align = '_fi',
-            x = 0,
-            y = 0,
-            width = 0,
-            height = 0,
+            align = '_ct',
+            x = -768 / 2,
+            y = y / 2,
+            width = 1024,
+            height = 580,
             cancelShowAnimation = true,
             bToggleShowHide = true,
             DesignResolutionWidth = 1280,
@@ -137,6 +142,14 @@ function MainPage:ShowExporerEmbed()
         self.mainId = 0
 
         RegisterComponents:Uninstall()
+    end
+end
+
+function MainPage:CloseExplorerEmbed()
+    local ExplorerEmbedPage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage.ExplorerEmbed')
+
+    if ExplorerEmbedPage then
+        ExplorerEmbedPage:CloseWindow()
     end
 end
 
@@ -362,6 +375,7 @@ function MainPage:SetMyClassListWorksTree(classId)
         self.isSearching = false
         self.isFavorite = false
         self.isClassList = true
+        self.isHistory = false
         self.categorySelected = {}
     end
 
@@ -443,6 +457,7 @@ function MainPage:SetMyFavoriteWorksTree()
     self.isSearching = false
     self.isClassList = false
     self.isFavorite = true
+    self.isHistory = false
     self.categorySelected = {}
 
     KeepworkServiceProject:GetMyFavoriteProjects({ page = self.curPage }, function(data, err)
@@ -501,6 +516,85 @@ function MainPage:SetMyFavoriteWorksTree()
     end)
 end
 
+function MainPage:SetMyHistoryWorksTree()
+    local ExplorerEmbedPage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage.ExplorerEmbed')
+
+    if not ExplorerEmbedPage then
+        return
+    end
+
+    self.worksTree = {}
+    self.curSelected = 1
+    self.isSearching = false
+    self.isFavorite = false
+    self.isClassList = false
+    self.isHistory = true
+    self.categorySelected = {}
+
+    local historyItems = LocalServiceHistory:GetWorldRecord()
+    local historyIds = {}
+
+    for key, item in ipairs(historyItems) do
+        historyIds[#historyIds + 1] = item.projectId
+    end
+
+    KeepworkServiceProject:GetProjectByIds(
+        historyIds,
+        nil,
+        function(data, err)
+            if not data or
+               type(data) ~= 'table' and
+               not data.rows and
+               type(data.rows) ~= 'table' then
+                return
+            end
+
+            local mapData = {}
+
+            for key, item in ipairs(data.rows) do
+                for hKey, hItem in ipairs(historyItems) do
+                    if item.id == hItem.projectId then
+                        item.visitTime = hItem.date
+                        break
+                    end
+                end
+
+                mapData[#mapData + 1] = {
+                    id = item.id,
+                    name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or '',
+                    cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or '',
+                    username = item.user and type(item.user.username) == 'string' and item.user.username or '',
+                    updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or '',
+                    user = item.user and type(item.user) == 'table' and item.user or {},
+                    isVipWorld = isVipWorld,
+                    total_view = item.visit,
+                    total_like = item.star,
+                    total_mark = item.favorite,
+                    total_comment = item.comment,
+                    visitTime = item.visitTime,
+                }
+            end
+
+            table.sort(mapData, function(a, b)
+                if not a or
+                   not a.visitTime or
+                   not b or
+                   not b.visitTime then
+                    return false
+                end
+
+                return a.visitTime > b.visitTime
+            end)
+
+            self:HandleWorldsTree(mapData, function(rows)
+                self.worksTree = rows
+
+                ExplorerEmbedPage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
+            end)
+        end
+    )
+end
+
 function MainPage:SetWorksTree()
     local ExplorerEmbedPage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage.ExplorerEmbed')
 
@@ -522,6 +616,7 @@ function MainPage:SetWorksTree()
     self.isSearching = false
     self.isClassList = false
     self.isFavorite = false
+    self.isHistory = false
 
     if categoryItem.id ~= -1 and categoryItem.id ~= -2 then
         KeepworkServiceProject:GetRecommandProjects(
@@ -752,12 +847,6 @@ function MainPage:HandleWorldsTree(rows, callback)
     local projectIds = {}
 
     for key, item in ipairs(rows) do
-        if ProjectsDatabase:IsProjectDownloaded(item.id) then
-            item.downloaded = true
-        else
-            item.downloaded = false
-        end
-
         item.isFavorite = false
         item.isStar = false
         item.type = nil
