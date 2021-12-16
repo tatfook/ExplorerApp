@@ -99,7 +99,12 @@ function MenuItemComponent.RenderCallback(mcmlNode, rootName, bindingContext, _p
             button.rotation = 3.14
         end
 
-        button:SetScript('onclick', Handle)
+        button:SetScript('onclick', function()
+            local onClickScript = mcmlNode:GetString('full_button_click')
+            Map3DSystem.mcml_controls.OnPageEvent(mcmlNode, onClickScript, curIndex, mcmlNode)
+            self:SetSelectedSubItem(0)
+            Handle()
+        end)
 
         _parent:AddChild(button)
     end
