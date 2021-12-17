@@ -1,7 +1,8 @@
 --[[
 Title: filters
-Author(s):  Big
-Date: 2021.3.5
+Author(s): big
+CreateDate: 2021.03.05
+ModifyDate: 2021.12.17
 Desc: 
 use the lib:
 ------------------------------------------------------------
@@ -10,10 +11,10 @@ Filters:Init()
 ------------------------------------------------------------
 ]]
 
-local ExplorerApp = commonlib.gettable("Mod.ExplorerApp")
+local ExplorerApp = commonlib.gettable('Mod.ExplorerApp')
 
 -- pages
-local MainPage = NPL.load("(gl)Mod/ExplorerApp/pages/MainPage.lua")
+local MainPage = NPL.load('(gl)Mod/ExplorerApp/pages/MainPage/MainPage.lua')
 
 local Filters = NPL.export()
 
