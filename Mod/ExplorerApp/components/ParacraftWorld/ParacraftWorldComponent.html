@@ -256,7 +256,7 @@
                                 float:left;
                                 font-size: 12px;'>
                         <pe:if condition='<%= has_school() %>'>
-                            <div>
+                            <div tooltip="<%=Eval('user').school.name%>">
                                 <img style='width: 19px;height: 16px;margin-right: 5px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png#311 311 19 16' />
                                 <%= Mod.WorldShare.Utils.WordsLimit(Eval('user').school.name) %>
                             </div>
