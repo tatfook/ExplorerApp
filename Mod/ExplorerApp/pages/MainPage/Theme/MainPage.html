@@ -357,7 +357,7 @@
                         local content = [[
                             <div width='100%%'
                                 style='padding: 30px;
-                                        margin-top: -50px;
+                                        margin-top: -60px;
                                         font-size: 16px;
                                         base-font-size: 16px;
                                         color: #FFFFFF;'>
@@ -541,13 +541,14 @@
             <div>
                 <div>
                     <div align='right'
-                        style='width: 67px;
+                        style='width: 150px;
                                 height: 70px;
                                 position: relative;
                                 margin-right: 20px;
                                 margin-top: 8px;'>
+                        <%=GameLogic.GetFilters():apply_filters('get_vip_time_icon_div', 3, "open_vip")%>
                         <div onclick='open_vip'
-                            style='background: url(Texture/Aries/Creator/keepwork/RedSummerCamp/works/works_32bits.png#304 111 67 70);
+                            style='float: left; background: url(Texture/Aries/Creator/keepwork/RedSummerCamp/works/works_32bits.png#304 111 67 70);
                                     width: 67px;
                                     height: 70px;'></div>
                     </div>
@@ -601,7 +602,7 @@
                     align='center'>
                     <div class='strip'>
                         <div style='float: left;
-                                    margin-left: 10px;
+                                    margin-left: -50px;
                                     margin-top: 8px;
                                     padding-left: 500px;'>
                             <!-- 我的学校 -->
