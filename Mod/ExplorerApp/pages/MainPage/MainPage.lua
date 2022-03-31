@@ -532,6 +532,7 @@ function MainPage:SetMyHistoryWorksTree()
     self.categorySelected = {}
 
     local historyItems = LocalServiceHistory:GetWorldRecord()
+
     local historyIds = {}
 
     for key, item in ipairs(historyItems) do
@@ -540,7 +541,7 @@ function MainPage:SetMyHistoryWorksTree()
 
     KeepworkServiceProject:GetProjectByIds(
         historyIds,
-        nil,
+        { perPage = 10000 },
         function(data, err)
             if not data or
                type(data) ~= 'table' and
