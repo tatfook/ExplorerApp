@@ -94,6 +94,7 @@
                             worldinfo.isFavorite = true
                             worldinfo.total_mark = worldinfo.total_mark + 1
                             page:CallMethod('worksTree', 'DataBind')
+                            GameLogic.GetFilters():apply_filters("favorite_change", {showFavorite = false})
                         end)
                     end
 
@@ -104,6 +105,7 @@
                             worldinfo.isFavorite = false
                             worldinfo.total_mark = worldinfo.total_mark - 1
                             page:CallMethod('worksTree', 'DataBind')
+                            GameLogic.GetFilters():apply_filters("favorite_change", {showFavorite = true})
                         end)
                     end
 
