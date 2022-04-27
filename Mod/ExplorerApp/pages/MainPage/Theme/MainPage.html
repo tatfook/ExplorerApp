@@ -31,8 +31,8 @@
                     function select_category_by_id(id)
                         MainPage.curPage = 1
                         MenuItemComponent:SetSelectedSubItem(id)
-
-                        MainPage:SetMenuItem({ id = id })
+                        local isSelectMySchool = MenuItemComponent:IsSelectedItem(4)
+                        MainPage:SetMenuItem({ id = id,isSelectMySchool = isSelectMySchool})
                         MainPage:SetWorksTree()
                     end
 
@@ -68,6 +68,11 @@
                             width = 29,
                             height = 27,
                             background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#19 357 29 27',
+                        },
+                        myschool = {
+                            width = 26,
+                            height = 24,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#366 666 26 24',
                         },
                         code = {
                             width = 31,
@@ -154,6 +159,12 @@
                             height = 12,
                             background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#53 365 54 12',
                             icon = all_menubar_icon_style.cup,
+                        },
+                        ['我的学校'] = {
+                            width = 33,
+                            height = 15,
+                            background = 'Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#415 674 33 15',
+                            icon = all_menubar_icon_style.myschool,
                         },
                         ['编程'] = {
                             width = 34,
@@ -242,7 +253,7 @@
                         local height = 0
                         local margin_top = 0
                         local background = ''
-
+                        
                         if all_menubar_button_style[value] then
                             width = all_menubar_button_style[value].width
                             height = all_menubar_button_style[value].height
@@ -610,7 +621,8 @@
                                 onclick='show_my_school_list'
                                 style='width: 140px;
                                         height: 24px;
-                                        background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#544 34 140 23)' />
+                                        background: url()' />
+                                        <!-- Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#544 34 140 23 -->
                             <pe:container name='my_school_popup'
                                         visible='false'
                                         zorder='1'

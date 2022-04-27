@@ -224,8 +224,22 @@ function MainPage:GetMyClassList()
                         name = item.name
                     }
                 end
-
+                
                 MainPagePage:GetNode('class_list'):SetUIAttribute('DataSource', self.classList)
+                
+                local KeepworkServiceSession = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/Session.lua')
+                KeepworkServiceSession:Profile(function(response, err)
+                    local myClassId = response and response.class and response.class.id
+                    local myschoolData =self.categoryTree and self.categoryTree[4]
+                    if myschoolData then
+                        for key, item in ipairs(data) do
+                            if myClassId and myClassId == item.id then
+                                local classData = {tagname=item.name,parentId=100,id=item.id,updatedAt="2021-12-09T15:10:17.000Z",createdAt="2021-12-09T15:10:17.000Z",extra={sn=1,username="paracraft",},classify=1,}
+                                table.insert(myschoolData.children,classData)
+                            end
+                        end
+                    end
+                end)
             end
         end)
     end)
@@ -237,7 +251,6 @@ function MainPage:SetCategoryTree(notGetWorks)
     if not MainPagePage then
         return false
     end
-
     KeepworkServiceProject:GetAllTags(
         function(data, err)
             if err ~= 200 or
@@ -266,6 +279,9 @@ function MainPage:SetCategoryTree(notGetWorks)
                     end
                 end
             end
+
+            local myschoolData = {tagname="我的学校",updatedAt="2022-04-26T18:01:21.000Z",parentId=0,extra={username="paracraft",sn=1,enTagname="myschool",},children={{tagname="全校",parentId=100,id=100,updatedAt="2022-04-26T15:10:17.000Z",createdAt="2022-04-26T15:10:17.000Z",extra={sn=1,username="luoxiang",},classify=1,}},id=100,createdAt="2022-04-26T18:01:21.000Z",classify=1,}
+            table.insert(data.rows,4,myschoolData)
 
             for key, item in ipairs(data.rows) do
                 if item and
@@ -619,7 +635,7 @@ function MainPage:SetWorksTree()
     self.isFavorite = false
     self.isHistory = false
 
-    if categoryItem.id ~= -1 and categoryItem.id ~= -2 then
+    if categoryItem.id ~= -1 and categoryItem.id ~= -2 and categoryItem.id ~= 100 and not categoryItem.isSelectMySchool then
         KeepworkServiceProject:GetRecommandProjects(
             categoryItem.id,
             self.mainId,
@@ -692,6 +708,9 @@ function MainPage:SetWorksTree()
         )
 
         return
+    elseif categoryItem.id == 100 or categoryItem.isSelectMySchool then
+        local id = (categoryItem.isSelectMySchool and categoryItem.id ~= 100) and categoryItem.id or -1
+        self:SetMyClassListWorksTree(id)
     else
         -- hotest and newest
         local sort = ''
