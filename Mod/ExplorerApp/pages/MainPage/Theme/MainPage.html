@@ -551,18 +551,10 @@
             </pe:container>
             <div>
                 <div>
-                    <div align='right'
-                        style='width: 150px;
-                                height: 70px;
-                                position: relative;
-                                margin-right: -58px;
-                                margin-top: 8px;'>
+                    <pe:container alignment="_rt" style="background:url();">
                         <%=GameLogic.GetFilters():apply_filters('get_vip_time_icon_div', 3, "open_vip")%>
-                        <div onclick='open_vip'
-                            style='float: left; background: url(Texture/Aries/Creator/keepwork/RedSummerCamp/works/works_32bits.png#304 111 67 70);
-                                    width: 67px;
-                                    height: 70px;'></div>
-                    </div>
+                        <input type="button" value='' onclick="open_vip" class="red_summer_camp_open_vip_btn" style="margin-right:20px;margin-top:6px;" />
+                    </pe:container>
                     <div style='background: url(Texture/Aries/Creator/keepwork/RedSummerCamp/courses/courses_32bits.png#7 249 169 56);
                                 width: 169px;
                                 height: 56px;
