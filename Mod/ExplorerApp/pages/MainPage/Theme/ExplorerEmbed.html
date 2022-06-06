@@ -134,6 +134,7 @@
                             worldinfo.isStar = true
                             worldinfo.total_like = worldinfo.total_like + 1
                             page:CallMethod('worksTree', 'DataBind')
+                            GameLogic.GetFilters():apply_filters("like_change", {isLiked = true})
                         end)
                     end
 
