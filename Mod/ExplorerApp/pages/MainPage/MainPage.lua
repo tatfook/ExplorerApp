@@ -101,8 +101,6 @@ function MainPage:ShowPage(callback, classId, defaulOpenValue)
         else
             self:SetCategoryTree()     
         end
-
-        self:GetMyClassList() 
     end
 end
 
@@ -197,49 +195,25 @@ function MainPage.OnScreenSizeChange()
     MainPage:Refresh(0)
 end
 
-function MainPage:GetMyClassList()
-    local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
-
-    if not MainPagePage then
-        return false
-    end
-
+function MainPage:GetMyClassList(callback)
     KeepworkServiceSchoolAndOrg:GetUserAllSchools(function(data, err)
         if not data or not data.id then
             return
         end
 
-        self.classList = {
-            {
-                id = -1,
-                name = L'全校'
-            }
-        }
-
         KeepworkServiceSchoolAndOrg:GetMyClassList(data.id, function(data, err)
-            if data and type(data) == 'table' then
-                for key, item in ipairs(data) do
-                    self.classList[#self.classList + 1] = {
-                        id = item.id,
-                        name = item.name
-                    }
-                end
-                
-                MainPagePage:GetNode('class_list'):SetUIAttribute('DataSource', self.classList)
-                
-                local KeepworkServiceSession = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/Session.lua')
-                KeepworkServiceSession:Profile(function(response, err)
-                    local myClassId = response and response.class and response.class.id
-                    local myschoolData =self.categoryTree and self.categoryTree[4]
-                    if myschoolData then
-                        for key, item in ipairs(data) do
-                            if myClassId and myClassId == item.id then
-                                local classData = {tagname=item.name,parentId=100,id=item.id,updatedAt="2021-12-09T15:10:17.000Z",createdAt="2021-12-09T15:10:17.000Z",extra={sn=1,username="paracraft",},classify=1,}
-                                table.insert(myschoolData.children,classData)
-                            end
-                        end
-                    end
-                end)
+            if not data or type(data) ~= 'table' then
+                return
+            end
+
+            for key, item in ipairs(data) do
+                item.tagname = item.name
+                item.id = 'c' .. item.id
+                item.parentId = -3
+            end
+
+            if callback and type(callback) == 'function' then
+                callback(data)
             end
         end)
     end)
@@ -253,38 +227,41 @@ function MainPage:SetCategoryTree(notGetWorks)
     end
 
     if System.options.channelId == '430' then
-        self.categoryTree = {
-            {
-                id = 100,
-                level = 2,
-                value = '我的学校',
-                color = 'YELLOW',
-                extra = {
-                    sn = 1,
-                    enTagname = 'myschool',
-                },
-                children = {
+        self:GetMyClassList(
+            function(classData, err)
+                table.insert(
+                    classData,
+                    1,
                     {
-                        id = 100,
+                        id = 'c0',
+                        parentId = 0,
                         tagname = '全校',
-                        parentId = 100,
+                    }
+                )
+
+                self.categoryTree = {
+                    {
+                        id = -3,
+                        parentId = 0,
+                        level = 2,
+                        value = '我的学校',
+                        color = 'YELLOW',
                         extra = {
-                            sn = 1,
                             enTagname = 'myschool',
                         },
-                        classify = 1,
-                    }
+                        children = classData
+                    },
                 }
-            },
-        }
 
-        self.categorySelected = { id = 100, value = '我的学校', color = 'YELLOW' }
+                self.categorySelected = { id = -3, value = '我的学校', color = 'YELLOW' }
+        
+                MainPagePage:GetNode('categoryTree'):SetUIAttribute('DataSource', self.categoryTree)
 
-        MainPagePage:GetNode('categoryTree'):SetUIAttribute('DataSource', self.categoryTree)
-
-        if not notGetWorks then
-            self:SetWorksTree(self.categorySelected)
-        end
+                if not notGetWorks then
+                    self:SetMyClassListWorksTree(-1)
+                end
+            end
+        )
     else
         KeepworkServiceProject:GetAllTags(
             function(data, err)
@@ -315,98 +292,100 @@ function MainPage:SetCategoryTree(notGetWorks)
                     end
                 end
 
-                local myschoolData = {
-                    tagname = '我的学校',
-                    parentId = 0,
-                    extra = {
-                        sn = 1,
-                        enTagname = 'myschool',
-                    },
-                    children = {
-                        {
-                            id = 100,
-                            tagname = '全校',
-                            parentId = 100,
+                self:GetMyClassList(
+                    function(classData, err)
+                        table.insert(
+                            classData,
+                            1,
+                            {
+                                id = 'c0',
+                                tagname = '全校',
+                                parentId = 0,
+                            }
+                        )
+
+                        local myschoolData = {
+                            tagname = '我的学校',
+                            parentId = 0,
                             extra = {
-                                sn = 1,
+                                enTagname = 'myschool',
                             },
-                            classify = 1,
+                            children = classData,
+                            id = -3,
                         }
-                    },
-                    id = 100,
-                    classify = 1,
-                }
+        
+                        table.insert(data.rows, 4, myschoolData)
+        
+                        for key, item in ipairs(data.rows) do
+                            if item and
+                            item.tagname ~= 'paracraft专用' and
+                            item.parentId == 0 then
+                                level = 1
+                                get_item_level(item)
+        
+                                local curItem = {
+                                    id = item.id,
+                                    value = item.tagname or '',
+                                    level = level,
+                                    children = item.children or {}
+                                }
+        
+                                if item and item.extra and item.extra.enTagname and self:IsEnglish() then
+                                    curItem.enValue = item.extra.enTagname
+                                end
+        
+                                if curItem and curItem.value == '大赛作品' then
+                                    curItem.color = 'YELLOW'
+                                elseif curItem and curItem.value == '我的学校' then
+                                    curItem.color = 'YELLOW'
+                                elseif curItem and curItem.value == '编程' then
+                                    curItem.color = 'BLACK'
+                                elseif curItem and curItem.value == '短片' then
+                                    curItem.color = 'BLACK'
+                                elseif curItem and curItem.value == '场景' then
+                                    curItem.color = 'BLACK'
+                                elseif curItem and curItem.value == '机器人' then
+                                    curItem.color = 'BLACK'
+                                elseif curItem and curItem.value == '计算机' then
+                                    curItem.color = 'BLACK'
+                                elseif curItem and curItem.value == '互动' then
+                                    curItem.color = 'BLACK'
+                                elseif curItem and curItem.value == '科学' then
+                                    curItem.color = 'BLACK'
+                                elseif curItem and curItem.value == '语文' then
+                                    curItem.color = 'BLACK'
+                                elseif curItem and curItem.value == '人文' then
+                                    curItem.color = 'BLACK'
+                                elseif curItem and curItem.value == '艺术' then
+                                    curItem.color = 'BLACK'
+                                elseif curItem and curItem.value == '数学' then
+                                    curItem.color = 'BLACK'
+                                elseif curItem and curItem.value == '生物' then
+                                    curItem.color = 'BLACK'
+                                elseif curItem and curItem.value == '设计' then
+                                    curItem.color = 'BLACK'
+                                end
+        
+                                self.categoryTree[#self.categoryTree + 1] = curItem
 
-                table.insert(data.rows, 4, myschoolData)
-
-                for key, item in ipairs(data.rows) do
-                    if item and
-                    item.tagname ~= 'paracraft专用' and
-                    item.parentId == 0 then
-                        level = 1
-                        get_item_level(item)
-
-                        local curItem = {
-                            id = item.id,
-                            value = item.tagname or '',
-                            level = level,
-                            children = item.children or {}
-                        }
-
-                        if item and item.extra and item.extra.enTagname and self:IsEnglish() then
-                            curItem.enValue = item.extra.enTagname
+                                if self.defaulOpenValue and curItem.value == self.defaulOpenValue then
+                                    self.categorySelected = curItem
+                                    self.defaulOpenValue = nil
+                                end
+                            end
+        
+                            if item.tagname == 'paracraft专用' then
+                                self.mainId = item.id
+                            end
                         end
-
-                        if curItem and curItem.value == '大赛作品' then
-                            curItem.color = 'YELLOW'
-                        elseif curItem and curItem.value == '我的学校' then
-                            curItem.color = 'YELLOW'
-                        elseif curItem and curItem.value == '编程' then
-                            curItem.color = 'BLACK'
-                        elseif curItem and curItem.value == '短片' then
-                            curItem.color = 'BLACK'
-                        elseif curItem and curItem.value == '场景' then
-                            curItem.color = 'BLACK'
-                        elseif curItem and curItem.value == '机器人' then
-                            curItem.color = 'BLACK'
-                        elseif curItem and curItem.value == '计算机' then
-                            curItem.color = 'BLACK'
-                        elseif curItem and curItem.value == '互动' then
-                            curItem.color = 'BLACK'
-                        elseif curItem and curItem.value == '科学' then
-                            curItem.color = 'BLACK'
-                        elseif curItem and curItem.value == '语文' then
-                            curItem.color = 'BLACK'
-                        elseif curItem and curItem.value == '人文' then
-                            curItem.color = 'BLACK'
-                        elseif curItem and curItem.value == '艺术' then
-                            curItem.color = 'BLACK'
-                        elseif curItem and curItem.value == '数学' then
-                            curItem.color = 'BLACK'
-                        elseif curItem and curItem.value == '生物' then
-                            curItem.color = 'BLACK'
-                        elseif curItem and curItem.value == '设计' then
-                            curItem.color = 'BLACK'
-                        end
-
-                        self.categoryTree[#self.categoryTree + 1] = curItem
-
-                        if self.defaulOpenValue and curItem.value == self.defaulOpenValue then
-                            self.categorySelected = curItem
-                            self.defaulOpenValue = nil
+        
+                        MainPagePage:GetNode('categoryTree'):SetUIAttribute('DataSource', self.categoryTree)
+        
+                        if not notGetWorks then
+                            self:SetWorksTree(self.categorySelected)
                         end
                     end
-
-                    if item.tagname == 'paracraft专用' then
-                        self.mainId = item.id
-                    end
-                end
-
-                MainPagePage:GetNode('categoryTree'):SetUIAttribute('DataSource', self.categoryTree)
-
-                if not notGetWorks then
-                    self:SetWorksTree(self.categorySelected)
-                end
+                )
             end
         )
     end
@@ -449,7 +428,6 @@ function MainPage:SetMyClassListWorksTree(classId)
         self.isFavorite = false
         self.isClassList = true
         self.isHistory = false
-        self.categorySelected = {}
     end
 
     if classId == -1 then
@@ -693,7 +671,7 @@ function MainPage:SetWorksTree()
     self.isFavorite = false
     self.isHistory = false
 
-    if categoryItem.id ~= -1 and categoryItem.id ~= -2 and categoryItem.id ~= 100 and not categoryItem.isSelectMySchool then
+    if categoryItem.id ~= -1 and categoryItem.id ~= -2 then
         KeepworkServiceProject:GetRecommandProjects(
             categoryItem.id,
             self.mainId,
@@ -766,9 +744,6 @@ function MainPage:SetWorksTree()
         )
 
         return
-    elseif categoryItem.id == 100 or categoryItem.isSelectMySchool then
-        local id = (categoryItem.isSelectMySchool and categoryItem.id ~= 100) and categoryItem.id or -1
-        self:SetMyClassListWorksTree(id)
     else
         -- hotest and newest
         local sort = ''

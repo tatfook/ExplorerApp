@@ -25,14 +25,40 @@
                         MenuItemComponent:SetSelectedSubItem(0)
 
                         MainPage:SetMenuItem(MainPage.categoryTree[index])
+
+                        local item = MainPage.categoryTree[index]
+
+                        if item and type(item) == 'table' and item.id == -3 then
+                            MainPage:SetMyClassListWorksTree(-1)
+                            return
+                        end
+
                         MainPage:SetWorksTree()
                     end
 
                     function select_category_by_id(id)
                         MainPage.curPage = 1
                         MenuItemComponent:SetSelectedSubItem(id)
-                        local isSelectMySchool = MenuItemComponent:IsSelectedItem(4)
-                        MainPage:SetMenuItem({ id = id,isSelectMySchool = isSelectMySchool})
+
+                        if id and type(id) == 'string' then
+                            if string.match(id, '^c%d') then
+                                -- class id
+
+                                id = string.match(id, '^c(%d+)')
+
+                                if id == 0 then
+                                    MainPage:SetMyClassListWorksTree(-1)
+                                else
+                                    MainPage:SetMyClassListWorksTree(id)
+                                end
+
+                                page:Refresh(0)
+
+                                return
+                            end
+                        end
+
+                        MainPage:SetMenuItem({ id = id })
                         MainPage:SetWorksTree()
                     end
 
@@ -510,7 +536,7 @@
                     },
                     list_search_bar = {
                         float = 'left',
-                        ['margin-left'] = 10,
+                        ['margin-left'] = 790,
                         ['margin-top'] = 4,
                         textcolor = '#ffffff',
                         width = 316,
@@ -615,58 +641,6 @@
                     style='width: 1150px;'
                     align='center'>
                     <div class='strip'>
-                        <div style='float: left;
-                                    margin-left: -50px;
-                                    margin-top: 8px;
-                                    padding-left: 500px;'>
-                            <!-- 我的学校 -->
-                            <input type='button'
-                                onclick='show_my_school_list'
-                                style='width: 140px;
-                                        height: 24px;
-                                        background: url()' />
-                                        <!-- Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#544 34 140 23 -->
-                            <pe:container name='my_school_popup'
-                                        visible='false'
-                                        zorder='1'
-                                        style='position: relative;
-                                                display:none;
-                                                background:'>
-                                <div style='width: 144px;
-                                            height: 200px;
-                                            margin-left: -2px;
-                                            padding-top: 2px;
-                                            padding-bottom: 2px;
-                                            padding-left: 6px;
-                                            padding-right: 6px;
-                                            color: white;
-                                            background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#306 169 68 68:18 18 18 18);'>
-                                    <pe:gridview name='class_list'>
-                                        <Columns>
-                                            <div>
-                                                <input type='button'
-                                                    style='width: 130px;
-                                                            height: 20px;
-                                                            margin-top: 6px;
-                                                            color: #FFFFFF;
-                                                            background: url()'
-                                                    onclick='select_class'
-                                                    value='<%= Eval("name") %>'
-                                                    name='<%= Eval("id") %>' />
-                                            </div>
-                                        </Columns>
-                                    </pe:gridview>
-                                </div>
-                            </pe:container>
-                        </div>
-                        <div style='float: left;margin-left: 10px;margin-top: 8px;width:110px'>
-                            <!-- 我的收藏 -->
-                            <!-- <input type='button'
-                                onclick='my_favorite_projects'
-                                style='width: 110px;
-                                        height: 24px;
-                                        background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#544 70 110 23)' /> -->
-                        </div>
                         <div class='list_search_bar'>
                             <input type='text'
                                 name='search_value'
