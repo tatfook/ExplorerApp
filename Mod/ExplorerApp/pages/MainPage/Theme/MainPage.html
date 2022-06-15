@@ -42,6 +42,14 @@
                         return item.level
                     end
 
+                    function is_show_scroll_bar()
+                        if #MainPage.categoryTree >= 13 then
+                            return true
+                        else
+                            return false
+                        end
+                    end
+
                     function search()
                         MainPage.curPage = 1
                         MainPage.isSearching = false
@@ -690,6 +698,7 @@
                                         <pe:menu_item
                                             index='<%= Eval("index") %>'
                                             level='<%= get_item_level() %>'
+                                            is_show_scroll_bar='<%= is_show_scroll_bar() %>'
                                             full_button='true'
                                             full_button_click='select_category()'
                                             children='<%= get_children() %>' />

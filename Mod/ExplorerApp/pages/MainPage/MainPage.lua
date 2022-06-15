@@ -249,110 +249,167 @@ function MainPage:SetCategoryTree(notGetWorks)
     local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if not MainPagePage then
-        return false
+        return
     end
-    KeepworkServiceProject:GetAllTags(
-        function(data, err)
-            if err ~= 200 or
-               type(data) ~= 'table' or
-               not data.rows then
-                return
-            end
 
-            self.categoryTree = {
-                { id = -1, value = L'热门', color = 'YELLOW' },
-                { id = -2, value = L'最新', color = 'YELLOW' },
-            }
-
-            self.categorySelected = { id = -1, value = L'热门', color = 'YELLOW' }
-
-            local level = 1
-
-            local function get_item_level(item)
-                if item.children and
-                   type(item.children) == 'table' and
-                   #item.children > 0 then
-                    level = level + 1
-
-                    for _, child in ipairs(item.children) do
-                        get_item_level(child)
-                    end
-                end
-            end
-
-            local myschoolData = {tagname="我的学校",updatedAt="2022-04-26T18:01:21.000Z",parentId=0,extra={username="paracraft",sn=1,enTagname="myschool",},children={{tagname="全校",parentId=100,id=100,updatedAt="2022-04-26T15:10:17.000Z",createdAt="2022-04-26T15:10:17.000Z",extra={sn=1,username="luoxiang",},classify=1,}},id=100,createdAt="2022-04-26T18:01:21.000Z",classify=1,}
-            table.insert(data.rows,4,myschoolData)
-
-            for key, item in ipairs(data.rows) do
-                if item and
-                   item.tagname ~= 'paracraft专用' and
-                   item.parentId == 0 then
-                    level = 1
-                    get_item_level(item)
-
-                    local curItem = {
-                        id = item.id,
-                        value = item.tagname or '',
-                        level = level,
-                        children = item.children or {}
+    if System.options.channelId == '430' then
+        self.categoryTree = {
+            {
+                id = 100,
+                level = 2,
+                value = '我的学校',
+                color = 'YELLOW',
+                extra = {
+                    sn = 1,
+                    enTagname = 'myschool',
+                },
+                children = {
+                    {
+                        id = 100,
+                        tagname = '全校',
+                        parentId = 100,
+                        extra = {
+                            sn = 1,
+                            enTagname = 'myschool',
+                        },
+                        classify = 1,
                     }
+                }
+            },
+        }
 
-                    if item and item.extra and item.extra.enTagname and self:IsEnglish() then
-                        curItem.enValue = item.extra.enTagname
-                    end
+        self.categorySelected = { id = 100, value = '我的学校', color = 'YELLOW' }
 
-                    if curItem and curItem.value == '大赛作品' then
-                        curItem.color = 'YELLOW'
-                    elseif curItem and curItem.value == '我的学校' then
-                        curItem.color = 'YELLOW'
-                    elseif curItem and curItem.value == '编程' then
-                        curItem.color = 'BLACK'
-                    elseif curItem and curItem.value == '短片' then
-                        curItem.color = 'BLACK'
-                    elseif curItem and curItem.value == '场景' then
-                        curItem.color = 'BLACK'
-                    elseif curItem and curItem.value == '机器人' then
-                        curItem.color = 'BLACK'
-                    elseif curItem and curItem.value == '计算机' then
-                        curItem.color = 'BLACK'
-                    elseif curItem and curItem.value == '互动' then
-                        curItem.color = 'BLACK'
-                    elseif curItem and curItem.value == '科学' then
-                        curItem.color = 'BLACK'
-                    elseif curItem and curItem.value == '语文' then
-                        curItem.color = 'BLACK'
-                    elseif curItem and curItem.value == '人文' then
-                        curItem.color = 'BLACK'
-                    elseif curItem and curItem.value == '艺术' then
-                        curItem.color = 'BLACK'
-                    elseif curItem and curItem.value == '数学' then
-                        curItem.color = 'BLACK'
-                    elseif curItem and curItem.value == '生物' then
-                        curItem.color = 'BLACK'
-                    elseif curItem and curItem.value == '设计' then
-                        curItem.color = 'BLACK'
-                    end
+        MainPagePage:GetNode('categoryTree'):SetUIAttribute('DataSource', self.categoryTree)
 
-                    self.categoryTree[#self.categoryTree + 1] = curItem
-
-                    if self.defaulOpenValue and curItem.value == self.defaulOpenValue then
-                        self.categorySelected = curItem
-                        self.defaulOpenValue = nil
-                    end
-                end
-
-                if item.tagname == 'paracraft专用' then
-                    self.mainId = item.id
-                end
-            end
-
-            MainPagePage:GetNode('categoryTree'):SetUIAttribute('DataSource', self.categoryTree)
-
-            if not notGetWorks then
-                self:SetWorksTree(self.categorySelected)
-            end
+        if not notGetWorks then
+            self:SetWorksTree(self.categorySelected)
         end
-    )
+    else
+        KeepworkServiceProject:GetAllTags(
+            function(data, err)
+                if err ~= 200 or
+                   type(data) ~= 'table' or
+                   not data.rows then
+                    return
+                end
+
+                self.categoryTree = {
+                    { id = -1, value = L'热门', color = 'YELLOW' },
+                    { id = -2, value = L'最新', color = 'YELLOW' },
+                }
+
+                self.categorySelected = { id = -1, value = L'热门', color = 'YELLOW' }
+
+                local level = 1
+
+                local function get_item_level(item)
+                    if item.children and
+                       type(item.children) == 'table' and
+                       #item.children > 0 then
+                        level = level + 1
+
+                        for _, child in ipairs(item.children) do
+                            get_item_level(child)
+                        end
+                    end
+                end
+
+                local myschoolData = {
+                    tagname = '我的学校',
+                    parentId = 0,
+                    extra = {
+                        sn = 1,
+                        enTagname = 'myschool',
+                    },
+                    children = {
+                        {
+                            id = 100,
+                            tagname = '全校',
+                            parentId = 100,
+                            extra = {
+                                sn = 1,
+                            },
+                            classify = 1,
+                        }
+                    },
+                    id = 100,
+                    classify = 1,
+                }
+
+                table.insert(data.rows, 4, myschoolData)
+
+                for key, item in ipairs(data.rows) do
+                    if item and
+                    item.tagname ~= 'paracraft专用' and
+                    item.parentId == 0 then
+                        level = 1
+                        get_item_level(item)
+
+                        local curItem = {
+                            id = item.id,
+                            value = item.tagname or '',
+                            level = level,
+                            children = item.children or {}
+                        }
+
+                        if item and item.extra and item.extra.enTagname and self:IsEnglish() then
+                            curItem.enValue = item.extra.enTagname
+                        end
+
+                        if curItem and curItem.value == '大赛作品' then
+                            curItem.color = 'YELLOW'
+                        elseif curItem and curItem.value == '我的学校' then
+                            curItem.color = 'YELLOW'
+                        elseif curItem and curItem.value == '编程' then
+                            curItem.color = 'BLACK'
+                        elseif curItem and curItem.value == '短片' then
+                            curItem.color = 'BLACK'
+                        elseif curItem and curItem.value == '场景' then
+                            curItem.color = 'BLACK'
+                        elseif curItem and curItem.value == '机器人' then
+                            curItem.color = 'BLACK'
+                        elseif curItem and curItem.value == '计算机' then
+                            curItem.color = 'BLACK'
+                        elseif curItem and curItem.value == '互动' then
+                            curItem.color = 'BLACK'
+                        elseif curItem and curItem.value == '科学' then
+                            curItem.color = 'BLACK'
+                        elseif curItem and curItem.value == '语文' then
+                            curItem.color = 'BLACK'
+                        elseif curItem and curItem.value == '人文' then
+                            curItem.color = 'BLACK'
+                        elseif curItem and curItem.value == '艺术' then
+                            curItem.color = 'BLACK'
+                        elseif curItem and curItem.value == '数学' then
+                            curItem.color = 'BLACK'
+                        elseif curItem and curItem.value == '生物' then
+                            curItem.color = 'BLACK'
+                        elseif curItem and curItem.value == '设计' then
+                            curItem.color = 'BLACK'
+                        end
+
+                        self.categoryTree[#self.categoryTree + 1] = curItem
+
+                        if self.defaulOpenValue and curItem.value == self.defaulOpenValue then
+                            self.categorySelected = curItem
+                            self.defaulOpenValue = nil
+                        end
+                    end
+
+                    if item.tagname == 'paracraft专用' then
+                        self.mainId = item.id
+                    end
+                end
+
+                MainPagePage:GetNode('categoryTree'):SetUIAttribute('DataSource', self.categoryTree)
+
+                if not notGetWorks then
+                    self:SetWorksTree(self.categorySelected)
+                end
+            end
+        )
+    end
 end
 
 function MainPage:SetMenuItem(categoryItem)
@@ -432,7 +489,8 @@ function MainPage:SetMyClassListWorksTree(classId)
                 total_view = item.visit,
                 total_like = item.star,
                 total_mark = item.favorite,
-                total_comment = item.comment
+                total_comment = item.comment,
+                visibility = item.visibility,
             }
         end
 
@@ -683,7 +741,7 @@ function MainPage:SetWorksTree()
                         isVipWorld = isVipWorld,
                         total_view = item.visit,
                         total_like = item.star,
-                        total_mark = item.favorite
+                        total_mark = item.favorite,
                     }
                 end
 
@@ -741,17 +799,29 @@ function MainPage:SetWorksTree()
                 local usernames = {}
     
                 for key, item in ipairs(data.hits) do
-                    if item and type(item) == 'table' and item.username and type(item.username) == 'string' then
-                        local beExisted = false
-    
-                        for uKey, uItem in ipairs(usernames) do
-                            if uItem and type(uItem) == 'string' and uItem == item.username then
-                                beExisted = true
+                    if item and type(item) == 'table' then
+                       if item.username and
+                          type(item.username) == 'string' then
+                            local beExisted = false
+        
+                            for uKey, uItem in ipairs(usernames) do
+                                if uItem and type(uItem) == 'string' and uItem == item.username then
+                                    beExisted = true
+                                end
+                            end
+        
+                            if not beExisted then
+                                usernames[#usernames + 1] = item.username
                             end
                         end
-    
-                        if not beExisted then
-                            usernames[#usernames + 1] = item.username
+
+                        if item.visibility and
+                           type(item.visibility) == 'string' then
+                            if item.visibility == 'public' then
+                                item.visibility = 0
+                            else
+                                item.visibility = 1
+                            end
                         end
                     end
                 end

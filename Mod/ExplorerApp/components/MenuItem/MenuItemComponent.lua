@@ -25,6 +25,7 @@ function MenuItemComponent.create(rootName, mcmlNode, bindingContext, _parent, l
     self.level = mcmlNode:GetAttributeWithCode('level')
     self.index = mcmlNode:GetAttributeWithCode('index')
     self.fullButton = mcmlNode:GetBool('full_button')
+    self.isShowScrollBar = mcmlNode:GetAttributeWithCode('is_show_scroll_bar')
     self.children = mcmlNode:GetAttributeWithCode('children')
 
     return mcmlNode:DrawDisplayBlock(
@@ -61,14 +62,16 @@ function MenuItemComponent.RenderCallback(mcmlNode, rootName, bindingContext, _p
         end
 
         if self.fullButton then
-            local fullButton = ParaUI.CreateUIObject(
-                        'button',
-                        nil,
-                        '_lt',
-                        0,
-                        0,
-                        self.width - 10,
-                        40)
+            local fullButton =
+                ParaUI.CreateUIObject(
+                    'button',
+                    nil,
+                    '_lt',
+                    0,
+                    0,
+                    self.width - 10,
+                    40
+                )
     
             fullButton.background = ''
             fullButton.zorder = 1
@@ -83,14 +86,32 @@ function MenuItemComponent.RenderCallback(mcmlNode, rootName, bindingContext, _p
             _parent:AddChild(fullButton)
         end
 
-        local button = ParaUI.CreateUIObject(
-                        'button',
-                        nil,
-                        '_rt',
-                        -35,
-                        16,
-                        14,
-                        8)
+        local button
+
+        if self.isShowScrollBar then
+            button =
+                ParaUI.CreateUIObject(
+                    'button',
+                    nil,
+                    '_rt',
+                    -35,
+                    16,
+                    14,
+                    8
+                )
+        else
+            button =
+                ParaUI.CreateUIObject(
+                    'button',
+                    nil,
+                    '_rt',
+                    -50,
+                    16,
+                    14,
+                    8
+                )
+        end
+
     
         button.background = 'Texture/Aries/Creator/keepwork/rank/btn_qiehuan2_14X8_32bits.png#0 0 14 8'
         button.zorder = 2
