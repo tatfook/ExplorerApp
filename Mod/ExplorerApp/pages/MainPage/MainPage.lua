@@ -196,8 +196,13 @@ function MainPage.OnScreenSizeChange()
 end
 
 function MainPage:GetMyClassList(callback)
+    if not callback or type(callback) ~= 'function' then
+        return
+    end
+
     KeepworkServiceSchoolAndOrg:GetUserAllSchools(function(data, err)
         if not data or not data.id then
+            callback({})
             return
         end
 
@@ -212,9 +217,7 @@ function MainPage:GetMyClassList(callback)
                 item.parentId = -3
             end
 
-            if callback and type(callback) == 'function' then
-                callback(data)
-            end
+            callback(data)
         end)
     end)
 end
@@ -294,6 +297,7 @@ function MainPage:SetCategoryTree(notGetWorks)
 
                 self:GetMyClassList(
                     function(classData, err)
+                        echo(classData, true)
                         table.insert(
                             classData,
                             1,
