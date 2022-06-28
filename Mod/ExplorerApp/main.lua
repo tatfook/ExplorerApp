@@ -12,13 +12,12 @@ local ExplorerApp = commonlib.gettable('Mod.ExplorerApp')
 ------------------------------------------------------------
 ]]
 
-NPL.load('(gl)Mod/ExplorerApp/store/ExplorerStore.lua')
 NPL.load('(gl)script/ide/System/Core/UniString.lua')
 NPL.load('(gl)script/apps/Aries/Creator/Game/Login/LocalLoadWorld.lua')
 NPL.load('(gl)script/apps/Aries/Creator/Game/Common/Translation.lua')
 
 -- store
-local ExplorerStore = commonlib.gettable('Mod.ExplorerApp.store.Explorer')
+local ExplorerStore = NPL.load('(gl)Mod/ExplorerApp/store/ExplorerStore.lua')
 
 -- pages
 local MainPage = NPL.load('(gl)Mod/ExplorerApp/pages/MainPage/MainPage.lua')
@@ -49,7 +48,7 @@ function ExplorerApp:Init(callback, classId, defaulOpenValue)
     end
 
     -- register explorer store to store list
-    Mod.WorldShare.Store.storeList.explorer = ExplorerStore
+    Mod.WorldShare.Store:RegisterStore('explorer', ExplorerStore)
 
     MainPage:ShowPage(callback, classId, defaulOpenValue)
 end
