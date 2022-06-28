@@ -297,7 +297,6 @@ function MainPage:SetCategoryTree(notGetWorks)
 
                 self:GetMyClassList(
                     function(classData, err)
-                        echo(classData, true)
                         table.insert(
                             classData,
                             1,
