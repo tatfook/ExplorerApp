@@ -10,19 +10,16 @@ local ExplorerStore = commonlib.gettable('Mod.ExplorerApp.store.Explorer')
 ------------------------------------------------------------
 ]]
 
-local ExplorerStore = commonlib.gettable('Mod.ExplorerApp.store.Explorer')
+local ExplorerStore = NPL.export()
 
-function ExplorerStore:Action()
+function ExplorerStore:Action(data)
+    self = data
+
     return {}
 end
 
-function ExplorerStore:Getter()
-    return {
-        GetSortValue = function()
-            return self.sortList[self.selectSortIndex].value
-        end,
-        GetSortKey = function()
-            return self.sortList[self.selectSortIndex].key
-        end
-    }
+function ExplorerStore:Getter(data)
+    self = data
+
+    return {}
 end
