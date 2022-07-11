@@ -14,7 +14,7 @@ local WorldShareKeepworkServiceProject = NPL.load('(gl)Mod/WorldShare/service/Ke
 
 -- api
 local ExplorerAppKeepworkProjectsApi = NPL.load('(gl)Mod/ExplorerApp/api/Keepwork/KeepworkProjectsApi.lua')
-local KeepworkProjectsApi = NPL.load('(gl)Mod/WorldShare/api/Keepwork/Projects.lua')
+local KeepworkProjectsApi = NPL.load('(gl)Mod/WorldShare/api/Keepwork/KeepworkProjectsApi.lua')
 local KeepworkSystemTagApi = NPL.load('(gl)Mod/ExplorerApp/api/Keepwork/SystemTag.lua')
 
 local KeepworkServiceProject = NPL.export()
