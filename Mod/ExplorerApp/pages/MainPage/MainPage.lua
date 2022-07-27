@@ -27,7 +27,7 @@ local RegisterComponents = NPL.load('(gl)Mod/ExplorerApp/components/RegisterComp
 -- services
 local KeepworkServiceSession = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/KeepworkServiceSession.lua')
 local KeepworkServiceProject = NPL.load('(gl)Mod/ExplorerApp/service/KeepworkService/KeepworkServiceProject.lua')
-local KeepworkEsServiceProject = NPL.load('(gl)Mod/ExplorerApp/service/KeepworkEsService/Project.lua')
+local KeepworkEsServiceProject = NPL.load('(gl)Mod/ExplorerApp/service/KeepworkEsService/KeepworkEsServiceProject.lua')
 local WorldShareKeepworkServiceProject = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/KeepworkServiceProject.lua')
 local KeepworkServiceSchoolAndOrg = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/SchoolAndOrg.lua')
 local LocalServiceHistory = NPL.load('(gl)Mod/WorldShare/service/LocalService/LocalServiceHistory.lua')
@@ -472,6 +472,7 @@ function MainPage:SetMyClassListWorksTree(classId)
                 total_mark = item.favorite,
                 total_comment = item.comment,
                 visibility = item.visibility,
+                level = item.level,
             }
         end
 
@@ -723,6 +724,7 @@ function MainPage:SetWorksTree()
                         total_view = item.visit,
                         total_like = item.star,
                         total_mark = item.favorite,
+                        level = item.level,
                     }
                 end
 
@@ -894,7 +896,6 @@ function MainPage:Search()
                     MainPagePage:Refresh(0)
 
                     ExplorerEmbedPage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
-
                 end)
             else
                 self:HandleWorldsTree(data.hits, function(rows)

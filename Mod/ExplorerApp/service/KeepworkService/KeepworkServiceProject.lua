@@ -2,7 +2,7 @@
 Title: Keepwork Projects Service
 Author(s): big
 CreateDate: 2019.01.25
-ModifyDate: 2021.12.16
+ModifyDate: 2022.7.27
 Place: Foshan
 use the lib:
 ------------------------------------------------------------
@@ -90,15 +90,57 @@ end
 
 -- get recommend works
 function KeepworkServiceProject:GetRecommandProjects(tagId, mainId, pages, callback)
-    if type(tagId) ~= 'number' or type(mainId) ~= 'number' then
-        return false
+    if not callback or type(callback) ~= 'function' then
+        return
+    end
+
+    if not tagId or
+       type(tagId) ~= 'number' or
+       type(mainId) ~= 'number' then
+        return
     end
 
     KeepworkProjectsApi:SearchForParacraft(
         pages and pages.perPage and pages.perPage or 10,
         pages and pages.page and pages.page or 1,
-        { tagIds = { tagId, mainId }, sortTag = tagId },
-        callback
+        {
+            tagIds = { tagId, mainId },
+            sortTag = tagId
+        },
+        function(data, err)
+            if not data or
+               type(data) ~= 'table' or
+               not data.rows or
+               type(data.rows) ~= 'table' then
+                return
+            end
+
+            local ids = {}
+
+            for key, item in ipairs(data.rows) do
+                ids[#ids + 1] = item.id
+            end
+
+            ExplorerAppKeepworkProjectsApi:Search(ids, function(searchData, err)
+                if not searchData or
+                   type(searchData) ~= 'table' or
+                   not searchData.rows or
+                   type(searchData.rows) ~= 'table' then
+                    return
+                end
+
+                for key, item in ipairs(data.rows) do
+                    for sKey, sItem in ipairs(searchData.rows) do
+                        if item.id == sItem.id then
+                            item.level = sItem.level
+                            break
+                        end
+                    end
+                end
+
+                callback(data, err)
+            end)
+        end
     )
 end
 
@@ -110,8 +152,51 @@ function KeepworkServiceProject:GetMyFavoriteProjects(pages, callback)
 end
 
 function KeepworkServiceProject:GetMySchoolProjects(classId, pages, callback)
+    if not callback or type(callback) ~= 'function' then
+        return
+    end
+
     local xPage = pages.page and pages.page or 1
     local xPerPage = pages.perPage and pages.perPage or 7
 
-    ExplorerAppKeepworkProjectsApi:MySchools(classId, xPage, xPerPage, callback, callback)
+    ExplorerAppKeepworkProjectsApi:MySchools(
+        classId,
+        xPage,
+        xPerPage,
+        function(data, err)
+            if not data or
+               type(data) ~= 'table' or
+               not data.rows or
+               type(data.rows) ~= 'table' then
+                return
+            end
+
+            local ids = {}
+
+            for key, item in ipairs(data.rows) do
+                ids[#ids + 1] = item.id
+            end
+
+            ExplorerAppKeepworkProjectsApi:Search(ids, function(searchData, err)
+                if not searchData or
+                   type(searchData) ~= 'table' or
+                   not searchData.rows or
+                   type(searchData.rows) ~= 'table' then
+                    return
+                end
+
+                for key, item in ipairs(data.rows) do
+                    for sKey, sItem in ipairs(searchData.rows) do
+                        if item.id == sItem.id then
+                            item.level = sItem.level
+                            break
+                        end
+                    end
+                end
+
+                callback(data, err)
+            end)
+        end,
+        callback
+    )
 end

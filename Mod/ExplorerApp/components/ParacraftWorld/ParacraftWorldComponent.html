@@ -263,11 +263,20 @@
                         </pe:if>
                     </div>
                     <div align='right' style='margin-right: 14px;width: 58px;height: 46px;margin-top: -20x;'>
-                        <input type='button'
-                               class='enter_button'
-                               onclick='enter'
-                               tooltip='<%= L"进入" %>'
-                               name='<%= Eval("index") %>' />
+                        <pe:if condition='<%= Eval("level") >= 1 %>'>
+                            <input type='button'
+                                   class='enter_button'
+                                   onclick='enter'
+                                   tooltip='<%= L"进入" %>'
+                                   name='<%= Eval("index") %>' />
+                        </pe:if>
+                        <pe:if condition='<%= Eval("level") == 0 %>'>
+                            <input align='right'
+                                   type='button'
+                                   class='no_entry'
+                                   tooltip='<%= L"没有权限" %>'
+                                   name='<%= Eval("index") %>' />
+                        </pe:if>
                     </div>
                 </div>
                 <pe:if condition='<%= is_load_more_items(Eval("index")) %>'>
