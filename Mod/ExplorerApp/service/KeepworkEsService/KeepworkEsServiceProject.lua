@@ -56,6 +56,12 @@ function KeepworkEsServiceProject:GetEsProjectsByFilter(filter, sort, pages, cal
                 for sKey, sItem in ipairs(searchData.rows) do
                     if item.id == sItem.id then
                         item.level = sItem.level
+                        item.user = sItem.user
+                        item.isSystemGroupMember = sItem.isSystemGroupMember
+                        item.isFreeWorld = sItem.isFreeWorld
+                        item.timeRules = sItem.timeRules
+                        item.visibility = sItem.visibility
+                        item.extra = sItem.extra
                         break
                     end
                 end
@@ -97,6 +103,12 @@ function KeepworkEsServiceProject:Search(query, pages, callback)
                 for sKey, sItem in ipairs(searchData.rows) do
                     if item.id == sItem.id then
                         item.level = sItem.level
+                        item.user = sItem.user
+                        item.isSystemGroupMember = sItem.isSystemGroupMember
+                        item.isFreeWorld = sItem.isFreeWorld
+                        item.timeRules = sItem.timeRules
+                        item.visibility = sItem.visibility
+                        item.extra = sItem.extra
                         break
                     end
                 end

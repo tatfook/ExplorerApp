@@ -32,6 +32,9 @@ local WorldShareKeepworkServiceProject = NPL.load('(gl)Mod/WorldShare/service/Ke
 local KeepworkServiceSchoolAndOrg = NPL.load('(gl)Mod/WorldShare/service/KeepworkService/SchoolAndOrg.lua')
 local LocalServiceHistory = NPL.load('(gl)Mod/WorldShare/service/LocalService/LocalServiceHistory.lua')
 
+-- api
+local KeepworkCommonApi = NPL.load("(gl)Mod/WorldShare/api/Keepwork/KeepworkCommonApi.lua")
+
 -- UI
 local SyncMain = NPL.load('(gl)Mod/WorldShare/cellar/Sync/Main.lua')
 local Toast = NPL.load('(gl)Mod/ExplorerApp/pages/Toast/Toast.lua')
@@ -50,6 +53,10 @@ MainPage.sortList = {
     updatedAt = { value = L'最新', key = 'updated_at' },
     score = { value = L'热门', key = 'score' },
 }
+MainPage.LimitUserOpenShareWorld = false
+MainPage.isHoliday = false
+MainPage.isVip = false
+MainPage.isOrgan = false
 
 function MainPage:ShowPage(callback, classId, defaulOpenValue)
     if callback and type(callback) == 'function' then
@@ -94,13 +101,34 @@ function MainPage:ShowPage(callback, classId, defaulOpenValue)
     local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if MainPagePage then
-        if classId and type(classId) == 'number' then
-            self:SetCategoryTree(true)
-            self.curPage = 1
-            self:SetMyClassListWorksTree(classId)
-        else
-            self:SetCategoryTree()     
-        end
+        GameLogic.IsVip('LimitUserOpenShareWorld', true, function(result)
+            self.LimitUserOpenShareWorld = result
+
+            GameLogic.IsVip('Vip', false, function(result)
+                self.isVip = result
+                
+                GameLogic.IsVip('IsOrgan', false, function(result)
+                    self.isOrgan = result
+
+                    KeepworkCommonApi:Holiday(nil, function(data, err)
+                        if data and
+                           type(data) == 'table' and
+                           type(data.isHoliday) == 'boolean' then
+                            self.isHoliday = data.isHoliday
+                        end
+        
+                        if classId and type(classId) == 'number' then
+                            self:SetCategoryTree(true)
+                            self.curPage = 1
+                            self:SetMyClassListWorksTree(classId)
+                        else
+                            self:SetCategoryTree()     
+                        end
+                    end)
+                end, 'Institute')
+
+            end, 'Vip')
+        end)
     end
 end
 
@@ -473,6 +501,12 @@ function MainPage:SetMyClassListWorksTree(classId)
                 total_comment = item.comment,
                 visibility = item.visibility,
                 level = item.level or 0,
+                user = item.user,
+                isSystemGroupMember = item.isSystemGroupMember,
+                isFreeWorld = item.isFreeWorld,
+                timeRules = item.timeRules,
+                visibility = item.visibility,
+                extra = item.extra,
             }
         end
 
@@ -548,7 +582,14 @@ function MainPage:SetMyFavoriteWorksTree()
                 total_view = item.visit,
                 total_like = item.star,
                 total_mark = item.favorite,
-                total_comment = item.comment
+                total_comment = item.comment,
+                level = item.level or 0,
+                user = item.user,
+                isSystemGroupMember = item.isSystemGroupMember,
+                isFreeWorld = item.isFreeWorld,
+                timeRules = item.timeRules,
+                visibility = item.visibility,
+                extra = item.extra,
             }
         end
 
@@ -630,6 +671,12 @@ function MainPage:SetMyHistoryWorksTree()
                     total_comment = item.comment,
                     visitTime = item.visitTime,
                     level = item.level or 0,
+                    user = item.user,
+                    isSystemGroupMember = item.isSystemGroupMember,
+                    isFreeWorld = item.isFreeWorld,
+                    timeRules = item.timeRules,
+                    visibility = item.visibility,
+                    extra = item.extra,
                 }
             end
 
@@ -726,6 +773,12 @@ function MainPage:SetWorksTree()
                         total_like = item.star,
                         total_mark = item.favorite,
                         level = item.level or 0,
+                        user = item.user,
+                        isSystemGroupMember = item.isSystemGroupMember,
+                        isFreeWorld = item.isFreeWorld,
+                        timeRules = item.timeRules,
+                        visibility = item.visibility,
+                        extra = item.extra,
                     }
                 end
 

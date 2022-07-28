@@ -159,6 +159,12 @@ function KeepworkServiceProject:GetRecommandProjects(tagId, mainId, pages, callb
                     for sKey, sItem in ipairs(searchData.rows) do
                         if item.id == sItem.id then
                             item.level = sItem.level
+                            item.user = sItem.user
+                            item.isSystemGroupMember = sItem.isSystemGroupMember
+                            item.isFreeWorld = sItem.isFreeWorld
+                            item.timeRules = sItem.timeRules
+                            item.visibility = sItem.visibility
+                            item.extra = sItem.extra
                             break
                         end
                     end
@@ -174,7 +180,51 @@ function KeepworkServiceProject:GetMyFavoriteProjects(pages, callback)
     local xPage = pages.page and pages.page or 1
     local xPerPage = pages.perPage and pages.perPage or 10
 
-    ExplorerAppKeepworkProjectsApi:Favorite(xPage, xPerPage, callback, callback)
+    ExplorerAppKeepworkProjectsApi:Favorite(
+        xPage,
+        xPerPage,
+        function(data, err)
+            if not data or
+               type(data) ~= 'table' or
+               not data.rows or
+               type(data.rows) ~= 'table' then
+                return
+            end
+
+            local ids = {}
+
+            for key, item in ipairs(data.rows) do
+                ids[#ids + 1] = item.id
+            end
+
+            ExplorerAppKeepworkProjectsApi:Search(ids, function(searchData, err)
+                if not searchData or
+                   type(searchData) ~= 'table' or
+                   not searchData.rows or
+                   type(searchData.rows) ~= 'table' then
+                    return
+                end
+
+                for key, item in ipairs(data.rows) do
+                    for sKey, sItem in ipairs(searchData.rows) do
+                        if item.id == sItem.id then
+                            item.level = sItem.level
+                            item.user = sItem.user
+                            item.isSystemGroupMember = sItem.isSystemGroupMember
+                            item.isFreeWorld = sItem.isFreeWorld
+                            item.timeRules = sItem.timeRules
+                            item.visibility = sItem.visibility
+                            item.extra = sItem.extra
+                            break
+                        end
+                    end
+                end
+
+                callback(data, err)
+            end)
+        end,
+        callback
+    )
 end
 
 function KeepworkServiceProject:GetMySchoolProjects(classId, pages, callback)

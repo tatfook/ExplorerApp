@@ -263,14 +263,14 @@
                         </pe:if>
                     </div>
                     <div align='right' style='margin-right: 14px;width: 58px;height: 46px;margin-top: -20x;'>
-                        <pe:if condition='<%= Eval("level") >= 1 %>'>
+                        <pe:if condition='<%= be_allow() %>'>
                             <input type='button'
                                    class='enter_button'
                                    onclick='enter'
                                    tooltip='<%= L"进入" %>'
                                    name='<%= Eval("index") %>' />
                         </pe:if>
-                        <pe:if condition='<%= Eval("level") == 0 %>'>
+                        <pe:if condition='<%= not be_allow() %>'>
                             <input align='right'
                                    type='button'
                                    class='no_entry'
