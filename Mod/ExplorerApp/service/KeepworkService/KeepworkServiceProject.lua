@@ -21,21 +21,47 @@ local KeepworkServiceProject = NPL.export()
 
 -- get list by ids
 function KeepworkServiceProject:GetProjectByIds(projectIds, pages, callback)
+    if not callback or type(callback) ~= 'function' then
+        return
+    end
+
     KeepworkProjectsApi:Search(
         pages and pages.perPage and pages.perPage or 10,
         pages and pages.page and pages.page or 1,
         { id = { ['$in'] = projectIds } },
         function(data, err)
-            if type(callback) ~= 'function' then
-                return false
-            end
-
-            if err ~= 200 or not data then
+            if err ~= 200 or
+               not data or
+               type(data) ~= 'table' then
                 callback()
-                return false
+                return
             end
 
-            callback(data, err)
+            local ids = {}
+
+            for key, item in ipairs(data.rows) do
+                ids[#ids + 1] = item.id
+            end
+
+            ExplorerAppKeepworkProjectsApi:Search(ids, function(searchData, err)
+                if not searchData or
+                   type(searchData) ~= 'table' or
+                   not searchData.rows or
+                   type(searchData.rows) ~= 'table' then
+                    return
+                end
+
+                for key, item in ipairs(data.rows) do
+                    for sKey, sItem in ipairs(searchData.rows) do
+                        if item.id == sItem.id then
+                            item.level = sItem.level
+                            break
+                        end
+                    end
+                end
+
+                callback(data, err)
+            end)
         end
     )
 end

@@ -629,6 +629,7 @@ function MainPage:SetMyHistoryWorksTree()
                     total_mark = item.favorite,
                     total_comment = item.comment,
                     visitTime = item.visitTime,
+                    level = item.level or 0,
                 }
             end
 
