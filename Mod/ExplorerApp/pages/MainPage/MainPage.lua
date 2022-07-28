@@ -101,7 +101,7 @@ function MainPage:ShowPage(callback, classId, defaulOpenValue)
     local MainPagePage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage')
 
     if MainPagePage then
-        GameLogic.IsVip('LimitUserOpenShareWorld', true, function(result)
+        GameLogic.IsVip('LimitUserOpenShareWorld', false, function(result)
             self.LimitUserOpenShareWorld = result
 
             GameLogic.IsVip('Vip', false, function(result)
