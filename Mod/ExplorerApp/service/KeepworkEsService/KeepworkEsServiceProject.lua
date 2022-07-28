@@ -78,5 +78,31 @@ function KeepworkEsServiceProject:Search(query, pages, callback)
         q = Mod.WorldShare.Utils.UrlEncode(query)
     }
 
-    EsProjectsApi:Projects(params, callback)
+    EsProjectsApi:Projects(params, function(data, err)
+        local ids = {}
+
+        for key, item in ipairs(data.hits) do
+            ids[#ids + 1] = item.id
+        end
+
+        KeepworkProjectsApi:Search(ids, function(searchData, err)
+            if not searchData or
+               type(searchData) ~= 'table' or
+               not searchData.rows or
+               type(searchData.rows) ~= 'table' then
+                return
+            end
+
+            for key, item in ipairs(data.hits) do
+                for sKey, sItem in ipairs(searchData.rows) do
+                    if item.id == sItem.id then
+                        item.level = sItem.level
+                        break
+                    end
+                end
+            end
+
+            callback(data, err)
+        end)
+    end)
 end
