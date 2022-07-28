@@ -472,7 +472,7 @@ function MainPage:SetMyClassListWorksTree(classId)
                 total_mark = item.favorite,
                 total_comment = item.comment,
                 visibility = item.visibility,
-                level = item.level,
+                level = item.level or 0,
             }
         end
 
@@ -724,7 +724,7 @@ function MainPage:SetWorksTree()
                         total_view = item.visit,
                         total_like = item.star,
                         total_mark = item.favorite,
-                        level = item.level,
+                        level = item.level or 0,
                     }
                 end
 
@@ -825,6 +825,10 @@ function MainPage:SetWorksTree()
     
                             if item.world_tag_name then
                                 item.name = item.world_tag_name
+                            end
+
+                            if not item.level then
+                                item.level = 0
                             end
                         end
                     end
