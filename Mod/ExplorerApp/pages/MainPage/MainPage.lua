@@ -735,8 +735,6 @@ function MainPage:SetMyHistoryWorksTreeImp()
             self:HandleWorldsTree(mapData, function(rows)
                 self.worksTree = rows
 
-                echo(self.worksTree, true)
-
                 ExplorerEmbedPage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
             end)
         end
@@ -931,6 +929,10 @@ function MainPage:SetWorksTree()
 
                             if not item.level then
                                 item.level = 0
+                            end
+
+                            if not item.cover or item.cover == '' then
+                                item.cover = 'Texture/Aries/Creator/paracraft/konbaitu_266x134_x2_32bits.png# 0 0 532 268'
                             end
                         end
                     end
