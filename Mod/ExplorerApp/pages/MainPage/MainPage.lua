@@ -536,6 +536,30 @@ function MainPage:SetMyClassListWorksTree(classId)
 end
 
 function MainPage:SetMyFavoriteWorksTree()
+    GameLogic.IsVip('LimitUserOpenShareWorld', false, function(result)
+        self.LimitUserOpenShareWorld = result
+
+        GameLogic.IsVip('Vip', false, function(result)
+            self.isVip = result
+            
+            GameLogic.IsVip('IsOrgan', false, function(result)
+                self.isOrgan = result
+
+                KeepworkCommonApi:Holiday(nil, function(data, err)
+                    if data and
+                       type(data) == 'table' and
+                       type(data.isHoliday) == 'boolean' then
+                        self.isHoliday = data.isHoliday
+                    end
+
+                    self:SetMyFavoriteWorksTreeImp()
+                end)
+            end, 'Institute')
+        end, 'Vip')
+    end)
+end
+
+function MainPage:SetMyFavoriteWorksTreeImp()
     if not KeepworkServiceSession:IsSignedIn() then
         return
     end
@@ -639,11 +663,10 @@ function MainPage:SetMyHistoryWorksTree()
                        type(data.isHoliday) == 'boolean' then
                         self.isHoliday = data.isHoliday
                     end
-    
+
                     self:SetMyHistoryWorksTreeImp()
                 end)
             end, 'Institute')
-
         end, 'Vip')
     end)
 end
