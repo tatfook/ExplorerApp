@@ -490,7 +490,12 @@ function MainPage:SetMyClassListWorksTree(classId)
             mapData[#mapData + 1] = {
                 id = item.id,
                 name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or '',
-                cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or '',
+                cover =
+                    item.extra and
+                    type(item.extra.imageUrl) == 'string' and
+                    item.extra.imageUrl ~= '' and
+                    item.extra.imageUrl or
+                    'Texture/Aries/Creator/paracraft/konbaitu_266x134_x2_32bits.png# 0 0 532 268',
                 username = item.user and type(item.user.username) == 'string' and item.user.username or '',
                 updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or '',
                 user = item.user and type(item.user) == 'table' and item.user or {},
@@ -574,7 +579,12 @@ function MainPage:SetMyFavoriteWorksTree()
             mapData[#mapData + 1] = {
                 id = item.id,
                 name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or '',
-                cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or '',
+                cover =
+                    item.extra and
+                    type(item.extra.imageUrl) == 'string' and
+                    item.extra.imageUrl ~= '' and
+                    item.extra.imageUrl or
+                    'Texture/Aries/Creator/paracraft/konbaitu_266x134_x2_32bits.png# 0 0 532 268',
                 username = item.user and type(item.user.username) == 'string' and item.user.username or '',
                 updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or '',
                 user = item.user and type(item.user) == 'table' and item.user or {},
@@ -614,6 +624,31 @@ function MainPage:SetMyFavoriteWorksTree()
 end
 
 function MainPage:SetMyHistoryWorksTree()
+    GameLogic.IsVip('LimitUserOpenShareWorld', false, function(result)
+        self.LimitUserOpenShareWorld = result
+
+        GameLogic.IsVip('Vip', false, function(result)
+            self.isVip = result
+            
+            GameLogic.IsVip('IsOrgan', false, function(result)
+                self.isOrgan = result
+
+                KeepworkCommonApi:Holiday(nil, function(data, err)
+                    if data and
+                       type(data) == 'table' and
+                       type(data.isHoliday) == 'boolean' then
+                        self.isHoliday = data.isHoliday
+                    end
+    
+                    self:SetMyHistoryWorksTreeImp()
+                end)
+            end, 'Institute')
+
+        end, 'Vip')
+    end)
+end
+
+function MainPage:SetMyHistoryWorksTreeImp()
     local ExplorerEmbedPage = Mod.WorldShare.Store:Get('page/Mod.ExplorerApp.MainPage.ExplorerEmbed')
 
     if not ExplorerEmbedPage then
@@ -660,7 +695,13 @@ function MainPage:SetMyHistoryWorksTree()
                 mapData[#mapData + 1] = {
                     id = item.id,
                     name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or '',
-                    cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or '',
+                    cover = 
+                        item.extra and
+                        type(item.extra.imageUrl) == 'string' and
+                        item.extra.imageUrl and
+                        item.extra.imageUrl ~= '' and
+                        item.extra.imageUrl or
+                        'Texture/Aries/Creator/paracraft/konbaitu_266x134_x2_32bits.png# 0 0 532 268',
                     username = item.user and type(item.user.username) == 'string' and item.user.username or '',
                     updated_at = item.updatedAt and type(item.updatedAt) == 'string' and item.updatedAt or '',
                     user = item.user and type(item.user) == 'table' and item.user or {},
@@ -693,6 +734,8 @@ function MainPage:SetMyHistoryWorksTree()
 
             self:HandleWorldsTree(mapData, function(rows)
                 self.worksTree = rows
+
+                echo(self.worksTree, true)
 
                 ExplorerEmbedPage:GetNode('worksTree'):SetUIAttribute('DataSource', self.worksTree)
             end)
@@ -752,7 +795,12 @@ function MainPage:SetWorksTree()
                     mapData[#mapData + 1] = {
                         id = item.id,
                         name = item.extra and type(item.extra.worldTagName) == 'string' and item.extra.worldTagName or item.name or '',
-                        cover = item.extra and type(item.extra.imageUrl) == 'string' and item.extra.imageUrl or '',
+                        cover =
+                            item.extra and
+                            type(item.extra.imageUrl) == 'string' and
+                            item.extra.imageUrl ~= '' and
+                            item.extra.imageUrl or
+                            'Texture/Aries/Creator/paracraft/konbaitu_266x134_x2_32bits.png# 0 0 532 268',
                         extra = {
                             award = {     
                                 text = item.extra and
