@@ -345,7 +345,7 @@ function MainPage:SetCategoryTree(notGetWorks)
                             id = -3,
                         }
         
-                        table.insert(data.rows, 4, myschoolData)
+                        table.insert(data.rows, 3, myschoolData)
         
                         for key, item in ipairs(data.rows) do
                             if item and
