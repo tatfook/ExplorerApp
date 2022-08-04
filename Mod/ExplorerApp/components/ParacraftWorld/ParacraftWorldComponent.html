@@ -1,6 +1,6 @@
 <pe:mcml>
     <div style='width: 310px;
-                height: 230px;'>
+                height: 255px;'>
         <div style='<%= "position: relative;" %>'>
             <div class='work_item'>
                 <input type='button'
@@ -84,19 +84,8 @@
                                     margin-left: 230px;
                                     margin-top: 5px;
                                     background: url(Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#347 289 28 26);'>
-                            <pe:container visible='true'
-                                          name='<%= "share_button_gray_" .. Eval("index") %>'
-                                          style='position: relative;background:;'>
+                            <pe:container style='position: relative;background:;'>
                                 <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#385 294 14 14'
-                                     style='width: 14px;
-                                            height: 14px;
-                                            margin-top: 4px;
-                                            margin-left: 6px;' />
-                            </pe:container>
-                            <pe:container visible='false'
-                                          name='<%= "share_button_blue_" .. Eval("index") %>'
-                                          style='position: relative;background:;'>
-                                <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#415 294 14 14'
                                      style='width: 14px;
                                             height: 14px;
                                             margin-top: 4px;
@@ -251,6 +240,9 @@
                             </span>
                         </div>
                     </div>
+                    <div>
+                        <%= Mod.WorldShare.Utils:RecentDatetimeFormat(Mod.WorldShare.Utils:UnifiedTimestampFormat(Eval('updated_at'))) %>
+                    </div>
                     <div style='position: relative;
                                 margin-top: 10px;
                                 float:left;
@@ -262,7 +254,7 @@
                             </div>
                         </pe:if>
                     </div>
-                    <div align='right' style='margin-right: 14px;width: 58px;height: 46px;margin-top: -20x;'>
+                    <div align='right' style='margin-right: 14px;width: 58px;height: 46px;margin-top: -10x;'>
                         <pe:if condition='<%= be_allow() %>'>
                             <input type='button'
                                    class='enter_button'
@@ -286,6 +278,6 @@
         </div>
         <div class='<%= get_work_item_style() %>'
              style='width: 295px;
-                    height: 220px;'></div>
+                    height: 245px;'></div>
     </div>
 </pe:mcml>
