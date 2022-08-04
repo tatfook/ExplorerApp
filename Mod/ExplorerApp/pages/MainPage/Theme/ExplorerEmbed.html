@@ -248,11 +248,11 @@
                         end
                     end
 
-                    function get_user_icon()
+                    function has_user_icon()
                         local user = Eval('user')
 
                         if not user or type(user) ~= 'table' then
-                            return ''
+                            return false
                         end
 
                         local user_info = {}
@@ -273,7 +273,36 @@
                             count = count + 1
                         end
 
-                        return KpUserTag.GetMcml(user_info)
+                        if count > 0 then
+                            return true
+                        else
+                            return false
+                        end
+                    end
+
+                    function get_user_icon()
+                        local user = Eval('user')
+
+                        if not user or type(user) ~= 'table' then
+                            return ''
+                        end
+
+                        local user_info = {}
+                        local count = 0
+
+                        if user.tLevel and user.tLevel >= 1 then
+                            user_info.tLevel = 1
+                        end
+                            
+                        if user.student and user.student == 1 then
+                            user_info.student = 1
+                        end
+
+                        if user.vip and user.vip == 1 then
+                            user_info.vip = 1
+                        end
+
+                        return '<div style="float: left;margin-right: 4px;">' .. KpUserTag.GetMcml(user_info) .. '</div>'
                     end
 
                     function get_username()
@@ -605,6 +634,19 @@
         
                         return true
                     end
+
+                    function get_tooltip()
+                        local user = Eval('user')
+
+                        if user and
+                           type(user) == 'table' and
+                           user.school and
+                           type(user.school) == 'table' and
+                           user.school.name and
+                           type(user.school.name) == 'string' then
+                            return Eval('username') .. '\n' .. user.school.name
+                        end
+                    end
                 ]]>
             </script>
             <style type='text/mcss'>
@@ -616,7 +658,7 @@
                         ['padding-bottom'] = 10,
                     },
                     work_item = {
-                        height = 235,
+                        height = 210,
                         width = 285,
                         ['margin-left'] = 5,
                         ['margin-top'] = 5,
@@ -634,7 +676,7 @@
                         background = 'Texture/Aries/Creator/keepwork/worldshare_32bits.png;435 212 30 30:11 11 11 11',
                     },
                     work_item_info = {
-                        height = 85,
+                        height = 60,
                         width = 290,
                         ['margin-left'] = 5,
                         ['margin-top'] = 5
@@ -720,7 +762,7 @@
                     RememberScrollPos='true'
                     name='worksTree'
                     style='padding-left: 20px;'
-                    DefaultNodeHeight='260'
+                    DefaultNodeHeight='235'
                     pagesize='<%= get_page_size %>'
                     ItemsPerLine='3'
                     VerticalScrollBarStep='100'

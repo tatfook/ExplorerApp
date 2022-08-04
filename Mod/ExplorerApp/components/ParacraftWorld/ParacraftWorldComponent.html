@@ -1,6 +1,6 @@
 <pe:mcml>
     <div style='width: 310px;
-                height: 255px;'>
+                height: 230px;'>
         <div style='<%= "position: relative;" %>'>
             <div class='work_item'>
                 <input type='button'
@@ -106,129 +106,125 @@
                     <div style='<%= "width: 265px;\
                                      height: 130px;\
                                      background: url(" .. (Eval("cover") and Eval("cover") or "") .. ")" %>'>
-                        <pe:if condition='<%= has_username() %>'>
-                            <div style='width: 265px;
-                                        height: 30px;
-                                        margin-top: 100px;
-                                        font-size: 12px;
-                                        padding-top: 5px;
-                                        padding-left: 4px;
-                                        color: #FFFFFF;
-                                        background-color: #000000A3'>
-                                <%= get_user_icon() %>
-                                <div style='float: left;
-                                            margin-left: 4px;'>
-                                    <%= get_username() %>
-                                </div>
-                                <div align='right'
-                                     style='<%= "font-size: 12px;\
-                                                 base-font-size: 12px;\
-                                                 color: #FFFFFF;\
-                                                 margin-top: 0px;\
-                                                 height: 20px;\
-                                                 float: left;" .. get_numbers_width() %>'>
-                                    <div style='float:left'>
-                                        <img src='Texture/Aries/Creator/paracraft/chakan_19x15_32bits.png#0 0 19 15'
-                                             style='width: 18px;
-                                                    height: 13px;
-                                                    margin-top: 3px;' />
-                                        <div style='float:left;margin-left: 2px;max-width: 45px;'>
-                                            <%= Mod.WorldShare.Utils.ShortNumber(get_project_views()) %>
-                                        </div>
+                        <div style='width: 265px;
+                                    height: 30px;
+                                    margin-top: 100px;
+                                    font-size: 12px;
+                                    padding-top: 5px;
+                                    padding-left: 4px;
+                                    color: #FFFFFF;
+                                    background-color: #000000A3'>
+                            <div style='float: left;'>
+                                <%= Mod.WorldShare.Utils:RecentDatetimeFormat(Mod.WorldShare.Utils:UnifiedTimestampFormat(Eval('updated_at'))) %>
+                            </div>
+                            <div align='right'
+                                 style='<%= "font-size: 12px;\
+                                             base-font-size: 12px;\
+                                             color: #FFFFFF;\
+                                             margin-top: 0px;\
+                                             height: 20px;\
+                                             float: left;" .. get_numbers_width() %>'>
+                                <div style='float:left'>
+                                    <img src='Texture/Aries/Creator/paracraft/chakan_19x15_32bits.png#0 0 19 15'
+                                         style='width: 18px;
+                                                height: 13px;
+                                                margin-top: 3px;' />
+                                    <div style='float:left;margin-left: 2px;max-width: 45px;'>
+                                        <%= Mod.WorldShare.Utils.ShortNumber(get_project_views()) %>
                                     </div>
-                                    <div style='float:left;margin-left: 8px;'>
-                                        <div style='float: left;width: 16px;height: 16px;'>
-                                            <pe:container visible='<%= is_star(1) %>'
-                                                          name='<%= "star_item_" .. Eval("index") %>'
-                                                          style='position: relative;background:;'>
-                                                <div>
-                                                    <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#704 166 16 15'
-                                                         style='width: 16px;
-                                                                height: 16px;
-                                                                margin-top: 1px;' />
-                                                </div>
-                                                <input type='button'
-                                                       name='<%= Eval("index") %>'
-                                                       onclick='star()'
-                                                       style='background:;
-                                                              width: 16px;
-                                                              height: 17px;
-                                                              margin-top: -16px;' />
-                                            </pe:container>
-                                            <pe:container visible='<%= is_star(2) %>'
-                                                          name='<%= "stared_item_" .. Eval("index") %>'
-                                                          style='position: relative;
-                                                                 background:;'>
-                                                <div>
-                                                    <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#703 196 17 16'
-                                                         style='width: 16px;
-                                                                height: 16px;
-                                                                margin-top: 1px;' />
-                                                </div>
-                                                <input type='button'
-                                                       name='<%= Eval("index") %>'
-                                                       onclick='unstar()'
-                                                       style='background:;
-                                                              width: 16px;
-                                                              height: 17px;
-                                                              margin-top: -16px;' />
-                                            </pe:container>
-                                        </div>
-                                        <div style='float:left;margin-left: 2px;max-width: 45px;'>
-                                            <%= Mod.WorldShare.Utils.ShortNumber(get_project_thumbs()) %>
-                                        </div>
+                                </div>
+                                <div style='float:left;margin-left: 8px;'>
+                                    <div style='float: left;width: 16px;height: 16px;'>
+                                        <pe:container visible='<%= is_star(1) %>'
+                                                      name='<%= "star_item_" .. Eval("index") %>'
+                                                      style='position: relative;background:;'>
+                                            <div>
+                                                <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#704 166 16 15'
+                                                     style='width: 16px;
+                                                            height: 16px;
+                                                            margin-top: 1px;' />
+                                            </div>
+                                            <input type='button'
+                                                   name='<%= Eval("index") %>'
+                                                   onclick='star()'
+                                                   style='background:;
+                                                          width: 16px;
+                                                          height: 17px;
+                                                          margin-top: -16px;' />
+                                        </pe:container>
+                                        <pe:container visible='<%= is_star(2) %>'
+                                                      name='<%= "stared_item_" .. Eval("index") %>'
+                                                      style='position: relative;
+                                                             background:;'>
+                                            <div>
+                                                <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#703 196 17 16'
+                                                     style='width: 16px;
+                                                            height: 16px;
+                                                            margin-top: 1px;' />
+                                            </div>
+                                            <input type='button'
+                                                   name='<%= Eval("index") %>'
+                                                   onclick='unstar()'
+                                                   style='background:;
+                                                          width: 16px;
+                                                          height: 17px;
+                                                          margin-top: -16px;' />
+                                        </pe:container>
+                                    </div>
+                                    <div style='float:left;margin-left: 2px;max-width: 45px;'>
+                                        <%= Mod.WorldShare.Utils.ShortNumber(get_project_thumbs()) %>
+                                    </div>
+                                </div>
+                                <div style='float: left;
+                                            margin-left: 8px;'>
+                                    <div style='float: left;
+                                                width: 16px;
+                                                height: 16px;'>
+                                        <pe:container visible='<%= is_favorite(1) %>'
+                                                      name='<%= "favorite_item_" .. Eval("index") %>'
+                                                      style='position: relative;
+                                                             background:;'>
+                                            <div>
+                                                <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#747 166 16 15'
+                                                     style='width: 16px;
+                                                            height: 16px;
+                                                            margin-top: 1px;' />
+                                            </div>
+                                            <input type='button'
+                                                   name='<%= Eval("index") %>'
+                                                   onclick='favorite()'
+                                                   style='background:;
+                                                          width: 16px;
+                                                          height: 17px;
+                                                          margin-top: -16px;' />
+                                        </pe:container>
+                                        <pe:container visible='<%= is_favorite(2) %>'
+                                                      name='<%= "favorited_item_" .. Eval("index") %>'
+                                                      style='position: relative;
+                                                             background:;'>
+                                            <div>
+                                                <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#745 196 17 16'
+                                                     style='width: 16px;
+                                                            height: 16px;
+                                                            margin-top: 1px;' />
+                                            </div>
+                                            <input type='button'
+                                                   name='<%= Eval("index") %>'
+                                                   onclick='unfavorite()'
+                                                   style='background:;
+                                                          width: 16px;
+                                                          height: 17px;
+                                                          margin-top: -16px;' />
+                                        </pe:container>
                                     </div>
                                     <div style='float: left;
-                                                margin-left: 8px;'>
-                                        <div style='float: left;
-                                                    width: 16px;
-                                                    height: 16px;'>
-                                            <pe:container visible='<%= is_favorite(1) %>'
-                                                          name='<%= "favorite_item_" .. Eval("index") %>'
-                                                          style='position: relative;
-                                                                 background:;'>
-                                                <div>
-                                                    <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#747 166 16 15'
-                                                         style='width: 16px;
-                                                                height: 16px;
-                                                                margin-top: 1px;' />
-                                                </div>
-                                                <input type='button'
-                                                       name='<%= Eval("index") %>'
-                                                       onclick='favorite()'
-                                                       style='background:;
-                                                              width: 16px;
-                                                              height: 17px;
-                                                              margin-top: -16px;' />
-                                            </pe:container>
-                                            <pe:container visible='<%= is_favorite(2) %>'
-                                                          name='<%= "favorited_item_" .. Eval("index") %>'
-                                                          style='position: relative;
-                                                                 background:;'>
-                                                <div>
-                                                    <img src='Texture/Aries/Creator/paracraft/paracraft_explorer_32bits.png#745 196 17 16'
-                                                         style='width: 16px;
-                                                                height: 16px;
-                                                                margin-top: 1px;' />
-                                                </div>
-                                                <input type='button'
-                                                       name='<%= Eval("index") %>'
-                                                       onclick='unfavorite()'
-                                                       style='background:;
-                                                              width: 16px;
-                                                              height: 17px;
-                                                              margin-top: -16px;' />
-                                            </pe:container>
-                                        </div>
-                                        <div style='float: left;
-                                                    margin-left: 2px;
-                                                    max-width: 45px;'>
-                                            <%= Mod.WorldShare.Utils.ShortNumber(get_project_favorites()) %>
-                                        </div>
+                                                margin-left: 2px;
+                                                max-width: 45px;'>
+                                        <%= Mod.WorldShare.Utils.ShortNumber(get_project_favorites()) %>
                                     </div>
                                 </div>
                             </div>
-                        </pe:if>
+                        </div>
                     </div>
                 </div>
                 <div class='work_item_info'>
@@ -240,20 +236,20 @@
                             </span>
                         </div>
                     </div>
-                    <div>
-                        <%= Mod.WorldShare.Utils:RecentDatetimeFormat(Mod.WorldShare.Utils:UnifiedTimestampFormat(Eval('updated_at'))) %>
-                    </div>
-                    <div style='position: relative;
-                                margin-top: 10px;
-                                float:left;
-                                font-size: 12px;'>
-                        <pe:if condition='<%= has_school() %>'>
-                            <div tooltip="<%=Eval('user').school.name%>">
-                                <img style='width: 19px;height: 16px;margin-right: 5px;' src='Texture/Aries/Creator/keepwork/worldshare_32bits.png#311 311 19 16' />
-                                <%= Mod.WorldShare.Utils.WordsLimit(Eval('user').school.name) %>
+                    <pe:if condition='<%= has_username() %>'>
+                        <div style='position: relative;
+                                    margin-top: 10px;
+                                    float:left;
+                                    font-size: 12px;'
+                             tooltip='<%= get_tooltip() %>'>
+                            <pe:if condition='<%= has_user_icon() %>'>
+                                <%= get_user_icon() %>
+                            </pe:if>
+                            <div style='float: left;'>
+                                <%= get_username() %>
                             </div>
-                        </pe:if>
-                    </div>
+                        </div>
+                    </pe:if>
                     <div align='right' style='margin-right: 14px;width: 58px;height: 46px;margin-top: -10x;'>
                         <pe:if condition='<%= be_allow() %>'>
                             <input type='button'
@@ -278,6 +274,6 @@
         </div>
         <div class='<%= get_work_item_style() %>'
              style='width: 295px;
-                    height: 245px;'></div>
+                    height: 220px;'></div>
     </div>
 </pe:mcml>
