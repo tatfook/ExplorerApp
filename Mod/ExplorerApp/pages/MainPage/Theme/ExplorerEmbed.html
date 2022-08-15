@@ -307,16 +307,18 @@
 
                     function get_username()
                         local user = Eval('user')
-
+                        local ret
                         if not user or type(user) ~= 'table' then
-                            return Eval('username') or '<%= "暂无" %>'
+                            ret = Eval('username') or '<%= "暂无" %>'
+                        else 
+                            if user.username then
+                                ret = user.username
+                            else
+                                ret = Eval('username') or '<%= "暂无" %>'
+                            end
                         end
-
-                        if user.username then
-                            return user.username
-                        else
-                            return Eval('username') or '<%= "暂无" %>'
-                        end
+                        ret = MyCompany.Aries.Chat.BadWordFilter.FilterString(ret)
+                        return ret
                     end
 
                     function has_username()
@@ -327,6 +329,12 @@
                         else
                             return false
                         end
+                    end
+
+                    function get_world_text()
+                        local name = Eval('name')
+                        name = MyCompany.Aries.Chat.BadWordFilter.FilterString(name)
+                        return Mod.WorldShare.Utils.WordsLimit(name)
                     end
 
                     function has_rated()
