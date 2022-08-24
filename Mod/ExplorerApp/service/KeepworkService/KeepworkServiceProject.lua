@@ -265,6 +265,8 @@ function KeepworkServiceProject:GetMySchoolProjects(classId, pages, callback)
                     for sKey, sItem in ipairs(searchData.rows) do
                         if item.id == sItem.id then
                             item.level = sItem.level
+                            item.isSystemGroupMember = sItem.isSystemGroupMember
+                            item.timeRules = sItem.timeRules
                             break
                         end
                     end
