@@ -169,7 +169,7 @@
                     function has_award()
                         local world_info = MainPage.worksTree[Eval('index')]
 
-                        if world_info.extra and
+                        if world_info and world_info.extra and
                            world_info.extra.award and
                            world_info.extra.award.text and
                            world_info.extra.award.text ~= '' then
