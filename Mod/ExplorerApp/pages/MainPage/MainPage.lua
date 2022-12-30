@@ -257,7 +257,7 @@ function MainPage:SetCategoryTree(notGetWorks)
         return
     end
 
-    if System.options.channelId == '430' then
+    if System.options.isChannel_430 then
         self:GetMyClassList(
             function(classData, err)
                 table.insert(
