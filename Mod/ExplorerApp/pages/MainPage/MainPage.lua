@@ -36,7 +36,6 @@ local LocalServiceHistory = NPL.load('(gl)Mod/WorldShare/service/LocalService/Lo
 local KeepworkCommonApi = NPL.load("(gl)Mod/WorldShare/api/Keepwork/KeepworkCommonApi.lua")
 
 -- UI
-local SyncMain = NPL.load('(gl)Mod/WorldShare/cellar/Sync/Main.lua')
 local Toast = NPL.load('(gl)Mod/ExplorerApp/pages/Toast/Toast.lua')
 
 local MainPage = NPL.export()
