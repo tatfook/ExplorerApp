@@ -116,7 +116,7 @@
                     function is_star(start_type)
                         local worldinfo = MainPage.worksTree[Eval('index')]
 
-                        if worldinfo.isStar then
+                        if worldinfo and worldinfo.isStar then
                             if start_type == 1 then
                                 return 'false'
                             elseif start_type == 2 then
